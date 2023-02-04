@@ -9,7 +9,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url("/static/images/sky.png");
+    background-image: url("sky.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;

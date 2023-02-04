@@ -8,33 +8,36 @@
     <link rel="stylesheet" type="text/css" href="/css/loginStyle.css">
 </head>
 <body>
-<form th:action="@{/login}" method="post">
-    <div class="box">
-        <div class="form">
-            <h2>Sign in</h2>
+<div>
+    <form th:action="@{/login}" method="post">
+        <div class="box">
+            <div class="form">
+                <h2>Sign in</h2>
 
-            <div class="inputBox">
-                <label for="username"></label><input type="text" required="required" id="username" name="username">
-                <span>Username</span>
-                <i></i>
-            </div>
+                <div class="inputBox">
+                    <label for="username"></label><input type="text" required="required" id="username" name="username">
+                    <span>Username</span>
+                    <i></i>
+                </div>
 
-            <div class="inputBox">
-                <label for="password"></label><input type="password" required="required" id="password" name="password">
-                <span>Password</span>
-                <i></i>
-            </div>
+                <div class="inputBox">
+                    <label for="password"></label><input type="password" required="required" id="password"
+                                                         name="password">
+                    <span>Password</span>
+                    <i></i>
+                </div>
 
-            <input type="submit" value="Login">
-            <p></p>
-            <p></p>
-            <p></p>
+                <input type="submit" value="Login">
+                <p></p>
+                <p></p>
+                <p></p>
 
-            <div class="links">
-                <a th:href="@{/registration}">Sign up</a>
+                <div class="links">
+                    <a th:href="@{/registration}">Sign up</a>
+                </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
 </body>
 </html>
