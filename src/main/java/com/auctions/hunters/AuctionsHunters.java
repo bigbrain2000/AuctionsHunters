@@ -1,31 +1,30 @@
 package com.auctions.hunters;
 
-import com.auctions.hunters.exceptions.EmailAlreadyExistsException;
 import com.auctions.hunters.model.ConfirmationToken;
 import com.auctions.hunters.model.Role;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.service.confirmationtoken.ConfirmationTokenService;
 import com.auctions.hunters.service.role.RoleService;
-import com.auctions.hunters.service.user.UserService;
+import com.auctions.hunters.service.user.BuyerService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
+import static com.auctions.hunters.utils.DateUtils.getDateTime;
 
 @SpringBootApplication
 public class AuctionsHunters implements CommandLineRunner {
 
-    private final UserService userService;
+    private final BuyerService buyerService;
     private final RoleService roleService;
     private final ConfirmationTokenService confirmationTokenService;
 
-    public AuctionsHunters(UserService userService, RoleService roleService, ConfirmationTokenService confirmationTokenService) {
-        this.userService = userService;
+    public AuctionsHunters(BuyerService buyerService, RoleService roleService, ConfirmationTokenService confirmationTokenService) {
+        this.buyerService = buyerService;
         this.roleService = roleService;
         this.confirmationTokenService = confirmationTokenService;
     }
@@ -36,26 +35,29 @@ public class AuctionsHunters implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws EmailAlreadyExistsException {
+    public void run(String... args) {
         insertPredefinedAdmin();
     }
 
     /**
      * Method used for inserting a predefined administrator account into the database at the service start.
-     *
-     * @throws EmailAlreadyExistsException exception thrown if the email already exists in the database
      */
-    private void insertPredefinedAdmin() throws EmailAlreadyExistsException {
+    private void insertPredefinedAdmin() {
         String adminData = "admin";
         String adminPhoneNumber = "1234567890";
         String adminEmail = "auctionshunters@gmail.com";
         String adminCityAddress = "Caracal";
         String adminCreditCardNumber = "1234567890123456";
+        OffsetDateTime now = getDateTime();
 
-        if (!userService.isUserEmailAlreadyRegistered(adminEmail)) {
+        if (!buyerService.isUserEmailAlreadyRegistered(adminEmail)) {
 
-            Role role = new Role("ADMIN");
+            Role role = Role.builder()
+                    .name("ADMIN")
+                    .creationDate(OffsetDateTime.from(now))
+                    .build();
             roleService.save(role);
+
             Set<Role> set = new HashSet<>();
             set.add(role);
 
@@ -65,13 +67,9 @@ public class AuctionsHunters implements CommandLineRunner {
             admin.setLocked(false);
             admin.setEnabled(true);
 
-            userService.save(admin);
+            buyerService.save(admin);
 
-            ConfirmationToken adminConfirmationToken = new ConfirmationToken(adminData,
-                    LocalDateTime.of(LocalDate.of(2022, 2, 2), LocalTime.of(10, 11, 19)),
-                    LocalDateTime.of(LocalDate.of(2022, 2, 2), LocalTime.of(10, 11, 19)),
-                    LocalDateTime.of(LocalDate.of(2022, 2, 2), LocalTime.of(10, 11, 19)),
-                    admin);
+            ConfirmationToken adminConfirmationToken = new ConfirmationToken(adminData, now, now, now, admin);
 
             confirmationTokenService.saveConfirmationToken(adminConfirmationToken);
         }
