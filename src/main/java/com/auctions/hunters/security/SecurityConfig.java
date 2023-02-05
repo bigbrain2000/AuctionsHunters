@@ -43,6 +43,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(@NotNull HttpSecurity http) throws Exception {
+
+        String[] allUsersPermittedApis = {"/css/**", "/", "/login", "/login_error", "/logout", "/seller/register", "/buyer/register"};
+        String[] sellerPermittedApis = {};
+        String[] buyerPermittedApis = {};
+
         http
                 .csrf().disable()
                 .headers().frameOptions().disable()
@@ -50,7 +55,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 //.authorizeRequests().antMatchers("/").hasAnyAuthority("ADMIN")
-                .antMatchers("/css/**", "/", "/login", "/login_error", "/registration", "/logout").permitAll()
+                .antMatchers(allUsersPermittedApis).permitAll()
+//                .and()
+//                .authorizeRequests().antMatchers(sellerPermittedApis).hasAnyAuthority("SELLER")
+//                .and()
+//                .authorizeRequests().antMatchers(buyerPermittedApis).hasAnyAuthority("BUYER")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
