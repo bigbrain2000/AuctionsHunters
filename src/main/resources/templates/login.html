@@ -16,20 +16,24 @@
 
                 <div class="inputBox">
                     <label for="username"></label><input type="text" required="required" id="username" name="username">
-                    <span>Username</span>
+                    <span>Nume utilizator</span>
                     <i></i>
                 </div>
 
                 <div class="inputBox">
                     <label for="password"></label><input type="password" required="required" id="password"
                                                          name="password">
-                    <span>Password</span>
+                    <span>Parola</span>
                     <i></i>
                 </div>
 
+                <div class="checkbox">
+                    <input type="checkbox" id="togglePassword">
+                    <label for="togglePassword">Arata parola</label>
+                </div>
+
+                <br>
                 <input type="submit" value="Login">
-                <p></p>
-                <p></p>
                 <p></p>
 
                 <div class="links">
@@ -39,5 +43,19 @@
         </div>
     </form>
 </div>
+
+<script>
+    const passwordInput = document.getElementById("password");
+    const togglePassword = document.getElementById("togglePassword");
+
+    togglePassword.addEventListener("change", function () {
+        if (togglePassword.checked) {
+            passwordInput.setAttribute("type", "text");
+        } else {
+            passwordInput.setAttribute("type", "password");
+        }
+    });
+</script>
+
 </body>
 </html>
