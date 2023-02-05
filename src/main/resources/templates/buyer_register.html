@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/registerStyle.css">
+
+</head>
+<body>
+<form th:action="@{/buyer/register}" th:object="${user}" method="post">
+    <div class="box">
+        <div class="form">
+
+            <h2>Sign up</h2>
+
+            <div class="inputBox">
+                <label for="username"></label><input type="text" required="required" id="username" name="username">
+                <span>Nume utilizator</span>
+                <i></i>
+            </div>
+
+            <div class="inputBox">
+                <label for="password"></label><input type="password" required="required" id="password" name="password">
+                <span>Parola</span>
+                <i></i>
+            </div>
+
+            <div class="inputBox">
+                <label for="email"></label><input type="text" required="required" id="email" name="email">
+                <span>Email</span>
+                <i></i>
+            </div>
+
+            <div class="inputBox">
+                <label for="cityAddress"></label><input type="text" required="required" id="cityAddress"
+                                                        name="cityAddress">
+                <span>Adresa</span>
+                <i></i>
+            </div>
+
+            <div class="inputBox">
+                <label for="phoneNumber"></label><input type="text" required="required" id="phoneNumber"
+                                                        name="phoneNumber">
+                <span>Numar telefon</span>
+                <i></i>
+            </div>
+
+            <div class="inputBox">
+                <label for="creditCardNumber"></label><input type="text" required="required" id="creditCardNumber"
+                                                             name="creditCardNumber">
+                <span>Numar card de credit</span>
+                <i></i>
+            </div>
+
+            <p></p>
+            <div class="inputBox">
+                <input type="submit" value="Sign in">
+            </div>
+
+            <p></p>
+            <div class="links">
+                <a th:href="@{/login}">Sign in</a>
+            </div>
+        </div>
+    </div>
+</form>
+</body>
+</html>
