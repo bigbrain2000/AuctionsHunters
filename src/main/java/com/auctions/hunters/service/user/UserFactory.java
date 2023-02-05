@@ -5,53 +5,113 @@ import com.auctions.hunters.exceptions.InvalidEmailException;
 import com.auctions.hunters.exceptions.ResourceNotFoundException;
 import com.auctions.hunters.exceptions.WeakPasswordException;
 import com.auctions.hunters.model.ConfirmationToken;
+import com.auctions.hunters.model.Role;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.repository.UserRepository;
+import com.auctions.hunters.security.PasswordEncoder;
 import com.auctions.hunters.service.confirmationtoken.ConfirmationTokenService;
 import com.auctions.hunters.service.email.EmailService;
+import com.auctions.hunters.service.role.RoleService;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.time.OffsetDateTime;
+import java.util.*;
 import java.util.regex.Pattern;
 
+import static com.auctions.hunters.utils.DateUtils.getDateTime;
 import static java.time.LocalDateTime.now;
 import static java.util.List.of;
 
 /**
- * Service class for managing users and implementing the {@link UserService} interface.
+ * Factory methods for users which is implementing the {@link UserService} interface.
  */
-@Service
-public class UserServiceImpl implements UserService {
+public abstract class UserFactory implements UserService {
 
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final ConfirmationTokenService confirmationTokenService;
-    private final EmailService emailService;
-    private final PasswordEncoder passwordEncoder;
+    final UserRepository userRepository;
+    final PasswordEncoder passwordEncoder;
+    final RoleService roleService;
+    final ConfirmationTokenService confirmationTokenService;
+    final EmailService emailService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+    private final OffsetDateTime NOW = getDateTime();
 
-    public UserServiceImpl(UserRepository userRepository,
-                           BCryptPasswordEncoder bCryptPasswordEncoder,
-                           ConfirmationTokenService confirmationTokenService,
-                           EmailService emailService,
-                           PasswordEncoder passwordEncoder) {
+    protected static final Logger LOGGER = LoggerFactory.getLogger(UserFactory.class);
+
+    protected UserFactory(UserRepository userRepository,
+                          PasswordEncoder passwordEncoder,
+                          RoleService roleService,
+                          ConfirmationTokenService confirmationTokenService,
+                          EmailService emailService) {
         this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
         this.confirmationTokenService = confirmationTokenService;
         this.emailService = emailService;
-        this.passwordEncoder = passwordEncoder;
+    }
+
+    public abstract String signUpUser(@NotNull User appUser) throws EmailAlreadyExistsException, WeakPasswordException;
+
+    /**
+     * Creates a role entity and adds it in the database based on an input.
+     *
+     * @param roleName the role names parsed as input
+     * @return the saved role
+     */
+    protected Role addRole(String roleName) {
+        Role role = Role.builder()
+                .name(roleName)
+                .creationDate(OffsetDateTime.from(now()))
+                .build();
+        roleService.save(role);
+        return role;
+    }
+
+    /**
+     * Creates a user entity and adds it in the database based on the inputs.
+     *
+     * @param user the user that will be stored in the database
+     * @param role the saved role that identifies the user
+     */
+    protected void addUser(User user, Role role) {
+        String encodedPassword = passwordEncoder.bCryptPasswordEncoder().encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        user.setEnabled(true);  //POATE LE STERG IN VIITOR
+        user.setLocked(false);
+
+        Set<Role> set = new HashSet<>();
+        set.add(role);
+        user.setRole(set);
+
+        userRepository.save(user);
+        LOGGER.debug("User {} inserted into the database", user);
+    }
+
+    /**
+     * Creates a confirmation entity and adds it in the database based on the input.
+     *
+     * @param user the user that`s going to have the new confirmation token
+     * @return the token
+     */
+    protected String addConfirmationToken(User user) {
+        String token = UUID.randomUUID().toString();
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+                token,
+                NOW,
+                NOW.plusMinutes(30),
+                NOW,
+                user
+        );
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
+        LOGGER.debug("Token {} for user {} inserted into the database", confirmationToken, user);
+
+        return token;
     }
 
     @Override
@@ -85,7 +145,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User save(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(user.getPassword()));
         LOGGER.debug("User {} saved in the database.", user);
         return userRepository.save(user);
     }
@@ -153,6 +213,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Check if the email parsed as input is valid using {@link InternetAddress}.
+     *
+     * @param email provided email
+     * @return true if the input is a valid email and false otherwise
+     */
     private boolean isValidEmailAddress(String email) {
 
         boolean result = true;
@@ -193,32 +259,6 @@ public class UserServiceImpl implements UserService {
 
     public boolean stringContainsUpperCase(String s) {
         return Pattern.compile("[A-Z]").matcher(s).find();
-    }
-
-    private String signUpUser(@NotNull User appUser) throws EmailAlreadyExistsException, WeakPasswordException {
-
-        checkIfEmailAlreadyExists(appUser.getEmail());
-        checkPasswordFormat(appUser.getPassword());
-
-        String encodedPassword = bCryptPasswordEncoder.encode(appUser.getPassword());
-        appUser.setPassword(encodedPassword);
-        appUser.setEnabled(true);
-        appUser.setLocked(false);
-        userRepository.save(appUser);
-        LOGGER.debug("User {} inserted into the database", appUser);
-
-        String token = UUID.randomUUID().toString();
-        ConfirmationToken confirmationToken = new ConfirmationToken(
-                token,
-                now(),
-                now().plusMinutes(30),
-                now(),
-                appUser
-        );
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
-        LOGGER.debug("Token {} for user {} inserted into the database", confirmationToken, appUser);
-
-        return token;
     }
 
     @Override
