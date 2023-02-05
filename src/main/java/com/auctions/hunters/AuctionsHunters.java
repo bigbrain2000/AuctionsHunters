@@ -66,10 +66,15 @@ public class AuctionsHunters implements CommandLineRunner {
 
             admin.setLocked(false);
             admin.setEnabled(true);
-
             buyerService.save(admin);
 
-            ConfirmationToken adminConfirmationToken = new ConfirmationToken(adminData, now, now, now, admin);
+            ConfirmationToken adminConfirmationToken = ConfirmationToken.builder()
+                    .token(adminData)
+                    .tokenCreatedAt(now)
+                    .tokenExpiresAt(now)
+                    .tokenConfirmedAt(now)
+                    .user(admin)
+                    .build();
 
             confirmationTokenService.saveConfirmationToken(adminConfirmationToken);
         }

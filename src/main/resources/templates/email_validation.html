@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmare validare email</title>
+</head>
+<body>
+
+<p>Mulțumim pentru că v-ați validat emailul. Vezi fi redirecționat la pagina de logare în
+    <span id="countdown">5</span>secunde.</p>
+
+<script>
+    function countdown() {
+        var seconds = document.getElementById("countdown").innerHTML;
+        seconds = parseInt(seconds, 10);
+
+        if (seconds == 0) {
+            clearInterval(countdownTimer);
+            window.location = "/login";
+        }
+
+        document.getElementById("countdown").innerHTML = seconds - 1;
+    }
+
+    var countdownTimer = setInterval(countdown, 1000);
+</script>
+
+</body>
+</html>

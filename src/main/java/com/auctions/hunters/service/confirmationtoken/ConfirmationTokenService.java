@@ -1,5 +1,6 @@
 package com.auctions.hunters.service.confirmationtoken;
 
+import com.auctions.hunters.exceptions.ResourceNotFoundException;
 import com.auctions.hunters.model.ConfirmationToken;
 
 import javax.validation.constraints.NotBlank;
@@ -15,9 +16,8 @@ public interface ConfirmationTokenService {
      * Set a token confirmation date
      *
      * @param token - the token we want to save
-     * @return - an integer
      */
-    int setConfirmedAt(@NotBlank String token);
+    void setConfirmedAt(@NotBlank String token);
 
     /**
      * Save a token after it has been confirmed
@@ -40,5 +40,5 @@ public interface ConfirmationTokenService {
      *
      * @param id - the token id we want to delete
      */
-    void delete(@NotNull Integer id);
+    void delete(@NotNull Integer id) throws ResourceNotFoundException;
 }

@@ -8,8 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
+
+import static com.auctions.hunters.utils.DateUtils.getDateTime;
 
 /**
  * Concrete class that implements the {@link ConfirmationTokenService} interface.
@@ -35,15 +36,15 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
         return confirmationTokenRepository.findByToken(token);
     }
 
-    public int setConfirmedAt(String token) {
+    public void setConfirmedAt(String token) {
         LOGGER.debug("Token was successfully updated in the database");
-        return confirmationTokenRepository.updateConfirmedAt(token, LocalDateTime.now());
+        confirmationTokenRepository.updateTokenConfirmationDate(token, getDateTime());
     }
 
-    public void delete(Integer id) {
+    public void delete(Integer id) throws ResourceNotFoundException {
         confirmationTokenRepository.findById(id).orElseThrow(() -> {
-            LOGGER.debug("Token could not be deleted from the database");
-            return new ResourceNotFoundException("Token", "id", id);
+            LOGGER.debug("Token with id {} could not be deleted from the database", id);
+            throw new ResourceNotFoundException("Token", "id", id);
         });
 
         LOGGER.debug("Token successfully deleted from the database");

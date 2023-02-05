@@ -78,7 +78,7 @@ public interface UserService {
     void checkIfEmailIsValid(@NotBlank String email) throws InvalidEmailException;
 
     /**
-     * Set user account as enabled
+     * Set user account as enabled once the email validation was completed.
      *
      * @param email of user
      * @return - an integer
@@ -86,12 +86,19 @@ public interface UserService {
     int enableUser(@NotBlank String email);
 
     /**
+     * Set user account as unlocked once the email validation was completed.
+     *
+     * @param email of user
+     * @return - an integer
+     */
+    int unlockUser(@NotBlank String email);
+
+    /**
      * After the email is confirmed, the token will be set as confirmed the user acc will be enabled
      *
      * @param token - the unique generated token for a new user
-     * @return - a confirmation message in a success scenario, else a message of failure if the 30 from registering passed
      */
-    String confirmToken(@NotBlank String token);
+    void confirmToken(@NotBlank String token);
 
     /**
      * Based on entered data, a new user will be saved in the DB and a token

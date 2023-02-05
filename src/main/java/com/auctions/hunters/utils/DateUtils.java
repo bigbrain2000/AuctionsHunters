@@ -13,7 +13,7 @@ import static java.time.LocalDateTime.now;
  */
 public class DateUtils {
 
-    public static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'hh:mm:ss.SSSX";
+    public static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
 
     private DateUtils() {
         throw new IllegalStateException("Reflection should not be used for instantiate this class: " + DateUtils.class.getName() + ".");

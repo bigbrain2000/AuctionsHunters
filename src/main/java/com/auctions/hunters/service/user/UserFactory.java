@@ -21,11 +21,12 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static com.auctions.hunters.utils.DateUtils.DATE_TIME_PATTERN;
 import static com.auctions.hunters.utils.DateUtils.getDateTime;
-import static java.time.LocalDateTime.now;
 import static java.util.List.of;
 
 /**
@@ -66,7 +67,7 @@ public abstract class UserFactory implements UserService {
     protected Role addRole(String roleName) {
         Role role = Role.builder()
                 .name(roleName)
-                .creationDate(OffsetDateTime.from(now()))
+                .creationDate(NOW)
                 .build();
         roleService.save(role);
         return role;
@@ -82,8 +83,9 @@ public abstract class UserFactory implements UserService {
         String encodedPassword = passwordEncoder.bCryptPasswordEncoder().encode(user.getPassword());
         user.setPassword(encodedPassword);
 
-        user.setEnabled(true);  //POATE LE STERG IN VIITOR
-        user.setLocked(false);
+        //set users scopes as not validated
+        user.setEnabled(false);
+        user.setLocked(true);
 
         Set<Role> set = new HashSet<>();
         set.add(role);
@@ -101,13 +103,18 @@ public abstract class UserFactory implements UserService {
      */
     protected String addConfirmationToken(User user) {
         String token = UUID.randomUUID().toString();
-        ConfirmationToken confirmationToken = new ConfirmationToken(
-                token,
-                NOW,
-                NOW.plusMinutes(30),
-                NOW,
-                user
-        );
+
+        OffsetDateTime defaultDateTime = OffsetDateTime.parse("2000-01-01T20:20:20.200Z",
+                DateTimeFormatter.ofPattern(DATE_TIME_PATTERN));
+
+        ConfirmationToken confirmationToken = ConfirmationToken.builder()
+                .token(token)
+                .tokenCreatedAt(NOW)
+                .tokenExpiresAt(NOW.plusMinutes(30))
+                .tokenConfirmedAt(defaultDateTime) //if the user did not validate his email, then it will have a default value into the database
+                .user(user)
+                .build();
+
         confirmationTokenService.saveConfirmationToken(confirmationToken);
         LOGGER.debug("Token {} for user {} inserted into the database", confirmationToken, user);
 
@@ -267,6 +274,11 @@ public abstract class UserFactory implements UserService {
     }
 
     @Override
+    public int unlockUser(String email) {
+        return userRepository.unlockUser(email);
+    }
+
+    @Override
     public String register(@NotNull User newUser) throws InvalidEmailException, EmailAlreadyExistsException, WeakPasswordException {
 
         checkIfEmailIsValid(newUser.getEmail());
@@ -283,7 +295,7 @@ public abstract class UserFactory implements UserService {
                 )
         );
 
-        String link = "http://localhost:8080/users/confirm?token=" + token; //url for validating user account
+        String link = "http://localhost:8080/confirm?token=" + token; //url for validating user account
 
         emailService.sendEmail(newUser.getEmail(), buildEmail(newUser.getUsername(), link));
         LOGGER.debug("Email for confirmation token was sent.");
@@ -293,92 +305,46 @@ public abstract class UserFactory implements UserService {
 
     @Transactional
     @Override
-    public String confirmToken(String token) {
+    public void confirmToken(String token) {
 
         ConfirmationToken confirmationToken = confirmationTokenService
                 .getToken(token)
                 .orElseThrow(() -> {
                     LOGGER.debug("Token was not found.");
-                    return new IllegalStateException("Token was not found");
+                    throw new IllegalStateException("Token was not found");
                 });
 
-        confirmationTokenService.setConfirmedAt(token);
-        LOGGER.debug("Token confirmed by user.");
+        if (confirmationToken.getTokenConfirmedAt().isBefore(confirmationToken.getTokenExpiresAt())) {
+            confirmationTokenService.setConfirmedAt(token);
+            LOGGER.debug("Token confirmed by user.");
 
-        enableUser(confirmationToken.getUser().getEmail());
-        LOGGER.debug("User enabled his account.");
-
-        return "Email confirmed!";
+            //set users scopes as validated
+            enableUser(confirmationToken.getUser().getEmail());
+            unlockUser(confirmationToken.getUser().getEmail());
+            LOGGER.debug("User enabled his account.");
+        }
     }
 
     @Contract(pure = true)
     private @NotNull String buildEmail(String name, String link) {
-        return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
-                "\n" +
-                "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +
-                "\n" +
-                "  <table role=\"presentation\" width=\"100%\" style=\"border-collapse:collapse;min-width:100%;width:100%!important\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n" +
-                "    <tbody><tr>\n" +
-                "      <td width=\"100%\" height=\"53\" bgcolor=\"#0b0c0c\">\n" +
-                "        \n" +
-                "        <table role=\"presentation\" width=\"100%\" style=\"border-collapse:collapse;max-width:580px\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" align=\"center\">\n" +
-                "          <tbody><tr>\n" +
-                "            <td width=\"70\" bgcolor=\"#0b0c0c\" valign=\"middle\">\n" +
-                "                <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\">\n" +
-                "                  <tbody><tr>\n" +
-                "                    <td style=\"padding-left:10px\">\n" +
-                "                  \n" +
-                "                    </td>\n" +
-                "                    <td style=\"font-size:28px;line-height:1.315789474;Margin-top:4px;padding-left:10px\">\n" +
-                "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#ffffff;text-decoration:none;vertical-align:top;display:inline-block\">Confirm your email</span>\n" +
-                "                    </td>\n" +
-                "                  </tr>\n" +
-                "                </tbody></table>\n" +
-                "              </a>\n" +
-                "            </td>\n" +
-                "          </tr>\n" +
-                "        </tbody></table>\n" +
-                "        \n" +
-                "      </td>\n" +
-                "    </tr>\n" +
-                "  </tbody></table>\n" +
-                "  <table role=\"presentation\" class=\"m_-6186904992287805515content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;max-width:580px;width:100%!important\" width=\"100%\">\n" +
-                "    <tbody><tr>\n" +
-                "      <td width=\"10\" height=\"10\" valign=\"middle\"></td>\n" +
-                "      <td>\n" +
-                "        \n" +
-                "                <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\">\n" +
-                "                  <tbody><tr>\n" +
-                "                    <td bgcolor=\"#1D70B8\" width=\"100%\" height=\"10\"></td>\n" +
-                "                  </tr>\n" +
-                "                </tbody></table>\n" +
-                "        \n" +
-                "      </td>\n" +
-                "      <td width=\"10\" valign=\"middle\" height=\"10\"></td>\n" +
-                "    </tr>\n" +
-                "  </tbody></table>\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "  <table role=\"presentation\" class=\"m_-6186904992287805515content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;max-width:580px;width:100%!important\" width=\"100%\">\n" +
-                "    <tbody><tr>\n" +
-                "      <td height=\"30\"><br></td>\n" +
-                "    </tr>\n" +
-                "    <tr>\n" +
-                "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
-                "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.315789474;max-width:560px\">\n" +
-                "        \n" +
-                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Thank you for registering. Please click on the below link to activate your account: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a  target=\"_blank\" href=\"" + link + "\">Activate Now</a> </p></blockquote>\n Link will expire in 30 minutes. <p>See you soon</p>" +
-                "        \n" +
-                "      </td>\n" +
-                "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
-                "    </tr>\n" +
-                "    <tr>\n" +
-                "      <td height=\"30\"><br></td>\n" +
-                "    </tr>\n" +
-                "  </tbody></table><div class=\"yj6qo\"></div><div class=\"adL\">\n" +
-                "\n" +
-                "</div></div>";
+
+        return "<div style=\"width: 500px; margin: 0 auto; text-align: center; font-family: Arial, sans-serif; background-color: lightgray; padding: 40px; border-radius: 10px; box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);\">\n" +
+                " <h1 style=\"margin-top: 50px; font-size: 36px; color: #01304A;\">Validare email</h1>\n" +
+                " <p>Draga " + name + ",</p>\n" +
+                " <p>Vă mulțumim că v-ați înscris la în aplicația noastră! Pentru a finaliza înregistrarea, trebuie să verificăm adresa dumneavoastră de email.</p>\n" +
+                " <br>\n" +
+                " <p>Apăsați pe butonul de mai jos pentru a valida emalailul.</p>\n" +
+                " <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a  target=\"_blank\" href=\"" + link + "\">Activate Now</a> </p>" +
+                " <p style=\"font-size: 18px; color: gray;\">\n" +
+                " Verificându-vă adresa de e-mail, veți putea accesa toate caracteristicile și desciile aplicației noastre de licitații de mașini.</p>\n" +
+                " <p style=\"font-size: 18px; margin-bottom: 20px; color: gray;\">\n" +
+                " Vă mulțumim pentru timpul acordat!\n" +
+                " </p>\n" +
+                " <p style=\"font-size: 18px; margin-bottom: 20px; color: gray;\">Cele mai bune urări,</p>\n" +
+                " <p style=\"font-size: 18px; margin-bottom: 20px; color: gray;\">echipa AuctionHunters.</p>\n" +
+                "</p>" +
+                "<blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\">" +
+                "</div>";
     }
 }
 

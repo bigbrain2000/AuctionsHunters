@@ -9,10 +9,7 @@ import com.auctions.hunters.service.user.SellerService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -76,5 +73,11 @@ public class AuctionsHuntersController {
     public String registerSeller(@ModelAttribute @Valid User user) throws EmailAlreadyExistsException, InvalidEmailException, WeakPasswordException {
         sellerService.register(user);
         return "redirect:/login";
+    }
+
+    @GetMapping(path = "/confirm")
+    public String confirm(@RequestParam("token") String token) {
+        buyerService.confirmToken(token);
+        return "/email_validation";
     }
 }

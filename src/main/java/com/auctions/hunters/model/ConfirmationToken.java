@@ -44,12 +44,4 @@ public class ConfirmationToken {
     @OneToOne
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
-
-    public ConfirmationToken(String token, OffsetDateTime tokenCreatedAt, OffsetDateTime tokenExpiresAt, OffsetDateTime tokenConfirmedAt, User user) {
-        this.token = token;
-        this.tokenCreatedAt = tokenCreatedAt;
-        this.tokenExpiresAt = tokenExpiresAt;
-        this.tokenConfirmedAt = tokenConfirmedAt;
-        this.user = user;
-    }
 }
