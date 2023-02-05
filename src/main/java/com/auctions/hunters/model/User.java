@@ -29,6 +29,11 @@ public class User {
     @Column(name = "id", updatable = false, columnDefinition = "INTEGER")
     private Integer id;
 
+    @Builder.Default
+    @ManyToMany(cascade = MERGE, fetch = EAGER)
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> role = new HashSet<>();
+
     @Column(name = "username", nullable = false, columnDefinition = "TEXT")
     private String username;
 
@@ -43,11 +48,6 @@ public class User {
 
     @Column(name = "phone_number", nullable = false, columnDefinition = "TEXT")
     private String phoneNumber;
-
-    @Builder.Default
-    @ManyToMany(cascade = MERGE, fetch = EAGER)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> role = new HashSet<>();
 
     @Column(name = "credit_card_number", nullable = false, columnDefinition = "TEXT")
     @Size(min = 16, max = 19)

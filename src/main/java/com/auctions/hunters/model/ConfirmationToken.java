@@ -7,8 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
+import static com.auctions.hunters.utils.DateUtils.DATE_TIME_PATTERN;
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 import static javax.persistence.GenerationType.SEQUENCE;
 
@@ -28,23 +29,23 @@ public class ConfirmationToken {
     @Column(name = "token", nullable = false, columnDefinition = "TEXT")
     private String token;
 
-    @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(shape = STRING, pattern = DATE_TIME_PATTERN)
     @Column(name = "token_creation_date", nullable = false)
-    private LocalDateTime tokenCreatedAt;
+    private OffsetDateTime tokenCreatedAt;
 
-    @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(shape = STRING, pattern = DATE_TIME_PATTERN)
     @Column(name = "token_expiration_date", nullable = false)
-    private LocalDateTime tokenExpiresAt;
+    private OffsetDateTime tokenExpiresAt;
 
-    @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(shape = STRING, pattern = DATE_TIME_PATTERN)
     @Column(name = "token_confirmation_date", nullable = false)
-    private LocalDateTime tokenConfirmedAt;
+    private OffsetDateTime tokenConfirmedAt;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
-    public ConfirmationToken(String token, LocalDateTime tokenCreatedAt, LocalDateTime tokenExpiresAt, LocalDateTime tokenConfirmedAt, User user) {
+    public ConfirmationToken(String token, OffsetDateTime tokenCreatedAt, OffsetDateTime tokenExpiresAt, OffsetDateTime tokenConfirmedAt, User user) {
         this.token = token;
         this.tokenCreatedAt = tokenCreatedAt;
         this.tokenExpiresAt = tokenExpiresAt;
