@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>Autentificare eșuată</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/loginStyle.css">
+</head>
+<body>
+<div>
+    <form th:action="@{/login}" method="post">
+        <div class="box">
+            <div class="form">
+
+                <h4 style="color:red"><em>Numele sau parola introduse nu au fost valide.</em></h4>
+
+                <div class="inputBox">
+                    <label for="username"></label><input type="text" required="required" id="username" name="username">
+                    <span>Nume utilizator</span>
+                    <i></i>
+                </div>
+
+                <div class="inputBox">
+                    <label for="password"></label><input type="password" required="required" id="password"
+                                                         name="password">
+                    <span>Parola</span>
+                    <i></i>
+                </div>
+
+                <div class="checkbox" style="padding-top: 20px; color: #45F3FF">
+                    <input type="checkbox" id="togglePassword">
+                    <label for="togglePassword">Arată parola</label>
+                </div>
+
+                <br>
+                <input type="submit" value="Conectare">
+                <p></p>
+
+                <div class="links">
+                    <a th:href="@{/buyer/register}">Nu ai un cont? Înregistrează-te</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    const passwordInput = document.getElementById("password");
+    const togglePassword = document.getElementById("togglePassword");
+
+    togglePassword.addEventListener("change", function () {
+        if (togglePassword.checked) {
+            passwordInput.setAttribute("type", "text");
+        } else {
+            passwordInput.setAttribute("type", "password");
+        }
+    });
+</script>
+
+</body>
+</html>
