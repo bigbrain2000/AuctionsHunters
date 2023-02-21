@@ -1,39 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Main page</title>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <title>AuctionsHunters acasă</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <link rel="stylesheet" type="text/css" href="/css/welcome.css">
+    <link rel="stylesheet" type="text/css" href="/css/postCardStyle.css">
 </head>
 
-<body style="background-color: lightskyblue">
+<header>
+    <div class="hamburger">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
 
-<div>
-    <article>
-        <b>Pergamum, Anatolia</b>, now the modern Turkish town of Bergama, was one of the most important cities in the
-        Hellenistic Greek age. It was culturally rich, with an extensive library at its heart.
-        The city gained renown as an administrative center when it was ruled by King Eumenes II from the Attalid
-        dynasty. It was under this king that Pergamum severed ties with Macedonia and made an alliance with the Roman
-        Republic.
-        The city boasted a population of over 200,000 citizens. Culturally, it rivaled both Alexandria and Antioch with
-        its many works of art, including sculptures and advanced architecture such as the Great Altar of Pergamum.
-        It was also an important religious center, being mentioned in the New Testament as one of the Seven Churches of
-        Revelation. Around 133 BC, Pergamum was bequeathed to the Roman Republic, and in the Middle Ages it fell under
-        the rule of the Ottoman empire.
-        Pergamum’s library was the center for all things cultural. The Greek writer Plutarch said that it had
-        approximately <i>200,000 volumes</i>. It came to be known as one of the most important libraries in the ancient
-        world and was second only to the Library of Alexandria.
-        If the library was destroyed by Julius Caesar, it supports the story that Mark Anthony gave the contents of the
-        Library of Pergamum to Cleopatra to refill the once great Library of Alexandria. Unfortunately, there is no
-        known catalog of the Library of Pergamum, which makes it impossible to know the true scope of the collection.
-    </article>
+    <nav class="nav-bar">
+        <ul>
+            <li>
+                <a href="" class="active">Acasă</a>
+            </li>
+            <li>
+                <a>Înregistrare</a>
+                <ul>
+                    <li><a th:href="@{/buyer/register}">Cumpărător</a></li>
+                    <li><a th:href="@{/seller/register}">Vânzător</a></li>
+                </ul>
+            </li>
+            <li>
+                <a th:href="@{/login}">Autentificare</a>
+            </li>
+            <li>
+                <a href="">Cautare mașini</a>
+                <ul>
+                    <li><a href="">Option 1</a></li>
+                    <li><a href="">Option 2</a></li>
+                    <li><a href="">Option 3</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="">Ghid licitare</a>
+            </li>
+        </ul>
+    </nav>
+
+    <script>
+        hamburger = document.querySelector(".hamburger");
+        hamburger.onClick = function () {
+            navBar = document.querySelector(".nav-bar");
+            navBar.classList.toggle("active");
+        }
+    </script>
+</header>
+
+<body>
+<img class="image" src="https://www.experian.com/blogs/insights/wp-content/uploads/2021/01/930x420.jpg" alt="Main banner for auctions">
+
+<div class="container">
+    <div class="grid">
+
+        <div class="card">
+            <div class="card_img">
+                <img src="https://images.unsplash.com/photo-1624593895161-c2d67791ef7a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                     alt="">
+            </div>
+            <div class="card_body">
+                <a href="#" class="read_more">SUV</a>
+                <!--                to define the reference-->
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card_img">
+                <img src="https://images.unsplash.com/photo-1624593895161-c2d67791ef7a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                     alt="">
+            </div>
+            <div class="card_body">
+                <a href="#" class="read_more">Sedan</a>
+                <!--                to define the reference-->
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card_img">
+                <img src="https://images.unsplash.com/photo-1624593895161-c2d67791ef7a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                     alt="">
+            </div>
+            <div class="card_body">
+                <a href="#" class="read_more">Pickup</a>
+                <!--                to define the reference-->
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card_img">
+                <img src="https://images.unsplash.com/photo-1624593895161-c2d67791ef7a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                     alt="">
+            </div>
+            <div class="card_body">
+                <a href="#" class="read_more">Coupe</a>
+                <!--                to define the reference-->
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card_img">
+                <img src="https://images.unsplash.com/photo-1624593895161-c2d67791ef7a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                     alt="">
+            </div>
+            <div class="card_body">
+                <a href="#" class="read_more">Convertible</a>
+                <!--                to define the reference-->
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card_img">
+                <img src="https://images.unsplash.com/photo-1624593895161-c2d67791ef7a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                     alt="">
+            </div>
+            <div class="card_body">
+                <a href="#" class="read_more">Roadster</a>
+                <!--                to define the reference-->
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card_img">
+                <img src="https://images.unsplash.com/photo-1624593895161-c2d67791ef7a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                     alt="">
+            </div>
+            <div class="card_body">
+                <a href="#" class="read_more">Hatchback</a>
+                <!--                to define the reference-->
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card_img">
+                <img src="https://images.unsplash.com/photo-1624593895161-c2d67791ef7a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                     alt="">
+            </div>
+            <div class="card_body">
+                <a href="#" class="read_more">Minivan</a>
+                <!--                to define the reference-->
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card_img">
+                <img src="https://images.unsplash.com/photo-1624593895161-c2d67791ef7a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                     alt="">
+            </div>
+            <div class="card_body">
+                <a href="#" class="read_more">Cargo Van</a>
+                <!--                to define the reference-->
+            </div>
+        </div>
+
+    </div>
 </div>
-
-<form th:action="@{/logout}" method="post">
-    <input type="submit" value="Logout"/>
-</form>
-
 </body>
 </html>

@@ -36,12 +36,12 @@ public class AuctionsHuntersController {
 
     @GetMapping("/login")
     public String getLoginPage() {
-        return "/welcome";
+        return "/login";
     }
 
     @GetMapping("/login_error")
     public String getLoginErrorPage() {
-        return "/login";
+        return "/loginError";
     }
 
     @GetMapping("/logout")

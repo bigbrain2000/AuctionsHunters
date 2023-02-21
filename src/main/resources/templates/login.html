@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Login</title>
+    <title>Autentificare</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="/css/loginStyle.css">
 </head>
@@ -12,7 +12,7 @@
     <form th:action="@{/login}" method="post">
         <div class="box">
             <div class="form">
-                <h2>Sign in</h2>
+                <h2>Conectează-te</h2>
 
                 <div class="inputBox">
                     <label for="username"></label><input type="text" required="required" id="username" name="username">
@@ -27,17 +27,17 @@
                     <i></i>
                 </div>
 
-                <div class="checkbox">
+                <div class="checkbox" style="padding-top: 20px; color: #45F3FF">
                     <input type="checkbox" id="togglePassword">
-                    <label for="togglePassword">Arata parola</label>
+                    <label for="togglePassword">Arată parola</label>
                 </div>
 
                 <br>
-                <input type="submit" value="Login">
+                <input type="submit" value="Conectare">
                 <p></p>
 
                 <div class="links">
-                    <a th:href="@{/registration}">Sign up</a>
+                    <a th:href="@{/buyer/register}">Nu ai un cont? Înregistrează-te</a>
                 </div>
             </div>
         </div>

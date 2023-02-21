@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Register</title>
+    <title>Înregistrare</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
           rel="stylesheet">
@@ -14,7 +14,7 @@
     <div class="box">
         <div class="form">
 
-            <h2>Sign up</h2>
+            <h2>Înregistrează-te ca și cumpărător</h2>
 
             <div class="inputBox">
                 <label for="username"></label><input type="text" required="required" id="username" name="username">
@@ -37,32 +37,34 @@
             <div class="inputBox">
                 <label for="cityAddress"></label><input type="text" required="required" id="cityAddress"
                                                         name="cityAddress">
-                <span>Adresa</span>
+                <span>Adresă</span>
                 <i></i>
             </div>
 
             <div class="inputBox">
                 <label for="phoneNumber"></label><input type="text" required="required" id="phoneNumber"
                                                         name="phoneNumber">
-                <span>Numar telefon</span>
+                <span>Număr de telefon</span>
                 <i></i>
             </div>
 
             <div class="inputBox">
                 <label for="creditCardNumber"></label><input type="text" required="required" id="creditCardNumber"
                                                              name="creditCardNumber">
-                <span>Numar card de credit</span>
+                <span>Număr card de credit</span>
                 <i></i>
             </div>
 
-            <p></p>
-            <div class="inputBox">
-                <input type="submit" value="Sign in">
+            <div style="padding-top: 10px">
+                <input type="submit" value="Salvează">
             </div>
 
-            <p></p>
             <div class="links">
-                <a th:href="@{/login}">Sign in</a>
+                <a th:href="@{/login}">Ai deja un cont? Conectează-te</a>
+            </div>
+
+            <div class="links">
+                <a th:href="@{/seller/register}">Înregistrează-te ca și vânzător</a>
             </div>
         </div>
     </div>
