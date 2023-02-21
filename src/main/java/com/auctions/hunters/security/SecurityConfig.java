@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -41,12 +43,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(authenticationProvider());
     }
 
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        SimpleUrlAuthenticationSuccessHandler successHandler = new SimpleUrlAuthenticationSuccessHandler();
+        successHandler.setUseReferer(false);
+        successHandler.setDefaultTargetUrl("/");
+
+        return successHandler;
+    }
+
     @Override
     protected void configure(@NotNull HttpSecurity http) throws Exception {
 
         String[] allUsersPermittedApis = {"/css/**", "/", "/login", "/login_error", "/logout", "/seller/register", "/buyer/register", "/confirm/**"};
         String[] sellerPermittedApis = {};
         String[] buyerPermittedApis = {};
+        String[] authenticatedUsersPermittedApis = {"/homepage"};
 
         http
                 .csrf().disable()
@@ -60,10 +72,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .authorizeRequests().antMatchers(sellerPermittedApis).hasAnyAuthority("SELLER")
 //                .and()
 //                .authorizeRequests().antMatchers(buyerPermittedApis).hasAnyAuthority("BUYER")
-                .anyRequest().authenticated()
+                .anyRequest()
+                .authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")
+                .successHandler(authenticationSuccessHandler())
                 .failureUrl("/login_error")
                 .and()
                 .logout()

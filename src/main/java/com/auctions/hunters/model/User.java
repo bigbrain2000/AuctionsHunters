@@ -16,7 +16,10 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "users",
-        uniqueConstraints = {@UniqueConstraint(name = "user_email_unique", columnNames = "email")})
+        uniqueConstraints = {
+                @UniqueConstraint(name = "user_email_unique", columnNames = "email"),
+                @UniqueConstraint(name = "username", columnNames = "username")
+        })
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
