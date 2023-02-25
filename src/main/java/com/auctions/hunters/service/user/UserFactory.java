@@ -3,7 +3,6 @@ package com.auctions.hunters.service.user;
 import com.auctions.hunters.exceptions.EmailAlreadyExistsException;
 import com.auctions.hunters.exceptions.InvalidEmailException;
 import com.auctions.hunters.exceptions.ResourceNotFoundException;
-import com.auctions.hunters.exceptions.WeakPasswordException;
 import com.auctions.hunters.model.ConfirmationToken;
 import com.auctions.hunters.model.Role;
 import com.auctions.hunters.model.User;
@@ -23,7 +22,6 @@ import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.regex.Pattern;
 
 import static com.auctions.hunters.utils.DateUtils.DATE_TIME_PATTERN;
 import static com.auctions.hunters.utils.DateUtils.getDateTime;
@@ -56,7 +54,7 @@ public abstract class UserFactory implements UserService {
         this.emailService = emailService;
     }
 
-    public abstract String signUpUser(@NotNull User appUser) throws EmailAlreadyExistsException, WeakPasswordException;
+    public abstract String signUpUser(@NotNull User appUser) throws EmailAlreadyExistsException;
 
     /**
      * Creates a role entity and adds it in the database based on an input.
@@ -239,35 +237,6 @@ public abstract class UserFactory implements UserService {
         return result;
     }
 
-    public void checkPasswordFormat(String password) throws WeakPasswordException {
-        checkIfPasswordContainsAtLeast8Characters(password);
-        checkIfPasswordContainsAtLeast1Digit(password);
-        checkIfPasswordContainsAtLeast1UpperCase(password);
-    }
-
-    private void checkIfPasswordContainsAtLeast8Characters(@NotNull String password) throws WeakPasswordException {
-        if (password.length() < 8)
-            throw new WeakPasswordException("8 characters");
-    }
-
-    private void checkIfPasswordContainsAtLeast1Digit(String password) throws WeakPasswordException {
-        if (!stringContainsNumber(password))
-            throw new WeakPasswordException("one digit");
-    }
-
-    public boolean stringContainsNumber(String s) {
-        return Pattern.compile("\\d").matcher(s).find();
-    }
-
-    private void checkIfPasswordContainsAtLeast1UpperCase(String password) throws WeakPasswordException {
-        if (!stringContainsUpperCase(password))
-            throw new WeakPasswordException("one upper case");
-    }
-
-    public boolean stringContainsUpperCase(String s) {
-        return Pattern.compile("[A-Z]").matcher(s).find();
-    }
-
     @Override
     public int enableUser(String email) {
         return userRepository.enableUser(email);
@@ -279,7 +248,7 @@ public abstract class UserFactory implements UserService {
     }
 
     @Override
-    public String register(@NotNull User newUser) throws InvalidEmailException, EmailAlreadyExistsException, WeakPasswordException {
+    public String register(@NotNull User newUser) throws InvalidEmailException, EmailAlreadyExistsException {
 
         checkIfEmailIsValid(newUser.getEmail());
 

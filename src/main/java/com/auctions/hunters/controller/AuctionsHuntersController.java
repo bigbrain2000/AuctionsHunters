@@ -2,7 +2,6 @@ package com.auctions.hunters.controller;
 
 import com.auctions.hunters.exceptions.EmailAlreadyExistsException;
 import com.auctions.hunters.exceptions.InvalidEmailException;
-import com.auctions.hunters.exceptions.WeakPasswordException;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.service.user.BuyerService;
 import com.auctions.hunters.service.user.SellerService;
@@ -57,7 +56,7 @@ public class AuctionsHuntersController {
     }
 
     @PostMapping("/buyer/register")
-    public String registerBuyer(@ModelAttribute @Valid User user) throws EmailAlreadyExistsException, InvalidEmailException, WeakPasswordException {
+    public String registerBuyer(@ModelAttribute @Valid User user) throws EmailAlreadyExistsException, InvalidEmailException {
         buyerService.register(user);
         return "redirect:/login";
     }
@@ -70,7 +69,7 @@ public class AuctionsHuntersController {
     }
 
     @PostMapping("/seller/register")
-    public String registerSeller(@ModelAttribute @Valid User user) throws EmailAlreadyExistsException, InvalidEmailException, WeakPasswordException {
+    public String registerSeller(@ModelAttribute @Valid User user) throws EmailAlreadyExistsException, InvalidEmailException {
         sellerService.register(user);
         return "redirect:/login";
     }

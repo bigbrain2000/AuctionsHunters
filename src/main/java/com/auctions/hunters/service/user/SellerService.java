@@ -1,7 +1,6 @@
 package com.auctions.hunters.service.user;
 
 import com.auctions.hunters.exceptions.EmailAlreadyExistsException;
-import com.auctions.hunters.exceptions.WeakPasswordException;
 import com.auctions.hunters.model.Role;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.repository.UserRepository;
@@ -29,10 +28,9 @@ public class SellerService extends UserFactory {
     }
 
     @Override
-    public String signUpUser(@NotNull User user) throws EmailAlreadyExistsException, WeakPasswordException {
+    public String signUpUser(@NotNull User user) throws EmailAlreadyExistsException {
 
         checkIfEmailAlreadyExists(user.getEmail());
-        checkPasswordFormat(user.getPassword());
 
         Role role = addRole("SELLER");
         addUser(user, role);

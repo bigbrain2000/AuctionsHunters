@@ -2,7 +2,6 @@ package com.auctions.hunters.service.user;
 
 import com.auctions.hunters.exceptions.EmailAlreadyExistsException;
 import com.auctions.hunters.exceptions.InvalidEmailException;
-import com.auctions.hunters.exceptions.WeakPasswordException;
 import com.auctions.hunters.model.User;
 
 import javax.validation.constraints.NotBlank;
@@ -108,7 +107,6 @@ public interface UserService {
      * @return - a String which contains the unique token generated for the registered user
      * @throws InvalidEmailException       - if a user email is invalid
      * @throws EmailAlreadyExistsException - if a user with the same email already exists
-     * @throws WeakPasswordException       - if user`s password does not fulfill the criteria
      */
-    String register(@NotNull User request) throws InvalidEmailException, EmailAlreadyExistsException, WeakPasswordException;
+    String register(@NotNull User request) throws InvalidEmailException, EmailAlreadyExistsException;
 }
