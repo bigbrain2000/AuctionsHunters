@@ -30,7 +30,7 @@ public class AuctionsHuntersController {
 
     @GetMapping("/")
     public String getHomePage() {
-        return "/index";
+        return "/homepage";
     }
 
     @GetMapping("/login")
@@ -75,7 +75,7 @@ public class AuctionsHuntersController {
     }
 
     @GetMapping(path = "/confirm")
-    public String confirm(@RequestParam("token") String token) {
+    public String validateEmail(@RequestParam("token") String token) {
         buyerService.confirmToken(token);
         return "/email_validation";
     }

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Adaugă o mașină</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/welcome.css">
+    <link rel="stylesheet" type="text/css" href="/css/addCarStyle.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<header>
+    <div class="hamburger">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+
+    <nav class="nav-bar">
+        <ul>
+            <li>
+                <a href="">Acasă</a>
+            </li>
+            <li>
+                <a href="">Cautare mașini</a>
+                <ul>
+                    <li><a href="">Option 1</a></li>
+                    <li><a href="">Option 2</a></li>
+                    <li><a href="">Option 3</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="">Ghid licitare</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<body>
+<form th:action="@{/seller/addCar}" method="post">
+
+    <div class="box">
+        <div class="form">
+            <h2>Înregistrează o mașină</h2>
+
+            <div class="inputBox">
+                <label for="category">Categorie</label>
+                <select type="text" required="required" id="category" name="category">
+                    <option value="SUV">SUV</option>
+                    <option value="SEDAN">SEDAN</option>
+                    <option value="PICKUP">PICKUP</option>
+                    <option value="COUPE">COUPE</option>
+                    <option value="CONVERTIBLE">CONVERTIBLE</option>
+                    <option value="ROADSTER">ROADSTER</option>
+                    <option value="HATCHBACK">HATCHBACK</option>
+                    <option value="MINIVAN">MINIVAN</option>
+                    <option value="CARGO_VAN">CARGO_VAN</option>
+                </select>
+            </div>
+
+            <div class="inputBox">
+                <label for="model"></label><input type="text" required="required" id="model"
+                                                  name="model">
+                <span>Model</span>
+                <i></i>
+            </div>
+
+            <div class="inputBox">
+                <label for="vin"></label><input type="text" required="required" id="vin"
+                                                name="vin">
+                <span>Numărul de identificare al mașinii</span>
+                <i></i>
+            </div>
+
+            <div class="inputBox">
+                <label for="tankCapacity"></label><input type="text" required="required" id="tankCapacity"
+                                                         name="tankCapacity">
+                <span>Capacitatea rezervorului</span>
+                <i></i>
+            </div>
+
+            <div class="inputBox">
+                <label for="color"></label><input type="text" required="required" id="color"
+                                                  name="color">
+                <span>Scrieți culoare mașinii</span>
+                <i>În </i>
+            </div>
+
+            <p>
+                Click on the question mark icon to reveal the hidden text:
+                <span class="clickable" onclick="toggleText()"><i class="fa fa-question-circle-o"
+                                                                  aria-hidden="true"></i></span>
+            </p>
+            <p class="hidden-text" id="hidden-text">This is the hidden text.</p>
+
+
+            <label for="year-dropdown">Anul fabricației</label>
+            <select id="year-dropdown" name="manufacturingYear"></select>
+
+            <div class="inputBox">
+                <label for="horsePower"></label><input type="text" required="required" id="horsePower"
+                                                       name="horsePower">
+                <span>Numărul de cai putere</span>
+                <i></i>
+            </div>
+
+            <div class="inputBox">
+                <label for="mileage"></label><input type="text" required="required" id="mileage"
+                                                    name="mileage">
+                <span>Numărul de kilometrii</span>
+                <i></i>
+            </div>
+
+            <div class="inputBox">
+                <label for="transmissionType">Tipul transmisiei</label>
+                <select type="text" required="required" id="transmissionType" name="transmissionType">
+                    <option value="MANUAL">Manual</option>
+                    <option value="AUTOMATIC">Automatic</option>
+                    <option value="SEMI_AUTOMATIC">Semi automatic</option>
+                    <option value="CVT">Variatie continua</option>
+                </select>
+            </div>
+
+            <div class="inputBox">
+                <label for="fuelType">Tipul combustibilului</label>
+                <select type="text" required="required" id="fuelType" name="fuelType">
+                    <option value="GASOLINE">Benzina</option>
+                    <option value="DIESEL">Motorina</option>
+                    <option value="HYBRID">Hibrid</option>
+                    <option value="ELECTRIC">Electric</option>
+                    <option value="NATURAL_GAS">Gaz</option>
+                    <option value="BIO_HIBRID">Bio hibrid</option>
+                    <option value="ETHANOL">Etanol</option>
+                </select>
+            </div>
+
+            <div class="inputBox">
+                <label for="pollutionStandard">Standardul european de emisie</label>
+                <select type="text" required="required" id="pollutionStandard" name="pollutionStandard">
+                    <option value="EURO_1">Euro 1</option>
+                    <option value="EURO_2">Euro 2</option>
+                    <option value="EURO_3">Euro 3</option>
+                    <option value="EURO_4">Euro 4</option>
+                    <option value="EURO_5">Euro 5</option>
+                    <option value="EURO_6">Euro 6</option>
+                </select>
+            </div>
+
+            <label for="mySelect">Numărul de foști proprietari</label>
+            <select id="mySelect" name="numberOfPreviousOwners"></select>
+
+            <label for="numberOfPreviousAccidents">Numărul de accidente</label>
+            <select id="numberOfPreviousAccidents"
+                    name="numberOfPreviousAccidents">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+
+            <br>
+            <input type="submit" value="Adaugă">
+            <p></p>
+
+        </div>
+    </div>
+</form>
+
+<script>
+    function toggleText() {
+        let hiddenText = document.getElementById("hidden-text");
+        if (hiddenText.style.display === "none") {
+            hiddenText.style.display = "block";
+        } else {
+            hiddenText.style.display = "none";
+        }
+    }
+
+    let hamburger = document.querySelector(".hamburger");
+    hamburger.onClick = function () {
+        let navBar = document.querySelector(".nav-bar");
+        navBar.classList.toggle("active");
+    };
+
+    const currentYear = new Date().getFullYear();
+
+    for (let year = 1950; year <= currentYear; year++) {
+        const option = document.createElement("option");
+        option.value = year;
+        option.text = year;
+        document.getElementById("year-dropdown").appendChild(option);
+    }
+
+    // get the <select> element by its ID
+    let selectElement = document.getElementById("mySelect");
+
+    // create options and add them to the <select> element
+    for (let i = 1; i <= 10; i++) {
+        let option = document.createElement("option");
+        option.value = i;
+        option.text = i;
+        selectElement.add(option);
+    }
+</script>
+</body>
+</html>

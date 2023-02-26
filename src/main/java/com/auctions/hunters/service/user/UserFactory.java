@@ -3,6 +3,7 @@ package com.auctions.hunters.service.user;
 import com.auctions.hunters.exceptions.EmailAlreadyExistsException;
 import com.auctions.hunters.exceptions.InvalidEmailException;
 import com.auctions.hunters.exceptions.ResourceNotFoundException;
+import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.ConfirmationToken;
 import com.auctions.hunters.model.Role;
 import com.auctions.hunters.model.User;
@@ -14,6 +15,8 @@ import com.auctions.hunters.service.role.RoleService;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.internet.AddressException;
@@ -149,6 +152,14 @@ public abstract class UserFactory implements UserService {
     }
 
     @Override
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> {
+            LOGGER.debug("Could not find the user identified by username {} ", username);
+            return new ResourceNotFoundException("User", "username", username);
+        });
+    }
+
+    @Override
     public User save(User user) {
         user.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(user.getPassword()));
         LOGGER.debug("User {} saved in the database.", user);
@@ -156,35 +167,53 @@ public abstract class UserFactory implements UserService {
     }
 
     @Override
-    public User update(@NotNull User newUser, Integer id) {
-        User user = userRepository.findById(id).orElseThrow(() -> {
-            LOGGER.debug("Could not find the user by the id {} ", id);
-            return new ResourceNotFoundException("User", "id", id);
+    public User update(@NotNull User newUser, String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> {
+            LOGGER.debug("Could not find the user by the username {} ", username);
+            return new ResourceNotFoundException("User", "username", username);
         });
 
+        if (!user.getUsername().equals(newUser.getUsername())) {
+            throw new IllegalArgumentException("Username in request body does not match username in path!");
+        }
+
+        user.setRole(newUser.getRole());
+        user.setCarList(newUser.getCarList());
         user.setUsername(newUser.getUsername());
         user.setPassword(newUser.getPassword());
         user.setEmail(newUser.getEmail());
         user.setCityAddress(newUser.getCityAddress());
         user.setPhoneNumber(newUser.getPhoneNumber());
-        user.setRole(newUser.getRole());
         user.setCreditCardNumber(newUser.getCreditCardNumber());
+        user.setLocked(newUser.getLocked());
+        user.setEnabled(newUser.getEnabled());
 
-        LOGGER.debug("Token successfully updated in the database");
+        LOGGER.debug("User successfully updated in the database");
         return userRepository.save(user);
     }
 
     @Override
     public void deleteById(Integer id) {
         userRepository.findById(id).orElseThrow(() -> {
-            LOGGER.debug("Token could not be deleted from the database");
-            return new ResourceNotFoundException("Token", "id", id);
+            LOGGER.debug("User could not be deleted from the database");
+            return new ResourceNotFoundException("User", "id", id);
         });
 
-        LOGGER.debug("Token successfully deleted from the database");
+        LOGGER.debug("User successfully deleted from the database");
         userRepository.deleteById(id);
     }
 
+    @Override
+    public void addCarToUserInventory(Car car) {
+        String loggedUsername = getLoggedUsername();
+        User user = findByUsername(getLoggedUsername());
+
+        List<Car> carList = user.getCarList();
+        carList.add(car);
+
+        user.setCarList(carList);
+        update(user, loggedUsername);
+    }
 
     @Override
     public boolean isUserEmailAlreadyRegistered(String username) {
@@ -245,6 +274,19 @@ public abstract class UserFactory implements UserService {
     @Override
     public int unlockUser(String email) {
         return userRepository.unlockUser(email);
+    }
+
+    @Override
+    public String getLoggedUsername() {
+        //load the current security context
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        //if the user is not authenticated return null
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+
+        return authentication.getName();
     }
 
     @Override

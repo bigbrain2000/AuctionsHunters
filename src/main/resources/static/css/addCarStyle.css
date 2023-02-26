@@ -1,0 +1,9 @@
+.clickable {
+    cursor: pointer;
+    color: rgba(30, 30, 75, 0.28);
+    text-decoration: underline;
+}
+
+.hidden-text {
+    display: none;
+}
