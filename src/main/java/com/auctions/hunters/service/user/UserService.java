@@ -16,9 +16,9 @@ import java.util.List;
 public interface UserService {
 
     /**
-     * Get a list with all the trainings
+     * Get a list with all the users
      *
-     * @return a list with all the trainings
+     * @return a list with all the users
      */
     List<User> findAll();
 

@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <title>Adaugă o mașină</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="/css/welcome.css">
     <link rel="stylesheet" type="text/css" href="/css/addCarStyle.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
@@ -33,10 +32,23 @@
             </li>
         </ul>
     </nav>
+
+    <script>
+        function validateForm() {
+            var tankCapacity = document.getElementById("tankCapacity").value;
+            var tankCapacityInt = parseFloat(tankCapacity);
+            if (isNaN(tankCapacityInt)) {
+                alert("Capacitatea rezervorului trebuie să fie un număr întreg.");
+                return false;
+            } else {
+                return true;
+            }
+        }
+    </script>
 </header>
 
 <body>
-<form th:action="@{/seller/addCar}" method="post">
+<form th:action="@{/seller/addCar}" method="post" onsubmit="return validateForm()">
 
     <div class="box">
         <div class="form">
@@ -58,56 +70,46 @@
             </div>
 
             <div class="inputBox">
+                <span>Model</span>
                 <label for="model"></label><input type="text" required="required" id="model"
                                                   name="model">
-                <span>Model</span>
                 <i></i>
             </div>
 
             <div class="inputBox">
-                <label for="vin"></label><input type="text" required="required" id="vin"
-                                                name="vin">
                 <span>Numărul de identificare al mașinii</span>
-                <i></i>
+                <label for="vin"></label><input type="text" required="required" id="vin" name="vin">
             </div>
 
             <div class="inputBox">
-                <label for="tankCapacity"></label><input type="text" required="required" id="tankCapacity"
-                                                         name="tankCapacity">
                 <span>Capacitatea rezervorului</span>
-                <i></i>
+                <label for="tankCapacity"></label><input type="text" required="required" id="tankCapacity" name="tankCapacity">
             </div>
 
             <div class="inputBox">
-                <label for="color"></label><input type="text" required="required" id="color"
-                                                  name="color">
                 <span>Scrieți culoare mașinii</span>
-                <i>În </i>
+                <label for="color"></label><input type="text" required="required" id="color" name="color">
             </div>
 
-            <p>
-                Click on the question mark icon to reveal the hidden text:
-                <span class="clickable" onclick="toggleText()"><i class="fa fa-question-circle-o"
-                                                                  aria-hidden="true"></i></span>
-            </p>
-            <p class="hidden-text" id="hidden-text">This is the hidden text.</p>
+            <a href="#" data-toggle="tooltip" title="Dacă mașina are mai multe culori le puteți introduce, separate prin virgulă">
+                <i class="fa fa-question-circle-o"
+                   aria-hidden="true" style="color: #8f8f8f"></i>
+            </a>
 
 
             <label for="year-dropdown">Anul fabricației</label>
             <select id="year-dropdown" name="manufacturingYear"></select>
 
             <div class="inputBox">
-                <label for="horsePower"></label><input type="text" required="required" id="horsePower"
-                                                       name="horsePower">
                 <span>Numărul de cai putere</span>
-                <i></i>
+                <label for="horsePower"></label><input type="text" required="required" id="horsePower"
+                name="horsePower">
             </div>
 
             <div class="inputBox">
+                <span>Numărul de kilometrii</span>
                 <label for="mileage"></label><input type="text" required="required" id="mileage"
                                                     name="mileage">
-                <span>Numărul de kilometrii</span>
-                <i></i>
             </div>
 
             <div class="inputBox">
@@ -149,8 +151,7 @@
             <select id="mySelect" name="numberOfPreviousOwners"></select>
 
             <label for="numberOfPreviousAccidents">Numărul de accidente</label>
-            <select id="numberOfPreviousAccidents"
-                    name="numberOfPreviousAccidents">
+            <select id="numberOfPreviousAccidents" name="numberOfPreviousAccidents">
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -171,6 +172,12 @@
         </div>
     </div>
 </form>
+
+<form method="post" action="/images" enctype="multipart/form-data">
+    <input type="file" name="file">
+    <button type="submit">Upload</button>
+</form>
+
 
 <script>
     function toggleText() {
@@ -207,6 +214,11 @@
         option.text = i;
         selectElement.add(option);
     }
+
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
 </script>
 </body>
 </html>

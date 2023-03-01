@@ -17,7 +17,7 @@ public interface RoleService {
      * Save a role in the DB.
      *
      * @param role -  the role we want to save into the DB
-     * @return - the saved tole
+     * @return - the saved role
      */
     Role save(@Valid Role role);
 }

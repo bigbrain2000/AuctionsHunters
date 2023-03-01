@@ -1,6 +1,7 @@
 package com.auctions.hunters.controller;
 
 import com.auctions.hunters.model.Car;
+import com.auctions.hunters.model.User;
 import com.auctions.hunters.service.car.CarService;
 import com.auctions.hunters.service.user.SellerService;
 import org.springframework.stereotype.Controller;
@@ -36,10 +37,12 @@ public class SellerController {
 
     @PostMapping("/addCar")
     public String addCar(@ModelAttribute @Valid Car car, RedirectAttributes redirectAttributes) {
+        User user = sellerService.findByUsername(sellerService.getLoggedUsername());
+        car.setUser(user);
         carService.save(car);
-        sellerService.addCarToUserInventory(car);
 
         redirectAttributes.addFlashAttribute("message", "Car added successfully");
         return "/homepage";
     }
+
 }

@@ -5,13 +5,14 @@ import com.auctions.hunters.model.enums.CategoryType;
 import com.auctions.hunters.model.enums.FuelType;
 import com.auctions.hunters.model.enums.PollutionStandard;
 import com.auctions.hunters.model.enums.TransmissionType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -21,6 +22,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @AllArgsConstructor
 @Builder
 @Data
+@ToString
 public class Car {
 
     @Id
@@ -32,6 +34,9 @@ public class Car {
     @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
+
+    @OneToMany(mappedBy = "car", cascade =ALL, orphanRemoval = true, fetch = EAGER)
+    private List<Image> images = new ArrayList<>();
 
     @Column(name = "category", nullable = false, columnDefinition = "TEXT")
     @Enumerated(EnumType.STRING)

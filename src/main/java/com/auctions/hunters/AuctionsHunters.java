@@ -8,6 +8,7 @@ import com.auctions.hunters.model.enums.CategoryType;
 import com.auctions.hunters.model.enums.FuelType;
 import com.auctions.hunters.model.enums.PollutionStandard;
 import com.auctions.hunters.model.enums.TransmissionType;
+import com.auctions.hunters.service.car.CarService;
 import com.auctions.hunters.service.confirmationtoken.ConfirmationTokenService;
 import com.auctions.hunters.service.role.RoleService;
 import com.auctions.hunters.service.user.BuyerService;
@@ -26,11 +27,13 @@ public class AuctionsHunters implements CommandLineRunner {
     private final BuyerService buyerService;
     private final RoleService roleService;
     private final ConfirmationTokenService confirmationTokenService;
+    private final CarService carService;
 
-    public AuctionsHunters(BuyerService buyerService, RoleService roleService, ConfirmationTokenService confirmationTokenService) {
+    public AuctionsHunters(BuyerService buyerService, RoleService roleService, ConfirmationTokenService confirmationTokenService, CarService carService) {
         this.buyerService = buyerService;
         this.roleService = roleService;
         this.confirmationTokenService = confirmationTokenService;
+        this.carService = carService;
     }
 
     public static void main(String[] args) {
@@ -70,26 +73,26 @@ public class AuctionsHunters implements CommandLineRunner {
 
             admin.setLocked(false);
             admin.setEnabled(true);
+//            Car newCar = Car.builder()
+//                    .user(admin)
+//                    .category(CategoryType.SEDAN)
+//                    .model("BMW")
+//                    .vin("VIN")
+//                    .tankCapacity(65)
+//                    .color("black")
+//                    .manufacturingYear(2004)
+//                    .horsePower(116)
+//                    .mileage(140000)
+//                    .transmissionType(TransmissionType.MANUAL)
+//                    .fuelType(FuelType.GASOLINE)
+//                    .pollutionStandard(PollutionStandard.EURO_3)
+//                    .numberOfPreviousOwners(2)
+//                    .numberOfPreviousAccidents(2)
+//                    .build();
 
-            Car newCar = Car.builder()
-                    .user(admin)
-                    .category(CategoryType.SEDAN)
-                    .model("BMW")
-                    .vin("VIN")
-                    .tankCapacity(65)
-                    .color("black")
-                    .manufacturingYear(2004)
-                    .horsePower(116)
-                    .mileage(140000)
-                    .transmissionType(TransmissionType.MANUAL)
-                    .fuelType(FuelType.GASOLINE)
-                    .pollutionStandard(PollutionStandard.EURO_3)
-                    .numberOfPreviousOwners(2)
-                    .numberOfPreviousAccidents(2)
-                    .build();
-
-            admin.setCarList(List.of(newCar));
+          // ?// admin.setCarList(List.of(newCar));
             buyerService.save(admin);
+
 
             ConfirmationToken adminConfirmationToken = ConfirmationToken.builder()
                     .token(adminData)
@@ -98,6 +101,7 @@ public class AuctionsHunters implements CommandLineRunner {
                     .tokenConfirmedAt(now)
                     .user(admin)
                     .build();
+
 
             confirmationTokenService.saveConfirmationToken(adminConfirmationToken);
         }

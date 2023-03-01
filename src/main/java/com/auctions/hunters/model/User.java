@@ -18,7 +18,7 @@ import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name = "user",
+@Table(name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(name = "user_email_unique", columnNames = "email"),
                 @UniqueConstraint(name = "username", columnNames = "username")
@@ -40,7 +40,7 @@ public class User {
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> role = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", fetch = EAGER, cascade = ALL)
+    @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = EAGER, cascade = ALL)
     private List<Car> carList = new ArrayList<>();
 
     @Column(name = "username", nullable = false, columnDefinition = "TEXT")

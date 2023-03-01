@@ -55,7 +55,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(@NotNull HttpSecurity http) throws Exception {
 
-        String[] allUsersPermittedApis = {"/css/**", "/", "/login", "/login_error", "/logout", "/seller/register", "/buyer/register", "/confirm/**", "/seller/username"};
+        String[] allUsersPermittedApis = {"/css/**", "/", "/login", "/login_error", "/logout", "/seller/register", "/buyer/register", "/confirm/**", "/seller/username"
+        , "/images", "/images/**", "/images2"
+        };
         String[] sellerPermittedApis = {"/seller/username"};
         String[] buyerPermittedApis = {};
         String[] authenticatedUsersPermittedApis = {"/homepage"};
