@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>No Cars Found</title>
-    <link rel="stylesheet" type="text/css" href="/css/addCarStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/welcome.css">
+    <link rel="stylesheet" type="text/css" href="/css/carListStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/noCarStyle.css">
 </head>
 <header>
@@ -16,12 +17,12 @@
     <nav class="nav-bar">
         <ul>
             <li>
-                <a href="">Acasă</a>
+                <a th:href="@{/}">Acasă</a>
             </li>
             <li>
                 <a th:href="@{/seller/addCar}" class="active">Inventar</a>
                 <ul>
-                    <li><a th:href="@{/seller/cars}">Vizualizeaza masinile mele</a></li>
+                    <li><a th:href="@{/seller/cars}">Masinile mele</a></li>
                 </ul>
             </li>
             <li>
@@ -48,8 +49,8 @@
 </header>
 <body>
 <div class="container">
-    <h1 class="heading">No cars to display</h1>
-    <p class="message">There are no cars to display at the moment. Please check back later.</p>
+    <h1 class="heading">Se pare că nu aveți nicio mașină de vânzare în acest moment.</h1>
+    <p class="message">Adăugați o mașină în inventarul dumneavoastră pentru a începe să o vindeți.</p>
 </div>
 </body>
 </html>

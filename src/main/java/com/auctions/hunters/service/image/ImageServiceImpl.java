@@ -1,5 +1,6 @@
 package com.auctions.hunters.service.image;
 
+import com.auctions.hunters.exceptions.ResourceNotFoundException;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.Image;
 import com.auctions.hunters.repository.ImageRepository;
@@ -9,9 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -49,5 +48,25 @@ public class ImageServiceImpl implements ImageService {
             image.setCar(lastCar);
             imageRepository.save(image);
         }
+    }
+
+    @Override
+    public Image findById(Integer id) {
+        return imageRepository.findById(id).orElseThrow(() -> {
+            LOGGER.debug("Could not find the image by the id {} ", id);
+            return new ResourceNotFoundException("Image", "id", id);
+        });
+    }
+
+    @Override
+    public void deleteAll(List<Image> images) {
+        if (images != null) {
+            for (Image image : images) {
+                imageRepository.deleteById(image.getId());
+            }
+            LOGGER.debug("All images were deleted.");
+        }
+
+        LOGGER.error("Images list was empty.");
     }
 }

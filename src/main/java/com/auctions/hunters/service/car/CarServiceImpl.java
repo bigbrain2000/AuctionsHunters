@@ -58,10 +58,15 @@ public class CarServiceImpl implements CarService {
 
         if (optionalCar.isPresent()) {
             Car car = optionalCar.get();
+
+            // Remove the car from the user's car list
             User user = car.getUser();
             if (user != null) {
                 user.getCarList().remove(car);
+                sellerService.update(user, user.getUsername()); // update the user
             }
+
+            // Remove the car from the database
             carRepository.delete(car);
         } else {
             throw new IllegalArgumentException("Car with ID " + carId + " does not exist.");
@@ -80,5 +85,4 @@ public class CarServiceImpl implements CarService {
         LOGGER.debug("The cars list was retrieved from the database.");
         return new ArrayList<>(carList);
     }
-
 }

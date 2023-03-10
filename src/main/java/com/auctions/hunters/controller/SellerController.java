@@ -80,15 +80,11 @@ public class SellerController {
         }
 
         return "/car_list";
-
     }
 
     @GetMapping("/cars/{id}")
-    public String deleteCar(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String deleteCar(@PathVariable Integer id) {
         carService.deleteById(id);
-        carRepository.deleteById(id);
-        redirectAttributes.addFlashAttribute("message", "Car deleted successfully");
         return "redirect:/seller/cars";
     }
-
 }

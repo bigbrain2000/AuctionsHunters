@@ -25,8 +25,8 @@ public interface UserService {
     /**
      * Find a specific user based on id.
      *
-     * @param id - user id
-     * @return found user.
+     * @param id user id
+     * @return found user
      */
     User findById(@NotNull Integer id);
 
@@ -34,7 +34,7 @@ public interface UserService {
      * Find a specific user based on email
      *
      * @param email email of user
-     * @return found user.
+     * @return found user
      */
     User findByEmail(@NotBlank String email);
 
@@ -42,7 +42,7 @@ public interface UserService {
      * Find a specific user based on username
      *
      * @param username username of user
-     * @return found user.
+     * @return found user
      */
     User findByUsername(@NotBlank String username);
 

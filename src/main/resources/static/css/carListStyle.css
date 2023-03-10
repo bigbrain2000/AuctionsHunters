@@ -1,0 +1,45 @@
+.car-list {
+    margin: 50px;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table th,
+.table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.table th {
+    background-color: #020000;
+    color: white;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.btn-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-primary,
+.btn-danger {
+    color: white;
+    border-radius: 20px;
+    padding: 8px 20px;
+    margin: 5px;
+}
+
+.btn-primary {
+    background-color: #337ab7;
+}
+
+.btn-danger {
+    background-color: #d9534f;
+}

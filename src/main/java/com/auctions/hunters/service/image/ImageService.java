@@ -21,4 +21,19 @@ public interface ImageService {
      * @param files the car images that will be saved in the database
      */
     void save(@NotNull List<MultipartFile> files);
+
+    /**
+     * Find a specific image based on id.
+     *
+     * @param id image id
+     * @return found user
+     */
+    Image findById(Integer id);
+
+    /**
+     * Delete all images from the list.
+     *
+     * @param images the images that need to be deleted
+     */
+    void deleteAll(List<Image> images);
 }
