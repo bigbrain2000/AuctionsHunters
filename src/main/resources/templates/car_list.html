@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Vizualizeaza masinile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/addCarStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/welcome.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+<header>
+    <div class="hamburger">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+
+    <nav class="nav-bar">
+        <ul>
+            <li>
+                <a th:href="@{/}">Acasă</a>
+            </li>
+            <li>
+                <a th:href="@{/seller/addCar}" class="active">Inventar</a>
+                <ul>
+                    <li><a th:href="@{/seller/cars}">Masinile mele</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="">Cautare mașini</a>
+                <ul>
+                    <li><a href="">Option 1</a></li>
+                    <li><a href="">Option 2</a></li>
+                    <li><a href="">Option 3</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="">Ghid licitare</a>
+            </li>
+        </ul>
+    </nav>
+
+    <script>
+        hamburger = document.querySelector(".hamburger");
+        hamburger.onClick = function () {
+            navBar = document.querySelector(".nav-bar");
+            navBar.classList.toggle("active");
+        }
+    </script>
+</header>
+<body>
+<div class="pagination">
+    <ul class="pagination">
+        <li th:class="${currentPage == 0}? 'disabled' : ''">
+            <a th:href="@{/seller/cars(page=0)}">First</a>
+        </li>
+        <li th:class="${currentPage == 0}? 'disabled' : ''">
+            <a th:href="@{/seller/cars(page=${currentPage - 1})}">Previous</a>
+        </li>
+        <li th:each="pageNumber : ${pageNumbers}" th:class="${currentPage == pageNumber}? 'active' : ''">
+            <a th:href="@{/seller/cars(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+        </li>
+        <li th:class="${currentPage == pageNumbers.size() - 1}? 'disabled' : ''">
+            <a th:href="@{/seller/cars(page=${currentPage + 1})}">Next</a>
+        </li>
+        <li th:class="${currentPage == pageNumbers.size() - 1}? 'disabled' : ''">
+            <a th:href="@{/seller/cars(page=${pageNumbers.size() - 1})}">Last</a>
+        </li>
+    </ul>
+</div>
+
+<div class="car-list">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Model</th>
+            <th>Year</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="car : ${carPage.content}">
+            <td th:text="${car.id}"></td>
+            <td th:text="${car.model}"></td>
+            <td th:text="${car.tankCapacity}"></td>
+            <td>
+                <div class="btn-group">
+                    <a href="#" class="btn btn-primary"><i class="fa fa-pencil"></i> Edit</a>
+<!--                    <a href="#" class="btn btn-danger delete-car-btn" th:href="@{'/seller/cars/' + ${car.id}}" th:car.id="${car.id}">-->
+<!--                        <i class="fa fa-trash"></i> Delete-->
+<!--                    </a>-->
+
+                <a th:href="@{/seller/cars/{id}(id=${car.id})}"
+                   class="btn btn-danger">Delete</a>
+
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>No Cars Found</title>
+    <link rel="stylesheet" type="text/css" href="/css/addCarStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/noCarStyle.css">
+</head>
+<header>
+    <div class="hamburger">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+
+    <nav class="nav-bar">
+        <ul>
+            <li>
+                <a href="">Acasă</a>
+            </li>
+            <li>
+                <a th:href="@{/seller/addCar}" class="active">Inventar</a>
+                <ul>
+                    <li><a th:href="@{/seller/cars}">Vizualizeaza masinile mele</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="">Cautare mașini</a>
+                <ul>
+                    <li><a href="">Option 1</a></li>
+                    <li><a href="">Option 2</a></li>
+                    <li><a href="">Option 3</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="">Ghid licitare</a>
+            </li>
+        </ul>
+    </nav>
+
+    <script>
+        hamburger = document.querySelector(".hamburger");
+        hamburger.onClick = function () {
+            navBar = document.querySelector(".nav-bar");
+            navBar.classList.toggle("active");
+        }
+    </script>
+</header>
+<body>
+<div class="container">
+    <h1 class="heading">No cars to display</h1>
+    <p class="message">There are no cars to display at the moment. Please check back later.</p>
+</div>
+</body>
+</html>
