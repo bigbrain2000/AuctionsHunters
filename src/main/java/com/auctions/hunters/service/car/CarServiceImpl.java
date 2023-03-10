@@ -1,6 +1,5 @@
 package com.auctions.hunters.service.car;
 
-import com.auctions.hunters.exceptions.ResourceNotFoundException;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.repository.CarRepository;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.List.of;
 
@@ -21,7 +21,6 @@ public class CarServiceImpl implements CarService {
     private final SellerService sellerService;
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(CarServiceImpl.class);
-
 
     public CarServiceImpl(CarRepository carRepository,
                           SellerService sellerService) {
@@ -53,16 +52,20 @@ public class CarServiceImpl implements CarService {
         return carRepository.save(newCar);
     }
 
-
     @Override
-    public void deleteById(Integer id) {
-        carRepository.findById(id).orElseThrow(() -> {
-            LOGGER.debug("Car could not be deleted from the database");
-            return new ResourceNotFoundException("User", "id", id);
-        });
+    public void deleteById(Integer carId) {
+        Optional<Car> optionalCar = carRepository.findById(carId);
 
-        LOGGER.debug("Car successfully deleted from the database");
-        carRepository.deleteById(id);
+        if (optionalCar.isPresent()) {
+            Car car = optionalCar.get();
+            User user = car.getUser();
+            if (user != null) {
+                user.getCarList().remove(car);
+            }
+            carRepository.delete(car);
+        } else {
+            throw new IllegalArgumentException("Car with ID " + carId + " does not exist.");
+        }
     }
 
     @Override

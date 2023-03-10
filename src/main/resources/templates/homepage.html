@@ -18,13 +18,16 @@
     <nav class="nav-bar">
         <ul>
             <li>
-                <a href="" >Acasă</a>
+                <a th:href="@{/}">Acasă</a>
             </li>
             <li>
                 <a th:href="@{/seller/addCar}" class="active">Inventar</a>
+                <ul>
+                    <li><a th:href="@{/seller/cars}">Masinile mele</a></li>
+                </ul>
             </li>
             <li>
-                <a href="">Cautare mașini</a>
+                <a href="">Căutare mașini</a>
                 <ul>
                     <li><a href="">Option 1</a></li>
                     <li><a href="">Option 2</a></li>

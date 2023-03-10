@@ -5,6 +5,7 @@
     <title>Adaugă o mașină</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="/css/addCarStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/welcome.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <header>
@@ -17,7 +18,13 @@
     <nav class="nav-bar">
         <ul>
             <li>
-                <a href="">Acasă</a>
+                <a th:href="@{/}">Acasă</a>
+            </li>
+            <li>
+                <a th:href="@{/seller/addCar}" class="active">Inventar</a>
+                <ul>
+                    <li><a th:href="@{/seller/cars}">Masinile mele</a></li>
+                </ul>
             </li>
             <li>
                 <a href="">Cautare mașini</a>
@@ -34,21 +41,16 @@
     </nav>
 
     <script>
-        function validateForm() {
-            var tankCapacity = document.getElementById("tankCapacity").value;
-            var tankCapacityInt = parseFloat(tankCapacity);
-            if (isNaN(tankCapacityInt)) {
-                alert("Capacitatea rezervorului trebuie să fie un număr întreg.");
-                return false;
-            } else {
-                return true;
-            }
+        hamburger = document.querySelector(".hamburger");
+        hamburger.onClick = function () {
+            navBar = document.querySelector(".nav-bar");
+            navBar.classList.toggle("active");
         }
     </script>
 </header>
 
 <body>
-<form th:action="@{/seller/addCar}" method="post" onsubmit="return validateForm()">
+<form th:action="@{/seller/addCar}" enctype="multipart/form-data" method="post" onsubmit="return validateForm()">
 
     <div class="box">
         <div class="form">
@@ -70,88 +72,86 @@
             </div>
 
             <div class="inputBox">
-                <span>Model</span>
-                <label for="model"></label><input type="text" required="required" id="model"
-                                                  name="model">
+                <label for="model"></label><input type="text" required="required" id="model" name="model"
+                                                  placeholder="Model">
                 <i></i>
             </div>
 
             <div class="inputBox">
-                <span>Numărul de identificare al mașinii</span>
-                <label for="vin"></label><input type="text" required="required" id="vin" name="vin">
+
+                <label for="vin"></label><input type="text" required="required" id="vin" name="vin"
+                                                placeholder="Numărul de identificare al mașinii">
             </div>
 
             <div class="inputBox">
-                <span>Capacitatea rezervorului</span>
-                <label for="tankCapacity"></label><input type="text" required="required" id="tankCapacity" name="tankCapacity">
+                <label for="tankCapacity"></label><input type="text" required="required" id="tankCapacity"
+                                                         name="tankCapacity"
+                                                         placeholder="Capacitatea rezervorului">
             </div>
 
             <div class="inputBox">
-                <span>Scrieți culoare mașinii</span>
-                <label for="color"></label><input type="text" required="required" id="color" name="color">
+                <label for="color"></label><input type="text" required="required" id="color" name="color"
+                                                  placeholder="Culoare mașinii">
             </div>
-
-            <a href="#" data-toggle="tooltip" title="Dacă mașina are mai multe culori le puteți introduce, separate prin virgulă">
+            <a href="#" data-toggle="tooltip"
+               title="Dacă mașina are mai multe culori le puteți introduce, separate prin virgulă">
                 <i class="fa fa-question-circle-o"
                    aria-hidden="true" style="color: #8f8f8f"></i>
             </a>
 
-
             <label for="year-dropdown">Anul fabricației</label>
-            <select id="year-dropdown" name="manufacturingYear"></select>
+            <select id="year-dropdown" name="manufacturingYear" style="margin-bottom: 20px"></select>
+
 
             <div class="inputBox">
-                <span>Numărul de cai putere</span>
                 <label for="horsePower"></label><input type="text" required="required" id="horsePower"
-                name="horsePower">
+                                                       name="horsePower" placeholder="Numărul de cai putere">
             </div>
 
             <div class="inputBox">
-                <span>Numărul de kilometrii</span>
                 <label for="mileage"></label><input type="text" required="required" id="mileage"
-                                                    name="mileage">
+                                                    name="mileage" placeholder="Numărul de kilometrii">
             </div>
 
-            <div class="inputBox">
-                <label for="transmissionType">Tipul transmisiei</label>
-                <select type="text" required="required" id="transmissionType" name="transmissionType">
-                    <option value="MANUAL">Manual</option>
-                    <option value="AUTOMATIC">Automatic</option>
-                    <option value="SEMI_AUTOMATIC">Semi automatic</option>
-                    <option value="CVT">Variatie continua</option>
-                </select>
-            </div>
+            <label for="transmissionType">Tipul transmisiei</label>
+            <select type="text" required="required" id="transmissionType" name="transmissionType" style="margin-bottom: 20px">
+                <option value="MANUAL">Manual</option>
+                <option value="AUTOMATIC">Automatic</option>
+                <option value="SEMI_AUTOMATIC">Semi automatic</option>
+                <option value="CVT">Variatie continua</option>
+            </select>
 
-            <div class="inputBox">
-                <label for="fuelType">Tipul combustibilului</label>
-                <select type="text" required="required" id="fuelType" name="fuelType">
-                    <option value="GASOLINE">Benzina</option>
-                    <option value="DIESEL">Motorina</option>
-                    <option value="HYBRID">Hibrid</option>
-                    <option value="ELECTRIC">Electric</option>
-                    <option value="NATURAL_GAS">Gaz</option>
-                    <option value="BIO_HIBRID">Bio hibrid</option>
-                    <option value="ETHANOL">Etanol</option>
-                </select>
-            </div>
+            <br>
 
-            <div class="inputBox">
-                <label for="pollutionStandard">Standardul european de emisie</label>
-                <select type="text" required="required" id="pollutionStandard" name="pollutionStandard">
-                    <option value="EURO_1">Euro 1</option>
-                    <option value="EURO_2">Euro 2</option>
-                    <option value="EURO_3">Euro 3</option>
-                    <option value="EURO_4">Euro 4</option>
-                    <option value="EURO_5">Euro 5</option>
-                    <option value="EURO_6">Euro 6</option>
-                </select>
-            </div>
+            <label for="fuelType">Tipul combustibilului</label>
+            <select type="text" required="required" id="fuelType" name="fuelType" style="margin-bottom: 20px">
+                <option value="GASOLINE">Benzina</option>
+                <option value="DIESEL">Motorina</option>
+                <option value="HYBRID">Hibrid</option>
+                <option value="ELECTRIC">Electric</option>
+                <option value="NATURAL_GAS">Gaz</option>
+                <option value="BIO_HIBRID">Bio hibrid</option>
+                <option value="ETHANOL">Etanol</option>
+            </select>
+
+
+            <br>
+
+            <label for="pollutionStandard">Standardul european de emisie</label> 
+            <select type="text" required="required" id="pollutionStandard" name="pollutionStandard" style="margin-bottom: 20px">
+                <option value="EURO_1">Euro 1</option>
+                <option value="EURO_2">Euro 2</option>
+                <option value="EURO_3">Euro 3</option>
+                <option value="EURO_4">Euro 4</option>
+                <option value="EURO_5">Euro 5</option>
+                <option value="EURO_6">Euro 6</option>
+            </select>
 
             <label for="mySelect">Numărul de foști proprietari</label>
-            <select id="mySelect" name="numberOfPreviousOwners"></select>
-
+            <select id="mySelect" name="numberOfPreviousOwners" style="margin-bottom: 20px"></select>
+            <br>
             <label for="numberOfPreviousAccidents">Numărul de accidente</label>
-            <select id="numberOfPreviousAccidents" name="numberOfPreviousAccidents">
+            <select id="numberOfPreviousAccidents" name="numberOfPreviousAccidents" style="margin-bottom: 20px">
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -165,6 +165,9 @@
                 <option value="10">10</option>
             </select>
 
+            <p></p>
+            <input type="file" name="files" id="file-input">
+
             <br>
             <input type="submit" value="Adaugă">
             <p></p>
@@ -172,12 +175,6 @@
         </div>
     </div>
 </form>
-
-<form method="post" action="/images" enctype="multipart/form-data">
-    <input type="file" name="file">
-    <button type="submit">Upload</button>
-</form>
-
 
 <script>
     function toggleText() {
@@ -197,7 +194,7 @@
 
     const currentYear = new Date().getFullYear();
 
-    for (let year = 1950; year <= currentYear; year++) {
+    for (let year = 1900; year <= currentYear; year++) {
         const option = document.createElement("option");
         option.value = year;
         option.text = year;
@@ -215,7 +212,7 @@
         selectElement.add(option);
     }
 
-    $(document).ready(function(){
+    $(document).ready(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
 

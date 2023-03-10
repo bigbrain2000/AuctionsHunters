@@ -7,15 +7,60 @@
     <link rel="stylesheet" type="text/css" href="/css/welcome.css">
     <link rel="stylesheet" type="text/css" href="/css/postCardStyle.css">
 </head>
-
+<style></style>
 <header>
 </header>
 
 <body>
-<form method="post" action="/images" enctype="multipart/form-data">
-    <input type="file" name="files">
-    <button type="submit">Upload</button>
+<div id="postcard-container"></div>
+
+<form method="post" enctype="multipart/form-data" action="/images">
+    <input type="file" name="file" id="file-input">
+    <input type="submit" value="Upload" onclick="uploadImage(event)">
 </form>
 
+<!-- Define a template for the postcard element -->
+<template id="postcard-template">
+    <div class="postcard">
+        <img src="" alt="Uploaded Image">
+    </div>
+</template>
+
+<script>
+    // Get references to the container element and postcard template
+    const container = document.getElementById("postcard-container");
+    const template = document.getElementById("postcard-template");
+
+    // Define a function to handle the upload form submission
+    function uploadImage(event) {
+        event.preventDefault();
+
+        const fileInput = document.getElementById("file-input");
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append("file", file);
+
+        // Send the image file to the server using AJAX
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/images");
+        xhr.send(formData);
+        xhr.onload = () => {
+            // Create a new postcard element from the template
+            const postcard = template.content.cloneNode(true).firstElementChild;
+
+            // Get the ID of the saved image from the server response
+            const imageId = xhr.responseText;
+
+            // Set the source of the postcard image to retrieve the image from the server
+            const imageUrl = "/images/" + imageId;
+            const image = postcard.querySelector("img");
+            image.setAttribute("src", imageUrl);
+
+            // Add the new postcard element to the container
+            container.appendChild(postcard);
+        };
+    }
+
+</script>
 </body>
 </html>
