@@ -78,7 +78,6 @@
             </div>
 
             <div class="inputBox">
-
                 <label for="vin"></label><input type="text" required="required" id="vin" name="vin"
                                                 placeholder="Seria de șasiu a mașinii">
             </div>
@@ -102,6 +101,11 @@
             <label for="year-dropdown">Anul fabricației</label>
             <select id="year-dropdown" name="manufacturingYear" style="margin-bottom: 20px"></select>
 
+            <div class="inputBox">
+                <label for="cylinderCapacity"></label><input type="text" required="required" id="cylinderCapacity"
+                                                             name="cylinderCapacity"
+                                                             placeholder="Capacitate cilindrică">
+            </div>
 
             <div class="inputBox">
                 <label for="horsePower"></label><input type="text" required="required" id="horsePower"
@@ -114,7 +118,8 @@
             </div>
 
             <label for="transmissionType">Tipul transmisiei</label>
-            <select type="text" required="required" id="transmissionType" name="transmissionType" style="margin-bottom: 20px">
+            <select type="text" required="required" id="transmissionType" name="transmissionType"
+                    style="margin-bottom: 20px">
                 <option value="MANUAL">Manual</option>
                 <option value="AUTOMATIC">Automatic</option>
                 <option value="SEMI_AUTOMATIC">Semi automatic</option>
@@ -137,8 +142,9 @@
 
             <br>
 
-            <label for="pollutionStandard">Standardul european de emisie</label> 
-            <select type="text" required="required" id="pollutionStandard" name="pollutionStandard" style="margin-bottom: 20px">
+            <label for="pollutionStandard">Standardul european de emisie</label>
+            <select type="text" required="required" id="pollutionStandard" name="pollutionStandard"
+                    style="margin-bottom: 20px">
                 <option value="EURO_1">Euro 1</option>
                 <option value="EURO_2">Euro 2</option>
                 <option value="EURO_3">Euro 3</option>
@@ -165,6 +171,11 @@
                 <option value="10">10</option>
             </select>
 
+            <div class="inputBox">
+                <label for="minimumPrice"></label><input type="text" required="required" id="minimumPrice"
+                                                         name="minimumPrice" placeholder="Prețul minim">
+            </div>
+
             <p></p>
             <input type="file" name="files" id="file-input">
 
@@ -177,15 +188,6 @@
 </form>
 
 <script>
-    function toggleText() {
-        let hiddenText = document.getElementById("hidden-text");
-        if (hiddenText.style.display === "none") {
-            hiddenText.style.display = "block";
-        } else {
-            hiddenText.style.display = "none";
-        }
-    }
-
     let hamburger = document.querySelector(".hamburger");
     hamburger.onClick = function () {
         let navBar = document.querySelector(".nav-bar");

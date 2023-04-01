@@ -40,6 +40,7 @@ public class CarServiceImpl implements CarService {
                 .tankCapacity(car.getTankCapacity())
                 .color(car.getColor())
                 .manufacturingYear(car.getManufacturingYear())
+                .cylinderCapacity(car.getCylinderCapacity())
                 .horsePower(car.getHorsePower())
                 .mileage(car.getMileage())
                 .transmissionType(car.getTransmissionType())
@@ -47,6 +48,7 @@ public class CarServiceImpl implements CarService {
                 .pollutionStandard(car.getPollutionStandard())
                 .numberOfPreviousOwners(car.getNumberOfPreviousOwners())
                 .numberOfPreviousAccidents(car.getNumberOfPreviousAccidents())
+                .minimumPrice(car.getMinimumPrice())
                 .build();
 
         return carRepository.save(newCar);

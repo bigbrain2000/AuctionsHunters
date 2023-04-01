@@ -8,7 +8,6 @@ import com.auctions.hunters.model.enums.TransmissionType;
 import lombok.*;
 
 import javax.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +34,7 @@ public class Car {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @OneToMany(mappedBy = "car", cascade =ALL, orphanRemoval = true, fetch = EAGER)
+    @OneToMany(mappedBy = "car", cascade = ALL, orphanRemoval = true, fetch = EAGER)
     private List<Image> images = new ArrayList<>();
 
     @Column(name = "category", nullable = false, columnDefinition = "TEXT")
@@ -56,6 +55,9 @@ public class Car {
 
     @Column(name = "manufacturing_year", nullable = false, columnDefinition = "INTEGER")
     private int manufacturingYear;
+
+    @Column(name = "cylinder_capacity", nullable = false)
+    private float cylinderCapacity;
 
     @Column(name = "horse_power", nullable = false)
     private float horsePower;
@@ -80,4 +82,7 @@ public class Car {
 
     @Column(name = "number_of_previous_accidents", nullable = false, columnDefinition = "INTEGER")
     private Integer numberOfPreviousAccidents;
+
+    @Column(name = "minimum_price", nullable = false)
+    private float minimumPrice;
 }
