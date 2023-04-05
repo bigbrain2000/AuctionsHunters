@@ -9,7 +9,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url("static/images/cloud_city.png");
+    background-image: url("cloud_city.png");
     background-size: cover;
     background-repeat: no-repeat;
     height: 100vh;
