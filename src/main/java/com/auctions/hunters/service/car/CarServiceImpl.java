@@ -48,7 +48,6 @@ public class CarServiceImpl implements CarService {
                 .pollutionStandard(car.getPollutionStandard())
                 .numberOfPreviousOwners(car.getNumberOfPreviousOwners())
                 .numberOfPreviousAccidents(car.getNumberOfPreviousAccidents())
-                .minimumPrice(car.getMinimumPrice())
                 .build();
 
         return carRepository.save(newCar);
@@ -86,5 +85,16 @@ public class CarServiceImpl implements CarService {
 
         LOGGER.debug("The cars list was retrieved from the database.");
         return new ArrayList<>(carList);
+    }
+
+    @Override
+    public Car getCarById(Integer carId) {
+        Optional<Car> optionalCar = carRepository.findById(carId);
+
+        if (optionalCar.isPresent()) {
+            return optionalCar.get();
+        } else {
+            throw new IllegalArgumentException("Car with ID " + carId + " does not exist.");
+        }
     }
 }

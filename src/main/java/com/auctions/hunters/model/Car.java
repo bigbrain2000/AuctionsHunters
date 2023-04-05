@@ -83,6 +83,6 @@ public class Car {
     @Column(name = "number_of_previous_accidents", nullable = false, columnDefinition = "INTEGER")
     private Integer numberOfPreviousAccidents;
 
-    @Column(name = "minimum_price", nullable = false)
-    private float minimumPrice;
+    @Builder.Default
+    private Boolean isAuctioned = false;
 }

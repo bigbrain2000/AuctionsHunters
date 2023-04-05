@@ -1,12 +1,14 @@
 package com.auctions.hunters.controller;
 
 import com.auctions.hunters.model.Car;
+import com.auctions.hunters.model.Image;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.repository.CarRepository;
 import com.auctions.hunters.service.car.CarService;
 import com.auctions.hunters.service.image.ImageService;
 import com.auctions.hunters.service.user.SellerService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -86,5 +88,16 @@ public class SellerController {
     public String deleteCar(@PathVariable Integer id) {
         carService.deleteById(id);
         return "redirect:/seller/cars";
+    }
+
+    @GetMapping("/getCar/{id}")
+    public String getCar(@PathVariable Integer id, Model model) {
+        Car car = carService.getCarById(id);
+        model.addAttribute("car", car);
+
+        Image image = imageService.findImageByCarId(car);
+        model.addAttribute("image", Base64.encodeBase64String(image.getData()));
+        log.info("Am preluat masina {}", id);
+        return "view_car";
     }
 }

@@ -26,6 +26,7 @@
 .btn-group {
     display: flex;
     justify-content: space-between;
+    margin-left: 30px;
 }
 
 .btn-primary,
@@ -42,4 +43,20 @@
 
 .btn-danger {
     background-color: #d9534f;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.btn-get-car {
+    display: flex;
+    align-items: center;
+    color: white;
+    border-radius: 20px;
+    padding: 8px 20px;
+    margin: 5px;
+    background-color: #5cb85c;
+}
+
+.btn-get-car i {
+    margin-right: 5px;
 }

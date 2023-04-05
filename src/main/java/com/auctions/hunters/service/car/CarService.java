@@ -34,4 +34,11 @@ public interface CarService {
      * @return a list with all the cars
      */
     List<Car> findAll();
+
+    /**
+     * Get a car by it`s id
+     *
+     * @return the found car
+     */
+    Car getCarById(Integer carId);
 }
