@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Vizualizeaza masinile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/welcome.css">
+    <link rel="stylesheet" type="text/css" href="/css/viewCarStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/auctionStyle.css">
+</head>
+
+<body>
+<header>
+    <div class="hamburger">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+
+    <nav class="nav-bar">
+        <ul>
+            <li>
+                <a th:href="@{/}">Acasă</a>
+            </li>
+            <li>
+                <a th:href="@{/seller/addCar}" class="active">Inventar</a>
+                <ul>
+                    <li><a th:href="@{/seller/cars}">Masinile mele</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="">Cautare mașini</a>
+                <ul>
+                    <li><a href="">Option 1</a></li>
+                    <li><a href="">Option 2</a></li>
+                    <li><a href="">Option 3</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="">Ghid licitare</a>
+            </li>
+        </ul>
+    </nav>
+
+    <script>
+        hamburger = document.querySelector(".hamburger");
+        hamburger.onClick = function () {
+            navBar = document.querySelector(".nav-bar");
+            navBar.classList.toggle("active");
+        }
+
+        function previewAuction() {
+            // Implement the preview auction feature here
+            alert('Preview auction feature not implemented');
+        }
+
+        function cancelAuction() {
+            // Redirect the user to the desired page or reset the form
+            window.location.href = '/'; // Replace with the appropriate URL
+        }
+    </script>
+</header>
+
+
+<main>
+    <div class="content-wrapper">
+        <div class="image-container">
+            <img th:src="@{'data:image/png;base64,' + ${image}}" alt="Imaginea masinii nu a putut fi incarcata"/>
+        </div>
+        <div class="car-details">
+            <div class="vehicle-info">
+                <div class="info-row">
+                    <div class="info-label">Category:</div>
+                    <div class="info-value" th:text="${car.category}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Model:</div>
+                    <div class="info-value" th:text="${car.model}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">VIN:</div>
+                    <div class="info-value" th:text="${car.vin}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Tank Capacity:</div>
+                    <div class="info-value" th:text="${car.tankCapacity}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Color:</div>
+                    <div class="info-value" th:text="${car.color}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Manufacturing Year:</div>
+                    <div class="info-value" th:text="${car.manufacturingYear}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Cylinder Capacity:</div>
+                    <div class="info-value" th:text="${car.cylinderCapacity}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Horsepower:</div>
+                    <div class="info-value" th:text="${car.horsePower}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Mileage:</div>
+                    <div class="info-value" th:text="${car.mileage}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Transmission Type:</div>
+                    <div class="info-value" th:text="${car.transmissionType}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Fuel Type:</div>
+                    <div class="info-value" th:text="${car.fuelType}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Pollution Standard:</div>
+                    <div class="info-value" th:text="${car.pollutionStandard}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Number of Previous Owners:</div>
+                    <div class="info-value" th:text="${car.numberOfPreviousOwners}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Number of Previous Accidents:</div>
+                    <div class="info-value" th:text="${car.numberOfPreviousAccidents}"></div>
+                </div>
+            </div>
+            <div class="car-actions">
+                <h2>Actions</h2>
+                <ul>
+                    <li><a href="#">Edit</a></li>
+                    <li><a href="#">Delete</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
