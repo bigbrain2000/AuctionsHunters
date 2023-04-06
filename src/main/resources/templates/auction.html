@@ -48,16 +48,6 @@
             navBar = document.querySelector(".nav-bar");
             navBar.classList.toggle("active");
         }
-
-        function previewAuction() {
-            // Implement the preview auction feature here
-            alert('Preview auction feature not implemented');
-        }
-
-        function cancelAuction() {
-            // Redirect the user to the desired page or reset the form
-            window.location.href = '/'; // Replace with the appropriate URL
-        }
     </script>
 </header>
 
@@ -67,6 +57,7 @@
         <div class="image-container">
             <img th:src="@{'data:image/png;base64,' + ${image}}" alt="Imaginea masinii nu a putut fi incarcata"/>
         </div>
+
         <div class="car-details">
             <div class="vehicle-info">
                 <div class="info-row">
@@ -126,15 +117,28 @@
                     <div class="info-value" th:text="${car.numberOfPreviousAccidents}"></div>
                 </div>
             </div>
-            <div class="car-actions">
-                <h2>Actions</h2>
-                <ul>
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Delete</a></li>
-                </ul>
-            </div>
         </div>
     </div>
+
+    <form th:action="@{/seller/createAuction/car/{id}(id=${car.id})}" method="post">
+        <div class="box">
+            <div class="form">
+                <h2>Creeaza o licitatie</h2>
+
+                <div class="inputBox">
+                    <div class="inputBox">
+                        <label for="minimumPrice"></label>
+                        <input type="text" required="required" id="minimumPrice" name="minimumPrice" placeholder="Pretul minim">
+
+                        <i></i>
+                    </div>
+
+                    <br>
+                    <input type="submit" value="Adaugă">
+                </div>
+            </div>
+        </div>
+    </form>
 </main>
 </body>
 </html>

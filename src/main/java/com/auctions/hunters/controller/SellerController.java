@@ -1,9 +1,11 @@
 package com.auctions.hunters.controller;
 
+import com.auctions.hunters.model.Auction;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.Image;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.repository.CarRepository;
+import com.auctions.hunters.service.auction.AuctionService;
 import com.auctions.hunters.service.car.CarService;
 import com.auctions.hunters.service.image.ImageService;
 import com.auctions.hunters.service.user.SellerService;
@@ -34,14 +36,18 @@ public class SellerController {
     private final SellerService sellerService;
     private final ImageService imageService;
     private final CarRepository carRepository;
+    private final AuctionService auctionService;
 
     public SellerController(CarService carService,
                             SellerService sellerService,
-                            ImageService imageService, CarRepository carRepository) {
+                            ImageService imageService,
+                            CarRepository carRepository,
+                            AuctionService auctionService) {
         this.carService = carService;
         this.sellerService = sellerService;
         this.imageService = imageService;
         this.carRepository = carRepository;
+        this.auctionService = auctionService;
     }
 
     @GetMapping("/addCar")
@@ -98,6 +104,34 @@ public class SellerController {
         Image image = imageService.findImageByCarId(car);
         model.addAttribute("image", Base64.encodeBase64String(image.getData()));
         log.info("Am preluat masina {}", id);
-        return "view_car";
+        return "/view_car";
     }
+
+    @GetMapping("/createAuction/car/{id}")
+    public String getAuction(@PathVariable Integer id, Model model) {
+        Car car = carService.getCarById(id);
+        model.addAttribute("car", car);
+
+        Image image = imageService.findImageByCarId(car);
+        model.addAttribute("image", Base64.encodeBase64String(image.getData()));
+
+        return "/auction";
+    }
+
+    @PostMapping("/createAuction/car/{id}")
+    public String createAuction(@PathVariable Integer id, @RequestParam("minimumPrice") String minimumPriceStr, Model model) {
+        Car car = carService.getCarById(id);
+        model.addAttribute("car", car);
+
+        Image image = imageService.findImageByCarId(car);
+        model.addAttribute("image", Base64.encodeBase64String(image.getData()));
+
+        float minimumPrice = Float.parseFloat(minimumPriceStr);
+        Auction auction = new Auction();
+        auction.setMinimumPrice(minimumPrice);
+        auctionService.save(car, auction);
+
+        return "/auction";
+    }
+
 }

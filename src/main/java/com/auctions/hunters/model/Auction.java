@@ -32,7 +32,7 @@ public class Auction {
     @Column(name = "id", updatable = false, columnDefinition = "INTEGER")
     private Integer id;
 
-    @OneToOne(fetch = EAGER, cascade = {PERSIST, MERGE})
+    @OneToOne(fetch = EAGER, cascade = MERGE)
     @JoinColumn(name = "car_id", referencedColumnName = "id", nullable = false)
     private Car car;
 

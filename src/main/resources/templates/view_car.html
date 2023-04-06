@@ -5,11 +5,10 @@
     <title>Vizualizeaza masinile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="/css/welcome.css">
-    <link rel="stylesheet" type="text/css" href="/css/auctionStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/viewCarStyle.css">
 </head>
 
-<body>
-<header>
+<body><header>
     <div class="hamburger">
         <div class="line"></div>
         <div class="line"></div>
@@ -58,103 +57,70 @@
         </div>
         <div class="car-details">
             <div class="vehicle-info">
-                <div class="info-row">
-                    <div class="info-label">Category:</div>
-                    <div class="info-value" th:text="${car.category}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Model:</div>
-                    <div class="info-value" th:text="${car.model}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">VIN:</div>
-                    <div class="info-value" th:text="${car.vin}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Tank Capacity:</div>
-                    <div class="info-value" th:text="${car.tankCapacity}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Color:</div>
-                    <div class="info-value" th:text="${car.color}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Manufacturing Year:</div>
-                    <div class="info-value" th:text="${car.manufacturingYear}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Cylinder Capacity:</div>
-                    <div class="info-value" th:text="${car.cylinderCapacity}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Horsepower:</div>
-                    <div class="info-value" th:text="${car.horsePower}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Mileage:</div>
-                    <div class="info-value" th:text="${car.mileage}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Transmission Type:</div>
-                    <div class="info-value" th:text="${car.transmissionType}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Fuel Type:</div>
-                    <div class="info-value" th:text="${car.fuelType}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Pollution Standard:</div>
-                    <div class="info-value" th:text="${car.pollutionStandard}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Number of Previous Owners:</div>
-                    <div class="info-value" th:text="${car.numberOfPreviousOwners}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Number of Previous Accidents:</div>
-                    <div class="info-value" th:text="${car.numberOfPreviousAccidents}"></div>
+                <div class="vehicle-info">
+                    <div class="info-row">
+                        <div class="info-label">Category:</div>
+                        <div class="info-value" th:text="${car.category}"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Model:</div>
+                        <div class="info-value" th:text="${car.model}"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">VIN:</div>
+                        <div class="info-value" th:text="${car.vin}"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Tank Capacity:</div>
+                        <div class="info-value" th:text="${car.tankCapacity}"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Color:</div>
+                        <div class="info-value" th:text="${car.color}"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Manufacturing Year:</div>
+                        <div class="info-value" th:text="${car.manufacturingYear}"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Cylinder Capacity:</div>
+                        <div class="info-value" th:text="${car.cylinderCapacity}"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Horsepower:</div>
+                        <div class="info-value" th:text="${car.horsePower}"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Mileage:</div>
+                        <div class="info-value" th:text="${car.mileage}"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Transmission Type:</div>
+                        <div class="info-value" th:text="${car.transmissionType}"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Fuel Type:</div>
+                        <div class="info-value" th:text="${car.fuelType}"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Pollution Standard:</div>
+                        <div class="info-value" th:text="${car.pollutionStandard}"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Number of Previous Owners:</div>
+                        <div class="info-value" th:text="${car.numberOfPreviousOwners}"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Number of Previous Accidents:</div>
+                        <div class="info-value" th:text="${car.numberOfPreviousAccidents}"></div>
+                    </div>
                 </div>
             </div>
-            <div class="car-actions">
-                <h2>Actions</h2>
-                <ul>
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Delete</a></li>
-                </ul>
-            </div>
         </div>
-
-        <!-- Auction details section -->
-        <div class="auction-details">
-            <h2>Auction Details</h2>
-            <form action="#" method="post">
-                <div class="form-row">
-                    <label for="starting-price">Starting Price:</label>
-                    <input type="number" id="starting-price" name="startingPrice" step="0.01" required>
-                </div>
-                <div class="form-row">
-                    <label for="end-date">End Date:</label>
-                    <input type="datetime-local" id="end-date" name="endDate" required>
-                </div>
-                <div class="form-row">
-                    <label for="bid-increments">Bid Increments:</label>
-                    <input type="number" id="bid-increments" name="bidIncrements" step="0.01" required>
-                </div>
-                <div class="form-row">
-                    <label for="minimum-price">Minimum Price:</label>
-                    <input type="number" id="minimum-price" name="minimumPrice" step="0.01" required>
-                </div>
-
-                <!-- Actions section -->
-                <div class="form-actions">
-                    <button type="submit">Save Auction Details</button>
-                    <button type="button" onclick="previewAuction()">Preview Auction</button>
-                    <button type="button" onclick="cancelAuction()">Cancel</button>
-                </div>
-            </form>
-        </div>
-
     </div>
+
+    <a th:href="@{/seller/createAuction/car/{id}(id=${car.id})}" class="btn-get-car">
+        <i class="fa fa-car"></i> Creeaza licitatie</a>
 </main>
 </body>
 </html>
