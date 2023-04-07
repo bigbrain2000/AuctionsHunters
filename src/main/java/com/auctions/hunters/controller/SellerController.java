@@ -124,14 +124,17 @@ public class SellerController {
         model.addAttribute("car", car);
 
         Image image = imageService.findImageByCarId(car);
-        model.addAttribute("image", Base64.encodeBase64String(image.getData()));
+        //Encodes binary data using the base64 algorithm.
+        String encodeBase64String = Base64.encodeBase64String(image.getData());
+        model.addAttribute("image", encodeBase64String);
 
-        float minimumPrice = Float.parseFloat(minimumPriceStr);
-        Auction auction = new Auction();
-        auction.setMinimumPrice(minimumPrice);
-        auctionService.save(car, auction);
+        try {
+            float minimumPrice = Float.parseFloat(minimumPriceStr);
+            auctionService.save(car, minimumPrice);
+        } catch (NumberFormatException e) {
+          return "/login"; //schimbat cu unul de eroare.
+        }
 
         return "/auction";
     }
-
 }

@@ -32,21 +32,11 @@
 .card_img img {
     width: 50%;
     height: auto;
-    border-radius: 10px;
+    /*border-radius: 10px;*/
 }
 
 .card_body {
     padding: 26px 20px 36px 20px;
-}
-
-.card_title {
-    font-family: 'Merriweather',
-    serif;
-    font-weight: 900;
-    text-transform: capitalize;
-
-    font-size: 26px;
-    padding-bottom: 20px;
 }
 
 .card_body p {
@@ -55,22 +45,7 @@
     line-height: 1.7;
 }
 
-p.card_author {
-    font-size: 15px;
-    padding-top: 15px;
-
-}
-
-p.card_author a {
-    color: #1B1C34;
-    font-style: italic;
-}
-
-p.card_author a:hover {
-    font-weight: bold;
-}
-
-a.read_more {
+a.placeholder_text {
     color: #FFF;
     font-size: 13px;
     text-decoration: none;
@@ -84,11 +59,10 @@ a.read_more {
     transition: all .3s ease-in-out;
 }
 
-a.read_more:hover {
+a.placeholder_text:hover {
     box-shadow: 0 1px 20px rgba(0, 0, 0, 0.15);
     background: #404040;
 }
-
 
 @media only screen and (max-width: 1441px) and (min-width: 1025px) {
     .container {
@@ -107,22 +81,16 @@ a.read_more:hover {
         padding: 15px;
     }
 
-    .card_title {
-        font-size: 22px;
-        padding-bottom: 14px;
-    }
-
     .card_body p {
         font-size: 16px;
     }
 
-    a.read_more {
+    a.placeholder_text {
         padding: 19px 0;
         width: 60%;
         font-size: 11px;
         margin-top: 30px;
     }
-
 }
 
 @media only screen and (max-width: 1024px) {
@@ -146,21 +114,17 @@ a.read_more:hover {
         padding: 7px;
     }
 
-    .card_title {
-        font-size: 20px;
-        padding-bottom: 7px;
-    }
-
     .card_body p {
         font-size: 14px;
     }
 
-    a.read_more {
+    a.placeholder_text {
         padding: 15px 0;
         margin-top: 20px;
     }
 }
-button.read-me a {
+
+button.placeholder_text a {
     font-size: 12px;
     padding: 6px 10px;
 }

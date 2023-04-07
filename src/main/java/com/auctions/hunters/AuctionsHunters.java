@@ -34,7 +34,6 @@ public class AuctionsHunters implements CommandLineRunner {
 
     public static void main(String[] args) {
         SpringApplication.run(AuctionsHunters.class, args);
-
     }
 
     @Override

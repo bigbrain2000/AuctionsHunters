@@ -33,7 +33,7 @@ public class Auction {
     private Integer id;
 
     @OneToOne(fetch = EAGER, cascade = MERGE)
-    @JoinColumn(name = "car_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "car_id", referencedColumnName = "id")
     private Car car;
 
     @Builder.Default
