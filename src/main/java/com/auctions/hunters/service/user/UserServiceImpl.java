@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.internet.AddressException;
@@ -33,23 +34,24 @@ import static java.util.List.of;
 /**
  * Factory methods for users which is implementing the {@link UserService} interface.
  */
-public abstract class UserFactory implements UserService {
+@Service
+public class UserServiceImpl implements UserService {
 
-    final UserRepository userRepository;
+    private final UserRepository userRepository;
     final PasswordEncoder passwordEncoder;
     final RoleService roleService;
     final ConfirmationTokenService confirmationTokenService;
     final EmailService emailService;
 
-    private final OffsetDateTime NOW = getDateTime();
+    private static final OffsetDateTime NOW = getDateTime();
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(UserFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    protected UserFactory(UserRepository userRepository,
-                          PasswordEncoder passwordEncoder,
-                          RoleService roleService,
-                          ConfirmationTokenService confirmationTokenService,
-                          EmailService emailService) {
+    public UserServiceImpl(UserRepository userRepository,
+                           PasswordEncoder passwordEncoder,
+                           RoleService roleService,
+                           ConfirmationTokenService confirmationTokenService,
+                           EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;
@@ -57,7 +59,16 @@ public abstract class UserFactory implements UserService {
         this.emailService = emailService;
     }
 
-    public abstract String signUpUser(@NotNull User appUser) throws EmailAlreadyExistsException;
+    @Override
+    public String signUpUser(@NotNull User user) throws EmailAlreadyExistsException {
+
+        checkIfEmailAlreadyExists(user.getEmail());
+
+        Role role = addRole("USER");
+        addUser(user, role);
+
+        return addConfirmationToken(user);
+    }
 
     /**
      * Creates a role entity and adds it in the database based on an input.
@@ -65,7 +76,7 @@ public abstract class UserFactory implements UserService {
      * @param roleName the role names parsed as input
      * @return the saved role
      */
-    protected Role addRole(String roleName) {
+    private Role addRole(String roleName) {
         Role role = Role.builder()
                 .name(roleName)
                 .creationDate(NOW)
@@ -80,7 +91,7 @@ public abstract class UserFactory implements UserService {
      * @param user the user that will be stored in the database
      * @param role the saved role that identifies the user
      */
-    protected void addUser(User user, Role role) {
+    private void addUser(User user, Role role) {
         String encodedPassword = passwordEncoder.bCryptPasswordEncoder().encode(user.getPassword());
         user.setPassword(encodedPassword);
 
@@ -102,7 +113,7 @@ public abstract class UserFactory implements UserService {
      * @param user the user that`s going to have the new confirmation token
      * @return the token
      */
-    protected String addConfirmationToken(User user) {
+    private String addConfirmationToken(User user) {
         String token = UUID.randomUUID().toString();
 
         OffsetDateTime defaultDateTime = OffsetDateTime.parse("2000-01-01T20:20:20.200Z",
@@ -184,7 +195,6 @@ public abstract class UserFactory implements UserService {
         user.setEmail(newUser.getEmail());
         user.setCityAddress(newUser.getCityAddress());
         user.setPhoneNumber(newUser.getPhoneNumber());
-        user.setCreditCardNumber(newUser.getCreditCardNumber());
         user.setLocked(newUser.getLocked());
         user.setEnabled(newUser.getEnabled());
 
@@ -301,8 +311,7 @@ public abstract class UserFactory implements UserService {
                         newUser.getEmail(),
                         newUser.getCityAddress(),
                         newUser.getPhoneNumber(),
-                        newUser.getRole(),
-                        newUser.getCreditCardNumber()
+                        newUser.getRole()
                 )
         );
 

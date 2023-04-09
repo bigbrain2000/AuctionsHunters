@@ -55,12 +55,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(@NotNull HttpSecurity http) throws Exception {
 
-        String[] allUsersPermittedApis = {"/css/**", "/", "/login", "/login_error", "/logout", "/seller/register", "/buyer/register", "/confirm/**", "/seller/username"
-        , "/images", "/images/**", "/images2", "/seller/*"
-        };
-        String[] sellerPermittedApis = {"/seller/username"};
-        String[] buyerPermittedApis = {};
-        String[] authenticatedUsersPermittedApis = {"/homepage"};
+        String[] allUsersPermittedApis = {"/css/**", "/images/**", "/", "/login", "/login_error", "/logout",
+                "/register/user", "/confirm/**", "/cars/**", "/car/**"};
+
+        String[] authenticatedUsersPermittedApis = {"/user/**"};
 
         http
                 .csrf().disable()
@@ -74,8 +72,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .authorizeRequests().antMatchers(sellerPermittedApis).hasAnyAuthority("SELLER")
 //                .and()
 //                .authorizeRequests().antMatchers(buyerPermittedApis).hasAnyAuthority("BUYER")
-                .anyRequest()
-                .authenticated()
+                .and()
+                // Only users with the USER role can access /user/** paths
+                .authorizeRequests().antMatchers(authenticatedUsersPermittedApis).hasAnyAuthority("ADMIN")
+                //the other requests are available only if the user is authenticated
+                .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")

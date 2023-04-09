@@ -4,7 +4,8 @@ import com.auctions.hunters.model.Auction;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.repository.AuctionRepository;
-import com.auctions.hunters.service.user.SellerService;
+import com.auctions.hunters.service.car.CarService;
+import com.auctions.hunters.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Boolean.TRUE;
 import static java.util.List.of;
 
 @Slf4j
@@ -19,12 +21,15 @@ import static java.util.List.of;
 public class AuctionServiceImpl implements AuctionService {
 
     private final AuctionRepository auctionRepository;
-    private final SellerService sellerService;
+    private final UserService userService;
+    private final CarService carService;
 
     public AuctionServiceImpl(AuctionRepository auctionRepository,
-                              SellerService sellerService) {
+                              UserService userService,
+                              CarService carService) {
         this.auctionRepository = auctionRepository;
-        this.sellerService = sellerService;
+        this.userService = userService;
+        this.carService = carService;
     }
 
     /**
@@ -36,7 +41,7 @@ public class AuctionServiceImpl implements AuctionService {
      */
     @Override
     public Auction save(Car car, float minimumPrice) {
-        User user = sellerService.findByUsername(sellerService.getLoggedUsername());
+        User user = userService.findByUsername(userService.getLoggedUsername());
         OffsetDateTime now = OffsetDateTime.now();
 
         Auction newAuction = Auction.builder()
@@ -49,6 +54,9 @@ public class AuctionServiceImpl implements AuctionService {
                 .currentPrice(minimumPrice)
                 .isActive(true)
                 .build();
+
+        //if a car is placed on an auction then change it`s status
+        carService.updateCarAuctionStatus(car.getId(), TRUE);
 
         auctionRepository.save(newAuction);
         log.debug("Auction has been saved in the database.");

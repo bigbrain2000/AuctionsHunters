@@ -1,6 +1,7 @@
 package com.auctions.hunters.controller;
 
 import com.auctions.hunters.service.image.ImageService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,11 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.List;
-
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@Slf4j
 @Validated
 @Controller
 @RequestMapping(produces = APPLICATION_JSON_VALUE, path = "/images")
@@ -25,16 +24,18 @@ public class ImageController {
         this.imageService = imageService;
     }
 
-    @PostMapping
-    public String uploadImages(@RequestParam("files") List<MultipartFile> files) {
-        imageService.save(files);
-        return "/homepage";
+    @GetMapping("/upload")
+    public String displayUploadForm() {
+        return "/upload_images";
     }
 
-    @GetMapping
-    public String getImages() {
-        return "/images";
+    @PostMapping("/upload")
+    public String uploadImages(@RequestParam("images") MultipartFile[] files) {
+        imageService.save(files);
+
+        return "redirect:/cars";
     }
+
 
 //    @GetMapping("/images/{id}")
 //    public ResponseEntity<byte[]> getImage(@PathVariable Integer id) {

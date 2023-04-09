@@ -15,11 +15,10 @@ import java.util.List;
 public interface ImageService {
 
     /**
-     * Save a role in the DB.
+     * Save multiple files in the DB.
      *
-     * @param files the car images that will be saved in the database
      */
-    void save(@NotNull List<MultipartFile> files);
+     void save(MultipartFile[] files);
 
     /**
      * Find a specific image based on id.

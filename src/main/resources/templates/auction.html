@@ -23,13 +23,13 @@
                 <a th:href="@{/}">Acasă</a>
             </li>
             <li>
-                <a th:href="@{/seller/addCar}" class="active">Inventar</a>
+                <a th:href="@{/car/add}" class="active">Inventar</a>
                 <ul>
-                    <li><a th:href="@{/seller/cars}">Masinile mele</a></li>
+                    <li><a th:href="@{/cars}">Masinile mele</a></li>
                 </ul>
             </li>
             <li>
-                <a href="">Cautare mașini</a>
+                <a href="">Căutare mașini</a>
                 <ul>
                     <li><a href="">Option 1</a></li>
                     <li><a href="">Option 2</a></li>
@@ -120,7 +120,7 @@
         </div>
     </div>
 
-    <form th:action="@{/seller/createAuction/car/{id}(id=${car.id})}" method="post">
+    <form th:action="@{/user/createAuction/car/{id}(id=${car.id})}" method="post">
         <div class="box">
             <div class="form">
                 <h2>Creeaza o licitatie</h2>
@@ -139,6 +139,23 @@
             </div>
         </div>
     </form>
+
+    <section class="my-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <p th:text="${msg}" th:if="${msg ne null}" class="alert alert-primary"></p>
+                    <form method="post" th:action="@{/images/upload}" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <input type="file" name="images" accept="image/*" class="form-control-file" multiple>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Încarcă imaginile</button>
+                    </form>
+                    <span th:if="${msg != null}" th:text="${msg}"></span>
+                </div>
+            </div>
+        </div>
+    </section>
 </main>
 </body>
 </html>

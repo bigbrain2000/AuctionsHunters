@@ -3,7 +3,6 @@ package com.auctions.hunters.model;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -56,10 +55,6 @@ public class User {
     @Column(name = "phone_number", nullable = false, columnDefinition = "TEXT")
     private String phoneNumber;
 
-    @Column(name = "credit_card_number", nullable = false, columnDefinition = "TEXT")
-    @Size(min = 16, max = 19)
-    private String creditCardNumber;
-
     @Builder.Default
     private Boolean locked = false;
 
@@ -71,8 +66,7 @@ public class User {
                 String email,
                 String cityAddress,
                 String phoneNumber,
-                Set<Role> role,
-                String creditCardNumber) {
+                Set<Role> role) {
 
         this.username = username;
         this.password = password;
@@ -80,7 +74,6 @@ public class User {
         this.cityAddress = cityAddress;
         this.phoneNumber = phoneNumber;
         this.role = role;
-        this.creditCardNumber = creditCardNumber;
     }
 }
 

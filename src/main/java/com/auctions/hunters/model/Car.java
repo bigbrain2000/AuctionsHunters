@@ -1,10 +1,6 @@
 package com.auctions.hunters.model;
 
 
-import com.auctions.hunters.model.enums.CategoryType;
-import com.auctions.hunters.model.enums.FuelType;
-import com.auctions.hunters.model.enums.PollutionStandard;
-import com.auctions.hunters.model.enums.TransmissionType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,7 +12,7 @@ import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name = "car")
+@Table(name = "car",  uniqueConstraints = @UniqueConstraint(name = "vin_unique", columnNames = "vin"))
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -37,51 +33,59 @@ public class Car {
     @OneToMany(mappedBy = "car", cascade = ALL, orphanRemoval = true, fetch = EAGER)
     private List<Image> images = new ArrayList<>();
 
-    @Column(name = "category", nullable = false, columnDefinition = "TEXT")
-    @Enumerated(EnumType.STRING)
-    private CategoryType category;
-
-    @Column(name = "model", nullable = false, columnDefinition = "TEXT")
-    private String model;
-
-    @Column(name = "vin", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "vin", nullable = false)
     private String vin;
 
-    @Column(name = "tank_capacity", nullable = false)
-    private float tankCapacity;
+    @Column(name = "producer", nullable = false)
+    private String producer;
 
-    @Column(name = "color", nullable = false, columnDefinition = "TEXT")
-    private String color;
+    @Column(name = "model", nullable = false)
+    private String model;
 
-    @Column(name = "manufacturing_year", nullable = false, columnDefinition = "INTEGER")
-    private int manufacturingYear;
+    @Column(name = "modelYear", nullable = false)
+    private String modelYear;
 
-    @Column(name = "cylinder_capacity", nullable = false)
-    private float cylinderCapacity;
+    @Column(name = "body", nullable = false)
+    private String body;
 
-    @Column(name = "horse_power", nullable = false)
-    private float horsePower;
+    @Column(name = "engineDisplacement", nullable = false)
+    private String engineDisplacement;
 
-    @Column(name = "mileage", nullable = false)
-    private float mileage;
+    @Column(name = "enginePower", nullable = false)
+    private String enginePower;
 
-    @Column(name = "transmission_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private TransmissionType transmissionType;
+    @Column(name = "fuelTypePrimary", nullable = false)
+    private String fuelTypePrimary;
 
-    @Column(name = "fuel_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private FuelType fuelType;
+    @Column(name = "transmission", nullable = false)
+    private String transmission;
 
-    @Column(name = "pollution_standard", nullable = false, columnDefinition = "TEXT")
-    @Enumerated(EnumType.STRING)
-    private PollutionStandard pollutionStandard;
+    @Column(name = "drive", nullable = false)
+    private String drive;
 
-    @Column(name = "number_of_previous_owners", nullable = false, columnDefinition = "INTEGER")
-    private Integer numberOfPreviousOwners;
+    @Column(name = "numberOfDoors", nullable = false)
+    private String numberOfDoors;
 
-    @Column(name = "number_of_previous_accidents", nullable = false, columnDefinition = "INTEGER")
-    private Integer numberOfPreviousAccidents;
+    @Column(name = "numberOfSeats", nullable = false)
+    private String numberOfSeats;
+
+    @Column(name = "length", nullable = false)
+    private String length;
+
+    @Column(name = "height", nullable = false)
+    private String height;
+
+    @Column(name = "width", nullable = false)
+    private String width;
+
+    @Column(name = "maxWeight", nullable = false)
+    private String maxWeight;
+
+    @Column(name = "fuelConsumptionCombined", nullable = false)
+    private String fuelConsumptionCombined;
+
+    @Column(name = "emissionStandard", nullable = false)
+    private String emissionStandard;
 
     @Builder.Default
     private Boolean isAuctioned = false;

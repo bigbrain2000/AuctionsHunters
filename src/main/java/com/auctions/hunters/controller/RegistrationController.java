@@ -3,8 +3,7 @@ package com.auctions.hunters.controller;
 import com.auctions.hunters.exceptions.EmailAlreadyExistsException;
 import com.auctions.hunters.exceptions.InvalidEmailException;
 import com.auctions.hunters.model.User;
-import com.auctions.hunters.service.user.BuyerService;
-import com.auctions.hunters.service.user.SellerService;
+import com.auctions.hunters.service.user.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -18,14 +17,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Validated
 @Controller
 @RequestMapping(produces = APPLICATION_JSON_VALUE)
-public class AuctionsHuntersController {
+public class RegistrationController {
 
-    private final BuyerService buyerService;
-    private final SellerService sellerService;
+    private final UserService userService;
 
-    public AuctionsHuntersController(BuyerService buyerService, SellerService sellerService) {
-        this.buyerService = buyerService;
-        this.sellerService = sellerService;
+    public RegistrationController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/")
@@ -48,35 +45,22 @@ public class AuctionsHuntersController {
         return "redirect:/login";
     }
 
-    @GetMapping("/buyer/register")
-    public String getBuyerRegisterPage(@NotNull Model model) {
-        User user = new User();
-        model.addAttribute("user", user);
-        return "/buyer_register";
-    }
-
-    @PostMapping("/buyer/register")
-    public String registerBuyer(@ModelAttribute @Valid User user) throws EmailAlreadyExistsException, InvalidEmailException {
-        buyerService.register(user);
-        return "redirect:/login";
-    }
-
-    @GetMapping("/seller/register")
+    @GetMapping("/register/user")
     public String getSellerRegisterPage(@NotNull Model model) {
         User user = new User();
         model.addAttribute("user", user);
-        return "/seller_register";
+        return "/user_register";
     }
 
-    @PostMapping("/seller/register")
+    @PostMapping("/register/user")
     public String registerSeller(@ModelAttribute @Valid User user) throws EmailAlreadyExistsException, InvalidEmailException {
-        sellerService.register(user);
+        userService.register(user);
         return "redirect:/login";
     }
 
     @GetMapping(path = "/confirm")
     public String validateEmail(@RequestParam("token") String token) {
-        buyerService.confirmToken(token);
+        userService.confirmToken(token);
         return "/email_validation";
     }
 }

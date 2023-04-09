@@ -18,19 +18,14 @@
     </div>
 
     <nav class="nav-bar">
-        <div class="auth-buttons">
-            <a href="#" class="login-btn">Login</a>
-            <a href="#" class="register-btn">Register</a>
-        </div>
-
         <ul>
             <li>
                 <a th:href="@{/}">Acasă</a>
             </li>
             <li>
-                <a th:href="@{/seller/addCar}" class="active">Inventar</a>
+                <a th:href="@{/car/add}" class="active">Inventar</a>
                 <ul>
-                    <li><a th:href="@{/seller/cars}">Masinile mele</a></li>
+                    <li><a th:href="@{/cars}">Masinile mele</a></li>
                 </ul>
             </li>
             <li>
@@ -45,6 +40,11 @@
                 <a href="">Ghid licitare</a>
             </li>
         </ul>
+
+        <div class="auth-buttons">
+            <a href="/login" class="login-btn">Login</a>
+            <a href="/register/user" class="register-btn">Register</a>
+        </div>
     </nav>
 
     <script>

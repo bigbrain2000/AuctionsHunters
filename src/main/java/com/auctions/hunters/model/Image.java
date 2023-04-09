@@ -1,20 +1,16 @@
 package com.auctions.hunters.model;
 
-import lombok.*;
+import lombok.Data;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "image")
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Data
-@ToString
 public class Image {
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -26,6 +22,11 @@ public class Image {
     @JoinColumn(name = "car_id", referencedColumnName = "id")
     private Car car;
 
-    @NotNull
+    @Lob
+    @Column(name = "data", nullable = false)
+    @Type(type = "org.hibernate.type.ImageType")
     private byte[] data;
+
+    @Column(name = "content_type", nullable = false)
+    private String contentType;
 }

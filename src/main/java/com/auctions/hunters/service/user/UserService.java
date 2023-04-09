@@ -133,4 +133,7 @@ public interface UserService {
      * @return username of user
      */
     String getLoggedUsername();
+
+
+    String signUpUser(@NotNull User user) throws EmailAlreadyExistsException;
 }

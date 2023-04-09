@@ -10,11 +10,11 @@
 
 </head>
 <body>
-<form th:action="@{/buyer/register}" th:object="${user}" method="post">
+<form th:action="@{/register/user}" th:object="${user}" method="post">
     <div class="box">
         <div class="form">
 
-            <h2>Înregistrează-te ca și cumpărător</h2>
+            <h2>Înregistrează-te</h2>
 
             <div class="inputBox">
                 <label for="username"></label><input type="text" required="required" id="username" name="username">
@@ -48,23 +48,12 @@
                 <i></i>
             </div>
 
-            <div class="inputBox">
-                <label for="creditCardNumber"></label><input type="text" required="required" id="creditCardNumber"
-                                                             name="creditCardNumber">
-                <span>Număr card de credit</span>
-                <i></i>
-            </div>
-
             <div style="padding-top: 10px">
                 <input type="submit" value="Salvează">
             </div>
 
             <div class="links">
                 <a th:href="@{/login}">Ai deja un cont? Conectează-te</a>
-            </div>
-
-            <div class="links">
-                <a th:href="@{/seller/register}">Înregistrează-te ca și vânzător</a>
             </div>
         </div>
     </div>
