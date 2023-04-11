@@ -1,24 +1,88 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Image Upload</title>
+    <title>Adaugă imagini</title>
+    <link rel="stylesheet" type="text/css" href="/css/uploadImagesStyle.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
 </head>
 <body>
 <section class="my-5">
     <div class="container">
         <div class="row">
             <div class="col-md-8 mx-auto">
-                <form method="post" th:action="@{/images/upload}" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <input type="file" name="images" accept="image/*" class="form-control-file" multiple>
+                <form id="uploadForm" method="post" th:action="@{/images/upload}" enctype="multipart/form-data">
+                    <div class="upload-area">
+                        <i class="fas fa-cloud-upload-alt fa-3x"></i>
+                        <label for="images" class="upload-text">
+                            Drag &amp; Drop or <span>Browse</span>
+                        </label>
+                        <input type="file" id="images" name="images" accept="image/*" class="form-control-file"
+                               multiple>
                     </div>
+
+                    <div class="progress-bar-container">
+                        <div class="progress">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: 0;"
+                                ></div>
+                        </div>
+                    </div>
+
+                    <div class="thumbnails"></div>
                     <button type="submit" class="btn btn-primary">Încarcă imaginile</button>
                 </form>
             </div>
         </div>
     </div>
 </section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    const imagesInput = document.getElementById('images');
+    const uploadText = document.querySelector('.upload-text');
+    const progressBarContainer = document.querySelector('.progress-bar-container');
+    const progressBar = document.querySelector('.progress-bar');
+    const thumbnails = document.querySelector('.thumbnails');
+    const uploadForm = document.getElementById('uploadForm');
+
+    uploadText.querySelector('span').addEventListener('click', () => {
+        imagesInput.click();
+    });
+
+    imagesInput.addEventListener('change', (e) => {
+        const files = e.target.files;
+        for (let file of files) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                thumbnails.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    uploadForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        progressBarContainer.style.display = 'block';
+        let uploadedImages = 0;
+        const files = imagesInput.files;
+        const totalImages = files.length;
+
+        for (let file of files) {
+            // Simulate an AJAX upload request
+            setTimeout(() => {
+                uploadedImages++;
+                const percentage = (uploadedImages / totalImages) * 100;
+                progressBar.style.width = percentage + '%';
+                progressBar.setAttribute('aria-valuenow', percentage);
+
+            }, Math.random() * 1000 + 500);
+        }
+    });
+</script>
 </body>
 </html>

@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="refresh" content="3;url=/images/upload">
     <title>Adaugă o mașină</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="/css/addCarStyle.css">
@@ -51,13 +50,13 @@
 </header>
 
 <body>
+
 <form th:action="@{/car/add}" method="post">
-    <div style="text-align: center;">
-
+    <div class="input-container">
         <label for="vin"></label>
-        <input type="text" required="required" id="vin" name="vin" placeholder="Pretul minim">
+        <input class="vin_input" type="text" required="required" id="vin" name="vin" placeholder="Introduceți seria de șasiu">
 
-        <input type="submit" value="Conectare">
+        <input class="button" type="submit" value="Caută">
     </div>
 </form>
 </body>

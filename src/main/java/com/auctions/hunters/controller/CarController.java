@@ -2,8 +2,10 @@ package com.auctions.hunters.controller;
 
 import com.auctions.hunters.exceptions.*;
 import com.auctions.hunters.model.Car;
+import com.auctions.hunters.model.Image;
 import com.auctions.hunters.repository.CarRepository;
 import com.auctions.hunters.service.car.CarService;
+import com.auctions.hunters.service.image.ImageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,7 +15,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -26,11 +30,14 @@ public class CarController {
 
     private final CarService carService;
     private final CarRepository carRepository;
+    private final ImageService imageService;
 
     public CarController(CarService carService,
-                         CarRepository carRepository) {
+                         CarRepository carRepository,
+                         ImageService imageService) {
         this.carService = carService;
         this.carRepository = carRepository;
+        this.imageService = imageService;
     }
 
     @GetMapping("/car/add")
@@ -94,6 +101,14 @@ public class CarController {
     public String getCar(@PathVariable Integer id, Model model) {
         Car car = carService.getCarById(id);
         model.addAttribute("car", car);
+
+        List<Image> images = imageService.findAll();
+        List<String> base64Images = images.stream()
+                .map(image -> Base64.getEncoder().encodeToString(image.getData()))
+                .collect(Collectors.toList());
+
+        model.addAttribute("images", base64Images);
+        model.addAttribute("contentTypes", images.stream().map(Image::getContentType).collect(Collectors.toList()));
 
         return "/view_car";
     }

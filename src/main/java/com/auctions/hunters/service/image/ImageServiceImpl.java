@@ -6,16 +6,19 @@ import com.auctions.hunters.model.Image;
 import com.auctions.hunters.repository.ImageRepository;
 import com.auctions.hunters.service.car.CarService;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.coobird.thumbnailator.Thumbnails;
+import org.imgscalr.Scalr;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 
 /**
  * Service class used for managing roles and implementing the {@link ImageService} interface.
@@ -35,23 +38,23 @@ public class ImageServiceImpl implements ImageService {
     /**
      * Save multiple files in the DB.
      * Retrieve the latest car saved in the database and save the files as parameters for that specific car.
+     *
      * @param files the file that will be persisted in the database
      */
     @Override
-    public void save(MultipartFile[] files) {
+    public void save(MultipartFile[] files) throws IOException {
         List<Car> carList = carService.findAll();
         Car lastCar = carList.get(carList.size() - 1);
-
+        int targetWidth = 400; // Desired width
         //iterate through the multipart files and set the data and content type of the images
         List<Image> imagesList = new ArrayList<>();
         for (MultipartFile file : files) {
             Image image = new Image();
-            try {
-                image.setData(file.getBytes());
-                image.setContentType(file.getContentType());
-            } catch (IOException e) {
-                log.error("Error at setting the image fields for image with id {}", image.getId());
-            }
+            byte[] originalImageBytes = file.getBytes();
+            byte[] thumbnailImageBytes = createThumbnail(originalImageBytes, 400, 300); // Desired dimensions
+
+            image.setData(thumbnailImageBytes);
+            image.setContentType(file.getContentType());
 
             imagesList.add(image);
         }
@@ -63,12 +66,30 @@ public class ImageServiceImpl implements ImageService {
         imageRepository.saveAll(imagesList);
     }
 
+    public byte[] createThumbnail(byte[] imageBytes, int targetWidth, int targetHeight) throws IOException {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        Thumbnails.of(inputStream)
+                .size(targetWidth, targetHeight)
+                .keepAspectRatio(true)
+                .outputFormat("jpg")
+                .toOutputStream(outputStream);
+
+        return outputStream.toByteArray();
+    }
+
     @Override
     public Image findById(Integer id) {
         return imageRepository.findById(id).orElseThrow(() -> {
             log.debug("Could not find the image by the id {} ", id);
             return new ResourceNotFoundException("Image", "id", id);
         });
+    }
+
+    @Override
+    public List<Image> findAll() {
+        return imageRepository.findAll();
     }
 
     @Override
