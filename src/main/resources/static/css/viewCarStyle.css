@@ -1,25 +1,9 @@
-.content-wrapper {
-    display: flex;
-    justify-content: space-between;
-    margin: 20px 0;
-}
-
-.image-container {
-    margin: 100px;
-    width: 700px;
-    height: 700px;
-    overflow: hidden;
-}
-
-.image-container img {
-    width: 100%;
-    height: auto;
-}
-
+/*Car details*/
 .car-details {
-    width: 45%;
     display: flex;
     flex-direction: column;
+    width: 400px;
+    margin-right: 100px;
 }
 
 .vehicle-info, .car-actions {
@@ -60,17 +44,116 @@
     color: #777;
 }
 
-/* Carrousel style */
+/*Carrousel*/
+
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
     background-color: rgba(0, 0, 0, 0.5);
     width: 50px;
     height: 50px;
     filter: invert(100%);
+    position: absolute;
+    top: calc(50% - 25px);
+    z-index: 2;
+}
+
+.carousel-control-prev-icon {
+    left: -25px;
+}
+
+.carousel-control-next-icon {
+    right: -25px;
 }
 
 .carousel img {
-    width: 400px;
-    height: 400px;
-    object-fit:scale-down;
+    width: 100%;
+    height: auto;
+    object-fit: scale-down;
+}
+
+.containerCarousel {
+    margin: 100px;
+    width: 600px;
+    height: 600px;
+}
+
+.content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.image-container {
+    width: 600px;
+    height: 600px;
+    overflow: hidden;
+}
+
+
+/* Bidding style*/
+.bidding-section {
+    margin-top: 100px;
+    background-color: #999999FF;
+    border: 1px solid #dae0e5;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 700px;
+    max-height: 200px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+}
+
+.bid-controls {
+    display: flex;
+    height: 40px;
+    overflow: hidden;
+    border: 1px solid #dae0e5;
+}
+
+.btn-bid-decrement,
+.btn-bid-increment {
+    background-color: #f8f9fa;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.btn-bid-decrement {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: 1px solid #dae0e5;
+}
+
+.btn-bid-increment {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: 1px solid #dae0e5;
+}
+
+.form-control {
+    border: none;
+    flex: 1;
+    height: 100%;
+    text-align: center;
+}
+
+/* Hide input field increment/decrement arrows */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type='number'] {
+    -moz-appearance: textfield;
 }
