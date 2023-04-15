@@ -5,59 +5,25 @@
     <title>Adaugă o mașină</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="/css/addCarStyle.css">
-    <link rel="stylesheet" type="text/css" href="/css/welcome.css">
+    <link rel="stylesheet" type="text/css" href="/css/navBarStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap"/>
 </head>
-<header>
-    <div class="hamburger">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-    </div>
-
-    <nav class="nav-bar">
-        <ul>
-            <li>
-                <a th:href="@{/}">Acasă</a>
-            </li>
-            <li>
-                <a th:href="@{/car/add}" class="active">Inventar</a>
-                <ul>
-                    <li><a th:href="@{/cars}">Masinile mele</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="">Căutare mașini</a>
-                <ul>
-                    <li><a href="">Option 1</a></li>
-                    <li><a href="">Option 2</a></li>
-                    <li><a href="">Option 3</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="">Ghid licitare</a>
-            </li>
-        </ul>
-    </nav>
-
-    <script>
-        hamburger = document.querySelector(".hamburger");
-        hamburger.onClick = function () {
-            navBar = document.querySelector(".nav-bar");
-            navBar.classList.toggle("active");
-        }
-    </script>
-</header>
-
 <body>
+<header th:replace="/nav_bar :: nav_bar"></header>
 
-<form th:action="@{/car/add}" method="post">
+<form th:action="@{/car/add}" method="post" style="margin-top: 150px">
     <div class="input-container">
         <label for="vin"></label>
-        <input class="vin_input" type="text" required="required" id="vin" name="vin" placeholder="Introduceți seria de șasiu">
+        <input class="vin_input" type="text" required="required" id="vin" name="vin"
+               placeholder="Introduceți seria de șasiu">
 
         <input class="button" type="submit" value="Caută">
     </div>
 </form>
+
+<footer th:replace="/footer :: footer"></footer>
 </body>
 </html>

@@ -4,9 +4,11 @@
     <meta charset="utf-8">
     <title>Vizualizeaza masinile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="/css/welcome.css">
     <link rel="stylesheet" type="text/css" href="/css/viewCarStyle.css">
-    <link rel="stylesheet" type="text/css" href="/css/auctionStyle.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/navBarStyle.css">
 </head>
 
 <body>
@@ -51,111 +53,127 @@
     </script>
 </header>
 
-
 <main>
-    <div class="content-wrapper">
-        <div class="image-container">
-            <img th:src="@{'data:image/png;base64,' + ${image}}" alt="Imaginea masinii nu a putut fi incarcata"/>
-        </div>
+<!--    <div class="content-wrapper">-->
+<!--        <div class="containerCarousel">-->
+<!--            <div id="imageCarousel" class="carousel slide" data-ride="carousel">-->
+<!--                <div class="carousel-inner" role="listbox">-->
+<!--                    <div th:each="image, stat : ${images}"-->
+<!--                         th:class="${stat.first} ? 'carousel-item active' : 'carousel-item'">-->
+<!--                        <div class="image-container">-->
+<!--                            <img th:src="@{'data:' + ${contentTypes[stat.index]} + ';base64,' + ${image}}"-->
+<!--                                 class="d-block"-->
+<!--                                 alt="Car images"/>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
 
-        <div class="car-details">
-            <div class="vehicle-info">
-                <div class="info-row">
-                    <div class="info-label">Category:</div>
-                    <div class="info-value" th:text="${car.category}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Model:</div>
-                    <div class="info-value" th:text="${car.model}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">VIN:</div>
-                    <div class="info-value" th:text="${car.vin}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Tank Capacity:</div>
-                    <div class="info-value" th:text="${car.tankCapacity}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Color:</div>
-                    <div class="info-value" th:text="${car.color}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Manufacturing Year:</div>
-                    <div class="info-value" th:text="${car.manufacturingYear}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Cylinder Capacity:</div>
-                    <div class="info-value" th:text="${car.cylinderCapacity}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Horsepower:</div>
-                    <div class="info-value" th:text="${car.horsePower}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Mileage:</div>
-                    <div class="info-value" th:text="${car.mileage}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Transmission Type:</div>
-                    <div class="info-value" th:text="${car.transmissionType}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Fuel Type:</div>
-                    <div class="info-value" th:text="${car.fuelType}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Pollution Standard:</div>
-                    <div class="info-value" th:text="${car.pollutionStandard}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Number of Previous Owners:</div>
-                    <div class="info-value" th:text="${car.numberOfPreviousOwners}"></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Number of Previous Accidents:</div>
-                    <div class="info-value" th:text="${car.numberOfPreviousAccidents}"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+<!--                <a class="carousel-control-prev" href="#imageCarousel" role="button" data-slide="prev">-->
+<!--                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>-->
+<!--                    <span class="sr-only">Previous</span>-->
+<!--                </a>-->
+<!--                <a class="carousel-control-next" href="#imageCarousel" role="button" data-slide="next">-->
+<!--                    <span class="carousel-control-next-icon" aria-hidden="true"></span>-->
+<!--                    <span class="sr-only">Next</span>-->
+<!--                </a>-->
+<!--            </div>-->
+<!--        </div>-->
 
-    <form th:action="@{/user/createAuction/car/{id}(id=${car.id})}" method="post">
-        <div class="box">
-            <div class="form">
-                <h2>Creeaza o licitatie</h2>
+        <form     th:href="@{/create/auction/car/{id}(id=${car.id})}" method="post">
+            <div class="box">
+                <div class="form">
+                    <h2>Creeaza o licitatie</h2>
 
-                <div class="inputBox">
                     <div class="inputBox">
-                        <label for="minimumPrice"></label>
-                        <input type="text" required="required" id="minimumPrice" name="minimumPrice" placeholder="Pretul minim">
+                        <div class="inputBox">
+                            <label for="minimumPrice"></label>
+                            <input type="text" required="required" id="minimumPrice" name="minimumPrice" placeholder="Pretul minim">
 
-                        <i></i>
-                    </div>
-
-                    <br>
-                    <input type="submit" value="Adaugă">
-                </div>
-            </div>
-        </div>
-    </form>
-
-    <section class="my-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8 mx-auto">
-                    <p th:text="${msg}" th:if="${msg ne null}" class="alert alert-primary"></p>
-                    <form method="post" th:action="@{/images/upload}" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <input type="file" name="images" accept="image/*" class="form-control-file" multiple>
+                            <i></i>
                         </div>
-                        <button type="submit" class="btn btn-primary">Încarcă imaginile</button>
-                    </form>
-                    <span th:if="${msg != null}" th:text="${msg}"></span>
+
+                        <br>
+                        <input type="submit" value="Adaugă">
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </form>
+
+<!--        <div class="car-details" style="margin-top: 100px">-->
+<!--            <div class="vehicle-info">-->
+<!--                <div class="vehicle-info">-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Serie șasiu</div>-->
+<!--                        <div class="info-value" th:text="${car.vin}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Producător:</div>-->
+<!--                        <div class="info-value" th:text="${car.producer}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Model:</div>-->
+<!--                        <div class="info-value" th:text="${car.model}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Anul fabricației:</div>-->
+<!--                        <div class="info-value" th:text="${car.modelYear}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Categorie:</div>-->
+<!--                        <div class="info-value" th:text="${car.body}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Dimensiune bloc motor în cm:</div>-->
+<!--                        <div class="info-value" th:text="${car.engineDisplacement}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Cai putere:</div>-->
+<!--                        <div class="info-value" th:text="${car.enginePower}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Combustibil:</div>-->
+<!--                        <div class="info-value" th:text="${car.fuelTypePrimary}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Transmisie:</div>-->
+<!--                        <div class="info-value" th:text="${car.transmission}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Tracțiune:</div>-->
+<!--                        <div class="info-value" th:text="${car.drive}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Numărul de uși:</div>-->
+<!--                        <div class="info-value" th:text="${car.numberOfDoors}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Numărul de locuri:</div>-->
+<!--                        <div class="info-value" th:text="${car.numberOfSeats}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Lungime:</div>-->
+<!--                        <div class="info-value" th:text="${car.length}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Înălțime:</div>-->
+<!--                        <div class="info-value" th:text="${car.height}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Lățime:</div>-->
+<!--                        <div class="info-value" th:text="${car.width}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Consumul mixt l/100km:</div>-->
+<!--                        <div class="info-value" th:text="${car.fuelConsumptionCombined}"></div>-->
+<!--                    </div>-->
+<!--                    <div class="info-row">-->
+<!--                        <div class="info-label">Normă de poluare:</div>-->
+<!--                        <div class="info-value" th:text="${car.emissionStandard}"></div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 </main>
 </body>
 </html>
