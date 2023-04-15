@@ -7,12 +7,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -56,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(@NotNull HttpSecurity http) throws Exception {
 
         String[] allUsersPermittedApis = {"/css/**", "/images/**", "/", "/login", "/login_error", "/logout",
-                "/register/user", "/confirm/**", "/cars/**", "/car/**"};
+                "/register/user", "/confirm/**", "/cars/**", "/car/**", "/create/**"};
 
         String[] authenticatedUsersPermittedApis = {"/user/**"};
 
@@ -68,10 +72,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //.authorizeRequests().antMatchers("/").hasAnyAuthority("ADMIN")
                 .antMatchers(allUsersPermittedApis).permitAll()
-//                .and()
-//                .authorizeRequests().antMatchers(sellerPermittedApis).hasAnyAuthority("SELLER")
-//                .and()
-//                .authorizeRequests().antMatchers(buyerPermittedApis).hasAnyAuthority("BUYER")
                 .and()
                 // Only users with the USER role can access /user/** paths
                 .authorizeRequests().antMatchers(authenticatedUsersPermittedApis).hasAnyAuthority("ADMIN")
@@ -79,14 +79,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/login")
-                .successHandler(authenticationSuccessHandler())
-                .failureUrl("/login_error")
+                    .loginPage("/login")
+                    .successHandler(authenticationSuccessHandler())
+                    .failureUrl("/login_error")
                 .and()
                 .logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/login")
-                .invalidateHttpSession(true)        // set invalidation state when logout
-                .deleteCookies("JSESSIONID").permitAll();
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                    .logoutSuccessUrl("/login")
+                    .invalidateHttpSession(true)        // set invalidation state when logout
+                    .deleteCookies("JSESSIONID");
     }
 }

@@ -26,4 +26,7 @@ public interface AuctionService {
      * @return the auctions list
      */
     List<Auction> findAll();
+
+    Auction getAuctionByCarId(Integer carId);
 }
+

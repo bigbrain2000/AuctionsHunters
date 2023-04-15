@@ -1,20 +1,26 @@
 package com.auctions.hunters.controller;
 
 
+import com.auctions.hunters.model.Auction;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.Image;
 import com.auctions.hunters.service.auction.AuctionService;
 import com.auctions.hunters.service.car.CarService;
 import com.auctions.hunters.service.image.ImageService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Controller
-@RequestMapping(produces = APPLICATION_JSON_VALUE, path = "/auction")
+@Slf4j
+@RequestMapping(produces = APPLICATION_JSON_VALUE)
 public class AuctionController {
 
     private final CarService carService;
@@ -29,27 +35,27 @@ public class AuctionController {
         this.auctionService = auctionService;
     }
 
-    @GetMapping("/create/car/{id}")
+    @GetMapping("/create/auction/car/{id}")
     public String getAuction(@PathVariable Integer id, Model model) {
         Car car = carService.getCarById(id);
         model.addAttribute("car", car);
 
-        Image image = imageService.findImageByCarId(car);
-        model.addAttribute("image", Base64.encodeBase64String(image.getData()));
+//        List<Image> images = imageService.findAllImagesByCarId(id);
+//        List<String> base64Images = images.stream()
+//                .map(image -> java.util.Base64.getEncoder().encodeToString(image.getData()))
+//                .collect(Collectors.toList());
+//
+//        model.addAttribute("images", base64Images);
+//        model.addAttribute("contentTypes", images.stream().map(Image::getContentType).collect(Collectors.toList()));
+
 
         return "/auction";
     }
 
-    @PostMapping("/create/car/{id}")
+    @PostMapping("/create/auction/car/{id}")
     public String createAuction(@PathVariable Integer id, @RequestParam("minimumPrice") String minimumPriceStr, Model model) {
         Car car = carService.getCarById(id);
         model.addAttribute("car", car);
-
-        Image image = imageService.findImageByCarId(car);
-
-        //encodes binary data using the base64 algorithm
-        String encodeBase64String = Base64.encodeBase64String(image.getData());
-        model.addAttribute("image", encodeBase64String);
 
         try {
             float minimumPrice = Float.parseFloat(minimumPriceStr);
@@ -58,6 +64,6 @@ public class AuctionController {
             return "/login"; //TODO:schimbat cu unul de eroare.
         }
 
-        return "/auction";
+        return "redirect:/";
     }
 }

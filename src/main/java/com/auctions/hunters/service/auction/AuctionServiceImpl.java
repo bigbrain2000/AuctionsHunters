@@ -81,4 +81,17 @@ public class AuctionServiceImpl implements AuctionService {
         log.debug("The auctions list was retrieved from the database.");
         return new ArrayList<>(auctionList);
     }
+
+    @Override
+    public Auction getAuctionByCarId(Integer carId) {
+        Auction auction = auctionRepository.findByCarId(carId);
+
+        if (auction == null) {
+            log.debug("Could not retrieve the auction for car id {}", carId);
+            return null;
+        }
+
+        log.debug("Auction {} retrieved for car {}", auction.getId(), carId);
+        return auction;
+    }
 }
