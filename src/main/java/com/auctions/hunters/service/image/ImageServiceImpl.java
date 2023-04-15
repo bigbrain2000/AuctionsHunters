@@ -7,12 +7,9 @@ import com.auctions.hunters.repository.ImageRepository;
 import com.auctions.hunters.service.car.CarService;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
-import org.imgscalr.Scalr;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -45,13 +42,13 @@ public class ImageServiceImpl implements ImageService {
     public void save(MultipartFile[] files) throws IOException {
         List<Car> carList = carService.findAll();
         Car lastCar = carList.get(carList.size() - 1);
-        int targetWidth = 400; // Desired width
+
         //iterate through the multipart files and set the data and content type of the images
         List<Image> imagesList = new ArrayList<>();
         for (MultipartFile file : files) {
             Image image = new Image();
             byte[] originalImageBytes = file.getBytes();
-            byte[] thumbnailImageBytes = createThumbnail(originalImageBytes, 400, 300); // Desired dimensions
+            byte[] thumbnailImageBytes = createThumbnail(originalImageBytes, 600, 600);
 
             image.setData(thumbnailImageBytes);
             image.setContentType(file.getContentType());
@@ -66,7 +63,7 @@ public class ImageServiceImpl implements ImageService {
         imageRepository.saveAll(imagesList);
     }
 
-    public byte[] createThumbnail(byte[] imageBytes, int targetWidth, int targetHeight) throws IOException {
+    private byte[] createThumbnail(byte[] imageBytes, int targetWidth, int targetHeight) throws IOException {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -88,8 +85,17 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public List<Image> findAll() {
-        return imageRepository.findAll();
+    public List<Image> findAllImagesByCarId(Integer carId) {
+        List<Image> allImages = imageRepository.findAll();
+        List<Image> wantedImageList = new ArrayList<>();
+
+        for(Image image : allImages) {
+            if(image.getCar().getId().equals(carId)) {
+                wantedImageList.add(image);
+            }
+        }
+
+        return wantedImageList;
     }
 
     @Override

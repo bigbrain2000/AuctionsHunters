@@ -16,9 +16,8 @@ public interface ImageService {
 
     /**
      * Save multiple files in the DB.
-     *
      */
-     void save(MultipartFile[] files) throws IOException;
+    void save(MultipartFile[] files) throws IOException;
 
     /**
      * Find a specific image based on id.
@@ -29,11 +28,11 @@ public interface ImageService {
     Image findById(Integer id);
 
     /**
-     * Get all images from the database.
+     * Get all images from the database for a specific car id.
      *
      * @return found images
      */
-    List<Image> findAll();
+    List<Image> findAllImagesByCarId(Integer carId);
 
     /**
      * Delete all images from the list.
