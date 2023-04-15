@@ -1,6 +1,7 @@
 package com.auctions.hunters.service.car;
 
 import com.auctions.hunters.exceptions.*;
+import com.auctions.hunters.model.Auction;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.repository.CarRepository;
@@ -38,7 +39,7 @@ public class CarServiceImpl implements CarService {
     @Override
     public Car save(String vin) throws NotEnoughLookupsException, CarPayloadFailedToCreateException, UnrecognizedVinException, CarVinAlreadyExistsException {
 
-        if (isCardAlreadySaved(vin)) {
+        if (isCarAlreadySaved(vin)) {
             throw new CarVinAlreadyExistsException(String.format("Car with VIN %s already exists.", vin));
         }
 
@@ -111,7 +112,7 @@ public class CarServiceImpl implements CarService {
      * @param vin the car`s VIN
      * @return true if a car with the given VIN is present in the database, false otherwise
      */
-    public boolean isCardAlreadySaved(String vin) {
+    public boolean isCarAlreadySaved(String vin) {
         Optional<Car> optionalCar = carRepository.findCarByVin(vin);
 
         if (optionalCar.isPresent()) {
