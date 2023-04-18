@@ -7,6 +7,10 @@ import com.auctions.hunters.model.User;
 import com.auctions.hunters.repository.CarRepository;
 import com.auctions.hunters.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -155,5 +159,11 @@ public class CarServiceImpl implements CarService {
             user.getCarList().remove(car);
             userService.update(user, user.getUsername()); // update the user
         }
+    }
+
+    @NotNull
+    public Page<Car> getCarPage(int page, Specification<Car> spec) {
+        int pageSize = 10; //the number of elements in a page
+        return carRepository.findAll(spec, PageRequest.of(page, pageSize));
     }
 }

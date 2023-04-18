@@ -1,12 +1,14 @@
 .input-container {
     display: flex;
     align-items: center;
+    margin-top: 150px;
 }
 
 .vin_input {
-    font-size: 24px;
-    padding: 12px 20px;
-    width: 100%;
+    font-size: 22px;
+    padding: 10px 12px 12px 2px;
+    width: auto;
+    margin-left: 40vw;
     box-sizing: border-box;
 }
 
@@ -17,5 +19,6 @@
     padding: 12px 20px;
     border: none;
     cursor: pointer;
-    margin-left: 10px;
+    height: 60px;
+    margin-left: -2px;
 }
