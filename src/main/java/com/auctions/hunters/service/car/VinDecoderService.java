@@ -43,8 +43,8 @@ public class VinDecoderService {
         }
 
         try {
-            String controlSum = sha1(vin + "|" + ACTION + "|" + properties.getVicardioKey() + "|" + properties.getVicardioSecret()).substring(0, 10);
-            String requestUrl = properties.getVicardioBaseUrl() + "/" + properties.getVicardioKey() + "/" + controlSum + "/" + ACTION + "/" + vin + ".json";
+            String controlSum = sha1(vin + "|" + ACTION + "|" + properties.getVicarioKey() + "|" + properties.getVicarioSecret()).substring(0, 10);
+            String requestUrl = properties.getVicarioBaseUrl() + "/" + properties.getVicarioKey() + "/" + controlSum + "/" + ACTION + "/" + vin + ".json";
             URL url = new URL(requestUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");

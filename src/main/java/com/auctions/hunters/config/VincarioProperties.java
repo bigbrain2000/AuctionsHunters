@@ -8,13 +8,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class VincarioProperties {
 
-    @Value("${vicardioKey}")
-    private String vicardioKey;
+    @Value("${vicarioKey}")
+    private String vicarioKey;
 
-    @Value("${vicardioSecret}")
-    private String vicardioSecret;
+    @Value("${vicarioSecret}")
+    private String vicarioSecret;
 
-    @Value("${vicardioBaseUrl}")
-    private String vicardioBaseUrl;
+    @Value("${vicarioBaseUrl}")
+    private String vicarioBaseUrl;
 }
 
