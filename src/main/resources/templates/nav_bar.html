@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Navbar</title>
@@ -24,6 +24,16 @@
                             <ul>
                                 <li><a th:href="@{/cars}">Listă mașini</a></li>
                                 <li><a th:href="@{/car/add}" class="active">Adaugă o mașină</a></li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="#" class="desktop-link">Licitații mele</a>
+                            <label for="show-services2"></label>
+                            <input type="checkbox" id="show-services2">
+                            <label for="show-services">Licitații</label>
+                            <ul>
+                                <li><a th:href="@{/auctions}">Listă licitații</a></li>
                             </ul>
                         </li>
 

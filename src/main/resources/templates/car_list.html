@@ -8,12 +8,18 @@
     <link rel="stylesheet" type="text/css" href="/css/carListStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/navBarStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/noCarStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
 <header th:replace="/nav_bar :: nav_bar"></header>
 
-<form method="GET" action="/cars">
+<div class="container" th:if="${authenticatedUserCarsListSize == 0}">
+    <h1 class="heading">Se pare că nu aveți nicio mașină de vânzare în acest moment.</h1>
+    <p class="message">Adăugați o mașină în inventarul dumneavoastră pentru a începe să o vindeți.</p>
+</div>
+
+<form method="GET" action="/cars" th:if="${authenticatedUserCarsListSize > 0}">
     <div class="search-container" style="margin-top: 200px">
         <div class="input-column">
             <label>
@@ -46,7 +52,7 @@
 <div class="car-list">
     <table class="table">
         <thead>
-        <tr>
+        <tr th:if="${authenticatedUserCarsListSize > 0}">
             <th>Producător</th>
             <th>Model</th>
             <th>Anul fabricației</th>
@@ -58,42 +64,46 @@
         </thead>
         <tbody>
         <tr th:each="car, stat : ${carPage.content}">
-            <td th:text="${car.producer}" style="padding-top: 20px;"></td>
-            <td th:text="${car.model}" style="padding-top: 20px;"></td>
-            <td th:text="${car.modelYear}" style="padding-top: 20px;"></td>
-            <!-- if the car is not in an auction then it does not have a minimum price so don`t display this field -->
-            <td>
-                <span th:if="${car.isAuctioned}" th:text="${auctionsMinimumPriceList[stat.index]}"
-                      style="padding-top: 80px; margin-top: 40px"></span>
-                <i th:if="${!car.isAuctioned}" class="fas fa-question-circle fa-lg"
-                   style="padding-top: 15px"></i>
-            </td>
-            <!-- if the car is in an auction then it can`t be deleted by the seller -->
-            <td>
-                <a th:disabled="${car.isAuctioned}" disabled th:href="@{/cars/{id}(id=${car.id})}"
-                   class="btn btn-get-car" style="background-color: #d9534f">
-                    <i class="fa fa-trash"></i>
-                </a>
-            </td>
-            <td>
-                <a th:href="@{/car/{id}(id=${car.id})}" class="btn btn-get-car">
-                    <i class="fa fa-car"></i>
-                </a>
-            </td>
-            <!-- if the car is in an auction then it will display its status, otherwise a button will be displayed -->
-            <td>
-                <a th:if="${!car.isAuctioned}" th:href="@{/create/auction/car/{id}(id=${car.id})}"
-                   class="btn btn-get-car btn-primary" style="background-color: #2044f5">
-                    <i class="fas fa-gavel"></i>
-                </a>
-                <span th:if="${car.isAuctioned}" class="active-text">Activ</span>
-            </td>
+            <div th:if="${authenticatedUserCarsListSize > 0}">
+                <td th:text="${car.producer}" style="padding-top: 20px;"></td>
+                <td th:text="${car.model}" style="padding-top: 20px;"></td>
+                <td th:text="${car.modelYear}" style="padding-top: 20px;"></td>
+                <!-- if the car is not in an auction then it does not have a minimum price so don`t display this field -->
+                <td>
+                 <span th:if="${auctionsMinimumPriceList[stat.index] != 0} and ${car.isAuctioned}"
+                       th:text="${auctionsMinimumPriceList[stat.index]}" style="padding-bottom: -20px;">
+                 </span>
+
+                    <i th:if="${auctionsMinimumPriceList[stat.index] == 0} and ${!car.isAuctioned}"
+                       class="fas fa-question-circle fa-lg" style="padding-top: 15px"></i>
+                </td>
+                <!-- if the car is in an auction then it can`t be deleted by the seller -->
+                <td>
+                    <a th:disabled="${car.isAuctioned}" disabled th:href="@{/cars/{id}(id=${car.id})}"
+                       class="btn btn-get-car" style="background-color: #d9534f">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </td>
+                <td>
+                    <a th:href="@{/car/{id}(id=${car.id})}" class="btn btn-get-car">
+                        <i class="fa fa-car"></i>
+                    </a>
+                </td>
+                <!-- if the car is in an auction then it will display its status, otherwise a button will be displayed -->
+                <td>
+                    <a th:if="${!car.isAuctioned}" th:href="@{/create/auction/car/{id}(id=${car.id})}"
+                       class="btn btn-get-car btn-primary" style="background-color: #2044f5">
+                        <i class="fas fa-gavel"></i>
+                    </a>
+                    <span th:if="${car.isAuctioned}" class="active-text">Activ</span>
+                </td>
+            </div>
         </tr>
         </tbody>
     </table>
 </div>
 
-<div class="pagination">
+<div class="pagination" th:if="${authenticatedUserCarsListSize > 0}">
     <ul class="pagination" style="margin-left: 50px">
         <li th:class="${currentPage == 0}? 'disabled' : ''">
             <a th:href="@{/cars(page=0)}">First</a>
@@ -121,6 +131,7 @@
 <!-- Latest compiled JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
+<!--TODO: UPDATE the rest of the functions and move them in the js directory-->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const yearFromSelect = document.getElementById("yearFrom");

@@ -11,6 +11,9 @@
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap"/>
     <link rel="stylesheet" type="text/css" href="/css/uploadImagesStyle.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/js/retrieveThumbnailImages.js"></script>
 </head>
 <body>
 <header th:replace="/nav_bar :: nav_bar"></header>
@@ -39,23 +42,5 @@
 
 <footer th:replace="/footer :: footer"></footer>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    const imagesInput = document.getElementById('images');
-    const thumbnails = document.querySelector('.thumbnails');
-
-    imagesInput.addEventListener('change', (e) => {
-        const files = e.target.files;
-        for (let file of files) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                thumbnails.appendChild(img);
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-</script>
 </body>
 </html>
