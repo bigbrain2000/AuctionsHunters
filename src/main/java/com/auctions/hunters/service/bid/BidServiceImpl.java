@@ -29,16 +29,16 @@ public class BidServiceImpl implements BidService {
         this.recommendationService = recommendationService;
     }
 
-    @PostConstruct
-    void ceva() {
-        List<Auction> recommendations = recommendationService.getRecommendations(4);
-
-        for (Auction auction : recommendations) {
-            log.info("Licitatie {}", auction.getId());
-        }
-
-        log.info(String.valueOf(recommendations.size()));
-    }
+//    @PostConstruct
+//    void ceva() {
+//        List<Auction> recommendations = recommendationService.getRecommendations(4);
+//
+//        for (Auction auction : recommendations) {
+//            log.info("Licitatie {}", auction.getId());
+//        }
+//
+//        log.info(String.valueOf(recommendations.size()));
+//    }
 
     @Override
     public Bid save(float amount, Auction auction) {

@@ -15,8 +15,8 @@ public class VehicleMarketValueService {
     private final WebClient webClient;
 
     private static final String API_PREFIX = "https://api.vindecoder.eu/3.2";
-    private static final String API_KEY = "e04763e4434a";
-    private static final String SECRET_KEY = "36cbeeac46";
+    private static final String API_KEY = "";
+    private static final String SECRET_KEY = "";
     private static final String ID = "vehicle-market-value";
 
     @Autowired
