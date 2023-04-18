@@ -54,126 +54,26 @@
 </header>
 
 <main>
-<!--    <div class="content-wrapper">-->
-<!--        <div class="containerCarousel">-->
-<!--            <div id="imageCarousel" class="carousel slide" data-ride="carousel">-->
-<!--                <div class="carousel-inner" role="listbox">-->
-<!--                    <div th:each="image, stat : ${images}"-->
-<!--                         th:class="${stat.first} ? 'carousel-item active' : 'carousel-item'">-->
-<!--                        <div class="image-container">-->
-<!--                            <img th:src="@{'data:' + ${contentTypes[stat.index]} + ';base64,' + ${image}}"-->
-<!--                                 class="d-block"-->
-<!--                                 alt="Car images"/>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
+    <form th:href="@{/create/auction/car/{id}(id=${car.id})}" method="post">
+        <div class="box">
+            <div class="form">
+                <h2>Creeaza o licitatie</h2>
 
-<!--                <a class="carousel-control-prev" href="#imageCarousel" role="button" data-slide="prev">-->
-<!--                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>-->
-<!--                    <span class="sr-only">Previous</span>-->
-<!--                </a>-->
-<!--                <a class="carousel-control-next" href="#imageCarousel" role="button" data-slide="next">-->
-<!--                    <span class="carousel-control-next-icon" aria-hidden="true"></span>-->
-<!--                    <span class="sr-only">Next</span>-->
-<!--                </a>-->
-<!--            </div>-->
-<!--        </div>-->
-
-        <form     th:href="@{/create/auction/car/{id}(id=${car.id})}" method="post">
-            <div class="box">
-                <div class="form">
-                    <h2>Creeaza o licitatie</h2>
-
+                <div class="inputBox">
                     <div class="inputBox">
-                        <div class="inputBox">
-                            <label for="minimumPrice"></label>
-                            <input type="text" required="required" id="minimumPrice" name="minimumPrice" placeholder="Pretul minim">
+                        <label for="minimumPrice"></label>
+                        <input type="text" required="required" id="minimumPrice" name="minimumPrice"
+                               placeholder="Pretul minim">
 
-                            <i></i>
-                        </div>
-
-                        <br>
-                        <input type="submit" value="Adaugă">
+                        <i></i>
                     </div>
+
+                    <br>
+                    <input type="submit" value="Adaugă">
                 </div>
             </div>
-        </form>
-
-<!--        <div class="car-details" style="margin-top: 100px">-->
-<!--            <div class="vehicle-info">-->
-<!--                <div class="vehicle-info">-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Serie șasiu</div>-->
-<!--                        <div class="info-value" th:text="${car.vin}"></div>-->
-<!--                    </div>-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Producător:</div>-->
-<!--                        <div class="info-value" th:text="${car.producer}"></div>-->
-<!--                    </div>-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Model:</div>-->
-<!--                        <div class="info-value" th:text="${car.model}"></div>-->
-<!--                    </div>-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Anul fabricației:</div>-->
-<!--                        <div class="info-value" th:text="${car.modelYear}"></div>-->
-<!--                    </div>-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Categorie:</div>-->
-<!--                        <div class="info-value" th:text="${car.body}"></div>-->
-<!--                    </div>-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Dimensiune bloc motor în cm:</div>-->
-<!--                        <div class="info-value" th:text="${car.engineDisplacement}"></div>-->
-<!--                    </div>-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Cai putere:</div>-->
-<!--                        <div class="info-value" th:text="${car.enginePower}"></div>-->
-<!--                    </div>-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Combustibil:</div>-->
-<!--                        <div class="info-value" th:text="${car.fuelTypePrimary}"></div>-->
-<!--                    </div>-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Transmisie:</div>-->
-<!--                        <div class="info-value" th:text="${car.transmission}"></div>-->
-<!--                    </div>-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Tracțiune:</div>-->
-<!--                        <div class="info-value" th:text="${car.drive}"></div>-->
-<!--                    </div>-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Numărul de uși:</div>-->
-<!--                        <div class="info-value" th:text="${car.numberOfDoors}"></div>-->
-<!--                    </div>-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Numărul de locuri:</div>-->
-<!--                        <div class="info-value" th:text="${car.numberOfSeats}"></div>-->
-<!--                    </div>-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Lungime:</div>-->
-<!--                        <div class="info-value" th:text="${car.length}"></div>-->
-<!--                    </div>-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Înălțime:</div>-->
-<!--                        <div class="info-value" th:text="${car.height}"></div>-->
-<!--                    </div>-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Lățime:</div>-->
-<!--                        <div class="info-value" th:text="${car.width}"></div>-->
-<!--                    </div>-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Consumul mixt l/100km:</div>-->
-<!--                        <div class="info-value" th:text="${car.fuelConsumptionCombined}"></div>-->
-<!--                    </div>-->
-<!--                    <div class="info-row">-->
-<!--                        <div class="info-label">Normă de poluare:</div>-->
-<!--                        <div class="info-value" th:text="${car.emissionStandard}"></div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
+        </div>
+    </form>
 </main>
 </body>
 </html>

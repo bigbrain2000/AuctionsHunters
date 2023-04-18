@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Vizualizează mașina</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/viewCarStyle.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/navBarStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap"/>
+
+    <script src="/js/modifyBidAmount.js"></script>
+</head>
+<body>
+<main>
+    <header th:replace="/nav_bar :: nav_bar"></header>
+
+    <div class="content-wrapper">
+        <div class="containerCarousel">
+            <div id="imageCarousel" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner" role="listbox">
+                    <div th:each="image, stat : ${images}"
+                         th:class="${stat.first} ? 'carousel-item active' : 'carousel-item'">
+                        <div class="image-container">
+                            <img th:src="@{'data:' + ${contentTypes[stat.index]} + ';base64,' + ${image}}"
+                                 class="d-block" alt="Car images"/>
+                        </div>
+                    </div>
+                </div>
+
+                <a class="carousel-control-prev" href="#imageCarousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#imageCarousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="bidding-section">
+            <h2>Introduceți prețul</h2>
+            <form th:action="@{/bid/car/{id}(id=${car.id})}" method="post">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="bid-controls">
+                            <button type="button" class="btn-bid-decrement">-</button>
+                            <label for="bidAmount">
+                                <input type="number" class="form-control" id="bidAmount" name="bidAmount"
+                                       placeholder="Prețul minim" required>
+                            </label>
+                            <button type="button" class="btn-bid-increment">+</button>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit-bid">Submit Bid</button>
+            </form>
+        </div>
+
+        <div class="car-details" style="margin-top: 100px">
+            <div class="vehicle-info">
+                <div class="vehicle-info">
+                    <div class="info-row" th:if="${car.vin != null}">
+                        <div class="info-label">Serie șasiu:</div>
+                        <div class="info-value" th:text="${car.vin}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.producer != null}">
+                        <div class="info-label">Producător:</div>
+                        <div class="info-value" th:text="${car.producer}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.model != null}">
+                        <div class="info-label">Model:</div>
+                        <div class="info-value" th:text="${car.model}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.modelYear != null}">
+                        <div class="info-label">Anul fabricației:</div>
+                        <div class="info-value" th:text="${car.modelYear}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.body != null}">
+                        <div class="info-label">Categorie:</div>
+                        <div class="info-value" th:text="${car.body}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.series != null}">
+                        <div class="info-label">Serie:</div>
+                        <div class="info-value" th:text="${car.series}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.drive != null}">
+                        <div class="info-label">Tracțiune:</div>
+                        <div class="info-value" th:text="${car.drive}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.engineDisplacement != null}">
+                        <div class="info-label">Dimensiune bloc motor în cm:</div>
+                        <div class="info-value" th:text="${car.engineDisplacement}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.enginePower != null}">
+                        <div class="info-label">Cai putere:</div>
+                        <div class="info-value" th:text="${car.enginePower}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.fuelTypePrimary != null}">
+                        <div class="info-label">Combustibil:</div>
+                        <div class="info-value" th:text="${car.fuelTypePrimary}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.engineCode != null}">
+                        <div class="info-label">Cod motor:</div>
+                        <div class="info-value" th:text="${car.engineCode}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.transmission != null}">
+                        <div class="info-label">Transmisie:</div>
+                        <div class="info-value" th:text="${car.transmission}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.numberOfGears != null}">
+                        <div class="info-label">Numărul de viteze:</div>
+                        <div class="info-value" th:text="${car.numberOfGears}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.emissionStandard != null}">
+                        <div class="info-label">Standard european de emisie:</div>
+                        <div class="info-value" th:text="${car.emissionStandard}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.manufacturerAddress != null}">
+                        <div class="info-label">Adresă producător:</div>
+                        <div class="info-value" th:text="${car.manufacturerAddress}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.manufacturerCountry != null}">
+                        <div class="info-label">Țară producător:</div>
+                        <div class="info-value" th:text="${car.manufacturerCountry}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.engineRpm != null}">
+                        <div class="info-label">Turația nominală a motorului</div>
+                        <div class="info-value" th:text="${car.engineRpm}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.numberOfCylinders != null}">
+                        <div class="info-label">Numărul de cilindrii</div>
+                        <div class="info-value" th:text="${car.numberOfCylinders}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.fuelConsumptionCombined != null}">
+                        <div class="info-label">Consumul mixt l/100km:</div>
+                        <div class="info-value" th:text="${car.fuelConsumptionCombined}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.fuelConsumptionUrban != null}">
+                        <div class="info-label">Consumul urban l/100km:</div>
+                        <div class="info-value" th:text="${car.fuelConsumptionUrban}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.co2Emission != null}">
+                        <div class="info-label">Emisii de CO2 (g/km):</div>
+                        <div class="info-value" th:text="${car.co2Emission}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.axleRatio != null}">
+                        <div class="info-label">Raportul dintre axe:</div>
+                        <div class="info-value" th:text="${car.axleRatio}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.numberOfWheels != null}">
+                        <div class="info-label">Numărul de roți:</div>
+                        <div class="info-value" th:text="${car.numberOfWheels}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.numberOfAxles != null}">
+                        <div class="info-label">Numărul de axe:</div>
+                        <div class="info-value" th:text="${car.numberOfAxles}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.numberOfDoors != null}">
+                        <div class="info-label">Numărul de uși:</div>
+                        <div class="info-value" th:text="${car.numberOfDoors}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.numberOfSeats != null}">
+                        <div class="info-label">Numărul de locuri:</div>
+                        <div class="info-value" th:text="${car.numberOfSeats}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.frontBrakes != null}">
+                        <div class="info-label">Frâne pe față:</div>
+                        <div class="info-value" th:text="${car.frontBrakes}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.brakeSystem != null}">
+                        <div class="info-label">Sistem de frânare:</div>
+                        <div class="info-value" th:text="${car.brakeSystem}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.suspension != null}">
+                        <div class="info-label">Tipul de suspensie:</div>
+                        <div class="info-value" th:text="${car.suspension}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.steeringType != null}">
+                        <div class="info-label">Tipul de sistem de direcție:</div>
+                        <div class="info-value" th:text="${car.steeringType}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.wheelSize != null}">
+                        <div class="info-label">Dimensiune jantă:</div>
+                        <div class="info-value" th:text="${car.wheelSize}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.wheelBase != null}">
+                        <div class="info-label">Distanța dintre punți:</div>
+                        <div class="info-value" th:text="${car.wheelBase}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.height != null}">
+                        <div class="info-label">Înălțime:</div>
+                        <div class="info-value" th:text="${car.height}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.length != null}">
+                        <div class="info-label">Lungime:</div>
+                        <div class="info-value" th:text="${car.length}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.width != null}">
+                        <div class="info-label">Lățime:</div>
+                        <div class="info-value" th:text="${car.width}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.maxSpeed != null}">
+                        <div class="info-label">Viteza maximă:</div>
+                        <div class="info-value" th:text="${car.maxSpeed}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.emptyWeight != null}">
+                        <div class="info-label">Greutate fară încărcătură:</div>
+                        <div class="info-value" th:text="${car.emptyWeight}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.maxWeight != null}">
+                        <div class="info-label">Greutate maximă permisă:</div>
+                        <div class="info-value" th:text="${car.maxWeight}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.maxRoofLoad != null}">
+                        <div class="info-label">Greutate maximă a acoperișului:</div>
+                        <div class="info-value" th:text="${car.maxRoofLoad}"></div>
+                    </div>
+                    <div class="info-row" th:if="${car.abs != null}">
+                        <div class="info-label">ABS:</div>
+                        <div class="info-value" th:text="${car.abs}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="/footer :: footer"></footer>
+
+</body>
+</html>
