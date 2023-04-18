@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,5 +25,10 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
      * This query that retrieves a {@link User} entity from the database where the email field is equal to the value of the "username" parameter.
      */
     @Query("SELECT a FROM Auction a WHERE a.car.id = ?1")
+    @Transactional
     Auction findByCarId(@Param("carId") Integer carId);
+
+    @Transactional
+    List<Auction> findByUserId(Integer userId);
+
 }

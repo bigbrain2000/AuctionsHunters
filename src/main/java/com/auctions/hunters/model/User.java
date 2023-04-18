@@ -11,6 +11,7 @@ import java.util.Set;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -39,6 +40,14 @@ public class User {
 
     @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = EAGER, cascade = ALL)
     private List<Car> carList = new ArrayList<>();
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "user")
+    private List<Auction> auctions;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = LAZY, cascade = ALL)
+    private Set<Bid> bids = new HashSet<>();
 
     @Column(name = "username", nullable = false, columnDefinition = "TEXT")
     private String username;

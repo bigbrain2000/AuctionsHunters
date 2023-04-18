@@ -1,7 +1,9 @@
 package com.auctions.hunters.service.auction;
 
 import com.auctions.hunters.model.Auction;
+import com.auctions.hunters.model.Bid;
 import com.auctions.hunters.model.Car;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -28,5 +30,20 @@ public interface AuctionService {
     List<Auction> findAll();
 
     Auction getAuctionByCarId(Integer carId);
+
+    List<Auction> getAllAuctionsByUserId(Integer userId);
+
+    Auction findById(Integer id);
+
+    public List<Auction> getAllAuctionsForBidder(Integer userId);
+
+    List<Bid> getAllBidsForAuction(Integer auctionId);
+
+     List<Integer> getBidderIds(Integer auctionId);
+
+
+        List<Auction> getTopBidAuctions(int limit);
+
+    List<Float> setMinimumPriceForEachPageCar(Page<Car> carPage);
 }
 

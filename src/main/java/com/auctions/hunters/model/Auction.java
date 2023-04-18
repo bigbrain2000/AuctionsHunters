@@ -1,10 +1,7 @@
 package com.auctions.hunters.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
@@ -24,7 +21,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Data
+@Getter
+@Setter
 public class Auction {
 
     @Id
@@ -36,16 +34,13 @@ public class Auction {
     @JoinColumn(name = "car_id", referencedColumnName = "id")
     private Car car;
 
-    @Builder.Default
-    @ManyToMany(cascade = MERGE, fetch = EAGER)
-    @JoinTable(name = "user_bids", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "auction_id"))
-    private Set<User> bidders = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(name = "seller_name", nullable = false, columnDefinition = "TEXT")
-    private String sellerName;
+    @OneToMany(mappedBy = "auction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Bid> bidders;
 
-    @OneToMany(mappedBy = "auction", cascade = ALL, fetch = LAZY)
-    private List<Bid> bids;
 
     @Column(name = "minimum_price", nullable = false)
     private float minimumPrice;

@@ -7,9 +7,12 @@ import com.auctions.hunters.model.User;
 import com.auctions.hunters.service.confirmationtoken.ConfirmationTokenService;
 import com.auctions.hunters.service.role.RoleService;
 import com.auctions.hunters.service.user.UserService;
+import com.auctions.hunters.utils.VehicleMarketValueService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import reactor.core.publisher.Mono;
 
 import java.time.OffsetDateTime;
 import java.util.HashSet;
@@ -17,20 +20,22 @@ import java.util.Set;
 
 import static com.auctions.hunters.utils.DateUtils.getDateTime;
 
+@Slf4j
 @SpringBootApplication
 public class AuctionsHunters implements CommandLineRunner {
 
     private final UserService userService;
     private final RoleService roleService;
     private final ConfirmationTokenService confirmationTokenService;
-
+    private final VehicleMarketValueService vehicleMarketValueService;
 
     public AuctionsHunters(UserService userService,
                            RoleService roleService,
-                           ConfirmationTokenService confirmationTokenService) {
+                           ConfirmationTokenService confirmationTokenService, VehicleMarketValueService vehicleMarketValueService) {
         this.userService = userService;
         this.roleService = roleService;
         this.confirmationTokenService = confirmationTokenService;
+        this.vehicleMarketValueService = vehicleMarketValueService;
     }
 
     public static void main(String[] args) {
@@ -78,6 +83,9 @@ public class AuctionsHunters implements CommandLineRunner {
                     .build();
 
             confirmationTokenService.saveConfirmationToken(adminConfirmationToken);
+
+//            Mono<String> mono = vehicleMarketValueService.getVehicleMarketValue("YV1JV324271643584");
+//            log.info(mono.block());
         }
     }
 }

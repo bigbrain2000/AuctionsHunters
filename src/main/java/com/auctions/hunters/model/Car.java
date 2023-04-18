@@ -1,6 +1,7 @@
 package com.auctions.hunters.model;
 
 import lombok.*;
+import org.hibernate.annotations.Check;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -15,8 +17,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Data
-@ToString
+@Getter
+@Setter
 public class Car {
 
     @Id
@@ -37,19 +39,41 @@ public class Car {
     private String model;
     private String modelYear;
     private String body;
+    private String series;
+    private String drive;
     private String engineDisplacement;
     private String enginePower;
     private String fuelTypePrimary;
+    private String engineCode;
     private String transmission;
-    private String drive;
+    private String numberOfGears;
+    private String emissionStandard;
+    private String manufacturerAddress;
+    private String manufacturerCountry;
+    private String engineRpm;
+    private String numberOfCylinders;
+    private String fuelConsumptionCombined;
+    private String fuelConsumptionUrban;
+    private String co2Emission;
+    private String axleRatio;
+    private String numberOfWheels;
+    private String numberOfAxles;
     private String numberOfDoors;
     private String numberOfSeats;
-    private String length;
+    private String frontBrakes;
+    private String brakeSystem;
+    private String suspension;
+    private String steeringType;
+    private String wheelSize;
+    private String wheelBase;
     private String height;
+    private String length;
     private String width;
+    private String maxSpeed;
+    private String emptyWeight;
     private String maxWeight;
-    private String fuelConsumptionCombined;
-    private String emissionStandard;
+    private String maxRoofLoad;
+    private String abs;
 
     @Builder.Default
     private Boolean isAuctioned = false;

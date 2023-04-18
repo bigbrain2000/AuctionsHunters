@@ -2,6 +2,8 @@ package com.auctions.hunters.service.car;
 
 import com.auctions.hunters.exceptions.*;
 import com.auctions.hunters.model.Car;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
@@ -50,4 +52,6 @@ public interface CarService {
      * @return the new updated car that`s being saved in the database
      */
     Car updateCarAuctionStatus(Integer id, boolean auctionStatus);
+
+    Page<Car> getCarPage(int page, Specification<Car> spec);
 }
