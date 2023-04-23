@@ -1,7 +1,6 @@
 package com.auctions.hunters.repository;
 
 import com.auctions.hunters.model.Auction;
-import com.auctions.hunters.model.User;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,24 +10,28 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 @Repository
 public interface AuctionRepository extends JpaRepository<Auction, Integer> {
 
+    /**
+     * Retrieve all auctions from the database.
+     *
+     * @return a list with all the auctions found
+     */
     @Override
     @NotNull
     List<Auction> findAll();
 
-    //todo:update the description
-
     /**
-     * This query that retrieves a {@link User} entity from the database where the email field is equal to the value of the "username" parameter.
+     * Retrieved an {@link Auction} from the database where the foreign key, car_id is equal to the parameter value.
      */
     @Query("SELECT a FROM Auction a WHERE a.car.id = ?1")
     @Transactional
     Auction findByCarId(@Param("carId") Integer carId);
 
+    /**
+     * Retrieved an {@link Auction} from the database where the foreign key, user_id is equal to the parameter value.
+     */
     @Transactional
     List<Auction> findByUserId(Integer userId);
-
 }

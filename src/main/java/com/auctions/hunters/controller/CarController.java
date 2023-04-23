@@ -4,14 +4,15 @@ import com.auctions.hunters.exceptions.*;
 import com.auctions.hunters.model.Auction;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.Image;
+import com.auctions.hunters.model.User;
 import com.auctions.hunters.service.auction.AuctionService;
 import com.auctions.hunters.service.bid.BidService;
 import com.auctions.hunters.service.car.CarService;
 import com.auctions.hunters.service.car.SearchCriteria;
 import com.auctions.hunters.service.image.ImageService;
+import com.auctions.hunters.service.ml.RecommendationService;
 import com.auctions.hunters.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
@@ -20,10 +21,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -39,17 +38,20 @@ public class CarController {
     private final AuctionService auctionService;
     private final UserService userService;
     private final BidService bidService;
+    private final RecommendationService recommendationService;
 
     public CarController(CarService carService,
                          ImageService imageService,
                          AuctionService auctionService,
                          UserService userService,
-                         BidService bidService) {
+                         BidService bidService,
+                         RecommendationService recommendationService) {
         this.carService = carService;
         this.imageService = imageService;
         this.auctionService = auctionService;
         this.userService = userService;
         this.bidService = bidService;
+        this.recommendationService = recommendationService;
     }
 
     @GetMapping("/car/add")
@@ -88,9 +90,15 @@ public class CarController {
 
         CarsListPaginator pager = (page1, producer1, model1, minYear1, maxYear1, minPrice1, maxPrice1, modelAtr1) -> {
             String loggedUsername = userService.getLoggedUsername();
+            User user = userService.findByUsername(loggedUsername);
+
+            List<Auction> recommendedAuctionsList = recommendationService.getUnfinishedAuctions(user);
 
             SearchCriteria searchCriteria = new SearchCriteria();
             Specification<Car> carSpecification = searchCriteria.buildSpec(producer1, model1, minYear1, maxYear1, minPrice1, maxPrice1);
+
+            //filter for displaying only the cars that MATCH the authenticated user id
+            carSpecification = carSpecification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("user"), user));
 
             Page<Car> carPage = carService.getCarPage(page1, carSpecification);
             int totalPages = carPage.getTotalPages();
@@ -100,38 +108,25 @@ public class CarController {
                         .boxed()
                         .toList();
 
-                List<Car> authenticatedUserCarsList = getAuthenticatedUserCarsList(loggedUsername, carPage);
+                //hook needed for displaying the car list if there are ay cars to display,
+                //a message will appear otherwise
+                List<Car> authenticatedUserCarsList = carService.getAuthenticatedUserCarsList();
 
+                //set the minimum price for each car
                 List<Float> auctionsMinimumPriceList = auctionService.setMinimumPriceForEachPageCar(carPage);
 
                 modelAtr1.addAttribute("carPage", carPage);
                 modelAtr1.addAttribute("currentPage", page1);
                 modelAtr1.addAttribute("pageNumbers", pageNumbers);
+                modelAtr1.addAttribute("authenticatedUserCarsListSize", authenticatedUserCarsList.size());
                 modelAtr1.addAttribute("auctionsMinimumPriceList", auctionsMinimumPriceList);
-                modelAtr1.addAttribute("authenticatedUserCarsListSize",  authenticatedUserCarsList.size());
+                modelAtr1.addAttribute("recommendedAuctionsList", recommendedAuctionsList);
             }
 
             return "/car_list";
         };
 
         return pager.createPaginationListForCars(page, producer, model, minYear, maxYear, minPrice, maxPrice, modelAtr);
-    }
-
-    /**
-     * Map all the cars from a page and return all cars which username matches the authenticated username.
-     */
-    @NotNull
-    private static List<Car> getAuthenticatedUserCarsList(String loggedUsername, Page<Car> carPage) {
-        List<Car> allCarsList = carPage.getContent();
-        List<Car> authenticatedUserCarsList = new ArrayList<>();
-
-        for(Car car : allCarsList) {
-            if(car.getUser().getUsername().equals(loggedUsername)) {
-                authenticatedUserCarsList.add(car);
-            }
-        }
-
-        return authenticatedUserCarsList;
     }
 
     @GetMapping("/cars/{id}")
@@ -148,22 +143,28 @@ public class CarController {
 
     @GetMapping("/car/{id}")
     public String getCar(@PathVariable Integer id, Model model) {
-        Car car = carService.getCarById(id);
-        model.addAttribute("car", car);
-
-        List<Image> images = imageService.findAllImagesByCarId(id);
-        List<String> base64Images = images.stream()
-                .map(image -> Base64.getEncoder().encodeToString(image.getData()))
-                .toList();
-
-        model.addAttribute("images", base64Images);
-        model.addAttribute("contentTypes", images.stream().map(Image::getContentType).collect(Collectors.toList()));
+        getAllImagesForTheSavedCar(id, model);
 
         return "/view_car";
     }
 
     @GetMapping("/bid/car/{id}")
     public String getAuctionedCar(@PathVariable Integer id, Model model) {
+        getAllImagesForTheSavedCar(id, model);
+
+        return "/view_auctioned_car";
+    }
+
+    @PostMapping("/bid/car/{carId}")
+    public String createNewBid(@PathVariable Integer carId, @RequestParam("bidAmount") Integer bidAmount) {
+        Auction auction = auctionService.getAuctionByCarId(carId);
+        bidService.save(bidAmount, auction);
+
+        log.info("Bidul este {}", bidAmount);
+        return "redirect:/auctions"; //redirect to the auctions endpoint
+    }
+
+    private void getAllImagesForTheSavedCar(Integer id, Model model) {
         Car car = carService.getCarById(id);
         model.addAttribute("car", car);
 
@@ -173,17 +174,6 @@ public class CarController {
                 .toList();
 
         model.addAttribute("images", base64Images);
-        model.addAttribute("contentTypes", images.stream().map(Image::getContentType).collect(Collectors.toList()));
-
-        return "/view_auctioned_car";
-    }
-
-    @PostMapping("/bid/car/{carId}")
-    public String createNewBid( @PathVariable Integer carId, @RequestParam("bidAmount") Integer bidAmount) {
-        Auction auction = auctionService.getAuctionByCarId(carId);
-        bidService.save(bidAmount, auction);
-
-        log.info("Bidul este {}", bidAmount);
-        return "redirect:/auctions"; //redirect to the auctions endpoint
+        model.addAttribute("contentTypes", images.stream().map(Image::getContentType).toList());
     }
 }

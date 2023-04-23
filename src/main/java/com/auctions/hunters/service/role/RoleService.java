@@ -10,7 +10,6 @@ import javax.validation.Valid;
  * Interface used for declaring the method signatures that can be performed with a {@link Role} entity.
  */
 @Validated
-@Repository
 public interface RoleService {
 
     /**

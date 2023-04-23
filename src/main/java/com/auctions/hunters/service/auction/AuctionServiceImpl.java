@@ -6,22 +6,17 @@ import com.auctions.hunters.model.Bid;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.repository.AuctionRepository;
-import com.auctions.hunters.repository.BidRepository;
 import com.auctions.hunters.service.car.CarService;
 import com.auctions.hunters.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.lang.Boolean.TRUE;
 import static java.util.List.of;
@@ -34,21 +29,17 @@ public class AuctionServiceImpl implements AuctionService {
     private final AuctionRepository auctionRepository;
     private final UserService userService;
     private final CarService carService;
-    private final BidRepository bidRepository;
 
     public AuctionServiceImpl(AuctionRepository auctionRepository,
                               UserService userService,
-                              CarService carService,
-                              BidRepository bidRepository) {
+                              CarService carService) {
         this.auctionRepository = auctionRepository;
         this.userService = userService;
         this.carService = carService;
-        this.bidRepository = bidRepository;
     }
 
-
     /**
-     * Save an auction in the database based on the provided car id and logged username.
+     * Save an {@link Auction} in the database based on the provided car id and logged username.
      *
      * @param car          the car that will be put on an auction
      * @param minimumPrice the minimum price that the seller demands for his car
@@ -74,13 +65,13 @@ public class AuctionServiceImpl implements AuctionService {
         carService.updateCarAuctionStatus(car.getId(), TRUE);
 
         auctionRepository.save(newAuction);
-        log.debug("Auction has been saved in the database.");
+        log.debug("Auction with id {} has been create.", newAuction.getId());
 
         return newAuction;
     }
 
     /**
-     * Retrieve a list with all the auctions from the database.
+     * Retrieve a list with all the {@link Auction} from the database.
      *
      * @return the auctions list if exists, empty otherwise
      */
@@ -97,64 +88,99 @@ public class AuctionServiceImpl implements AuctionService {
         return new ArrayList<>(auctionList);
     }
 
+    /**
+     * Retrieves an {@link Auction} from the database where the foreign key, car_id is equal to the specified parameter value.
+     *
+     * @param carId the ID of the car associated with the auction to retrieve from the database
+     * @return an {@link Auction} object if found in the database, or null if not found
+     */
     @Override
     public Auction getAuctionByCarId(Integer carId) {
         return auctionRepository.findByCarId(carId);
     }
 
-    public List<Bid> getAllBidsForAuction(Integer auctionId) {
+    /**
+     * Retrieves from the database a list of {@link Bid} objects for the given {@link Auction} id.
+     *
+     * @param auctionId the ID of the auction to retrieve from the database
+     * @return a list of {@link Bid} objects for the found {@link Auction} id, or an empty list if not found
+     */
+    public List<Bid> getAllBidsByAuctionId(Integer auctionId) {
         Auction auction = auctionRepository.findById(auctionId).orElse(null);
+
         if (auction != null) {
             List<Bid> bidders = auction.getBidders();
             bidders.size(); // This line will force Hibernate to fetch the lazy-loaded data
             return bidders;
         }
+
         return new ArrayList<>();
     }
 
-    public List<Auction> getAllAuctionsForBidder(Integer userId) {
-        List<Bid> bids = bidRepository.findByUserId(userId);
-        return bids.stream()
-                .map(Bid::getAuction)
-                .toList();
-    }
-
+    /**
+     * Retrieves from the database a list of {@link Auction} objects for the given {@link User} id.
+     *
+     * @param userId the ID of the user for which the auctions will be retrieved from the database
+     * @return a list of {@link Auction} objects for the found {@link User} id, or an empty list if not found
+     */
     public List<Auction> getAllAuctionsByUserId(Integer userId) {
         List<Auction> userAuctionsList = auctionRepository.findByUserId(userId);
 
-        if(userAuctionsList == null) {
+        if (userAuctionsList == null) {
             log.debug("Could not find the auctions list by user id {} ", userId);
-            throw  new ResourceNotFoundException("User", "id", userId);
+            throw new ResourceNotFoundException("User", "id", userId);
         }
 
         return userAuctionsList;
     }
 
+    /**
+     * Find a specific {@link Auction} object based on id.
+     *
+     * @param auctionId the id of the wanted {@link Auction}
+     * @return found {@link Auction}
+     */
     @Override
-    public Auction findById(Integer id) {
-        return auctionRepository.findById(id).orElseThrow(() -> {
-            log.debug("Could not find the auction by the id {} ", id);
-            return new ResourceNotFoundException("Auction", "id", id);
+    public Auction findById(Integer auctionId) {
+        return auctionRepository.findById(auctionId).orElseThrow(() -> {
+            log.debug("Could not find the auction by the auctionId {} ", auctionId);
+            return new ResourceNotFoundException("Auction", "id", auctionId);
         });
     }
 
+    /**
+     * Retrieve a limited by size list with all the ACTIVE {@link Auction} objects from the database that have the most bidders.
+     *
+     * @param limit the list limitation size
+     * @return a list of {@link Auction} objects if the bidders bid on auctions / an empty list otherwise
+     */
     public List<Auction> getTopBidAuctions(int limit) {
         return auctionRepository.findAll().stream()
+                // the auctions with the most bidders will be listed
                 .sorted(Comparator.comparing(a -> a.getBidders().size(), Comparator.reverseOrder()))
                 .filter(Auction::isActive)
                 .limit(limit)
                 .toList();
     }
 
+    /**
+     * Retrieve a list with all the {@link User} ids who bid on the {@link Auction} specified by the parameter id.
+     *
+     * @param auctionId the {@link Auction} id for which the bidders ids will be retrieved
+     * @return a list of {@link Integer} objects if the bidders bid on the specified auction id parameter / an empty list otherwise
+     */
     public List<Integer> getBidderIds(Integer auctionId) {
-        List<Bid> bids = getAllBidsForAuction(auctionId);
-        return bids.stream().map(bid -> bid.getUser().getId()).collect(Collectors.toList());
+        List<Bid> bids = getAllBidsByAuctionId(auctionId);
+        return bids.stream()
+                .map(bid -> bid.getUser().getId())
+                .toList();
     }
 
-    @NotNull
+
     public List<Float> setMinimumPriceForEachPageCar(Page<Car> carPage) {
         List<Float> auctionsMinimumPriceList = new ArrayList<>();
         List<Car> content = carPage.getContent();
+
         for (Car car : content) {
             Auction auction = getAuctionByCarId(car.getId());
 
@@ -167,5 +193,4 @@ public class AuctionServiceImpl implements AuctionService {
 
         return auctionsMinimumPriceList;
     }
-
 }

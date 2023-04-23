@@ -354,7 +354,7 @@ public class UserServiceImpl implements UserService {
                 " <p>Vă mulțumim că v-ați înscris la în aplicația noastră! Pentru a finaliza înregistrarea, trebuie să verificăm adresa dumneavoastră de email.</p>\n" +
                 " <br>\n" +
                 " <p>Apăsați pe butonul de mai jos pentru a valida emalailul.</p>\n" +
-                " <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a  target=\"_blank\" href=\"" + link + "\">Activate Now</a> </p>" +
+                " <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a  target=\"_blank\" href=\"" + link + "\">Actiează acum</a> </p>" +
                 " <p style=\"font-size: 18px; color: gray;\">\n" +
                 " Verificându-vă adresa de e-mail, veți putea accesa toate caracteristicile și desciile aplicației noastre de licitații de mașini.</p>\n" +
                 " <p style=\"font-size: 18px; margin-bottom: 20px; color: gray;\">\n" +

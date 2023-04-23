@@ -53,5 +53,16 @@ public interface CarService {
      */
     Car updateCarAuctionStatus(Integer id, boolean auctionStatus);
 
+
+    /**
+     * Retrieve a set car page with 10 cars.
+     */
     Page<Car> getCarPage(int page, Specification<Car> spec);
+
+    /**
+     * Returns all the cars that belong to the authenticated user.
+     *
+     * @return a list with all the cars that belong to the authenticated user, an empty list otherwise
+     */
+    List<Car> getAuthenticatedUserCarsList();
 }

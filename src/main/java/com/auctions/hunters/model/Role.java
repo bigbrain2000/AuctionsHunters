@@ -7,8 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 import static com.auctions.hunters.utils.DateUtils.DATE_TIME_PATTERN;

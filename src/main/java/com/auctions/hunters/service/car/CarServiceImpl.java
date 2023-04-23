@@ -1,13 +1,11 @@
 package com.auctions.hunters.service.car;
 
 import com.auctions.hunters.exceptions.*;
-import com.auctions.hunters.model.Auction;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.repository.CarRepository;
 import com.auctions.hunters.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -149,6 +147,25 @@ public class CarServiceImpl implements CarService {
     }
 
     /**
+     * Retrieve a set car page with 10 cars.
+     */
+    public Page<Car> getCarPage(int page, Specification<Car> spec) {
+        int pageSize = 10; //the number of elements in a page
+        return carRepository.findAll(spec, PageRequest.of(page, pageSize));
+    }
+
+    /**
+     * Returns all the cars that belong to the authenticated user.
+     *
+     * @return a list with all the cars that belong to the authenticated user, an empty list otherwise
+     */
+    public List<Car> getAuthenticatedUserCarsList() {
+        User user = userService.findByUsername(userService.getLoggedUsername());
+
+        return getAllCarsByUserId(user.getId());
+    }
+
+    /**
      * Remove the provided car from the user list.
      *
      * @param car the car that will be deleted
@@ -161,9 +178,14 @@ public class CarServiceImpl implements CarService {
         }
     }
 
-    @NotNull
-    public Page<Car> getCarPage(int page, Specification<Car> spec) {
-        int pageSize = 10; //the number of elements in a page
-        return carRepository.findAll(spec, PageRequest.of(page, pageSize));
+    private List<Car> getAllCarsByUserId(Integer userId) {
+        List<Car> userCarList = carRepository.findByUserId(userId);
+
+        if (userCarList == null) {
+            log.debug("Could not find the car list for user id {} ", userId);
+            throw new ResourceNotFoundException("User", "id", userId);
+        }
+
+        return userCarList;
     }
 }

@@ -5,13 +5,12 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static com.auctions.hunters.utils.DateUtils.DATE_TIME_PATTERN;
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
-import static javax.persistence.CascadeType.*;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -38,9 +37,8 @@ public class Auction {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "auction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "auction", cascade = ALL, fetch = LAZY)
     private List<Bid> bidders;
-
 
     @Column(name = "minimum_price", nullable = false)
     private float minimumPrice;
