@@ -10,6 +10,10 @@
     <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/noCarStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <script src="/js/yearFromDropDownMenu.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
 <header th:replace="/nav_bar :: nav_bar"></header>
@@ -49,21 +53,21 @@
     </div>
 </form>
 
-<div class="car-list">
+<div class="car-list" th:if="${authenticatedUserCarsListSize > 0}">
     <table class="table">
         <thead>
-        <tr th:if="${authenticatedUserCarsListSize > 0}">
+        <tr >
             <th>Producător</th>
             <th>Model</th>
-            <th>Anul fabricației</th>
-            <th>Prețul curent</th>
+            <th>An fabricați</th>
+            <th>Preț curent</th>
             <th>Șterge</th>
             <th>Afișează</th>
             <th>Status licitație</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="car, stat : ${carPage.content}">
+        <tr  th:if="${authenticatedUserCarsListSize > 0}" th:each="car, stat : ${carPage.content}">
             <div th:if="${authenticatedUserCarsListSize > 0}">
                 <td th:text="${car.producer}" style="padding-top: 20px;"></td>
                 <td th:text="${car.model}" style="padding-top: 20px;"></td>
@@ -125,29 +129,5 @@
 
 <footer th:replace="/footer :: footer"></footer>
 
-<!-- jQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-<!-- Latest compiled JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-<!--TODO: UPDATE the rest of the functions and move them in the js directory-->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const yearFromSelect = document.getElementById("yearFrom");
-        const currentYear = new Date().getFullYear();
-
-        for (let year = 1900; year <= currentYear; year++) {
-            if (year < 2000 && year % 10 !== 0) {
-                continue;
-            }
-
-            const option = document.createElement("option");
-            option.value = year;
-            option.text = year;
-            yearFromSelect.add(option);
-        }
-    });
-</script>
 </body>
 </html>

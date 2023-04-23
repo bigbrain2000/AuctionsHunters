@@ -12,68 +12,26 @@
 </head>
 
 <body>
-<header>
-    <div class="hamburger">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-    </div>
-
-    <nav class="nav-bar">
-        <ul>
-            <li>
-                <a th:href="@{/}">Acasă</a>
-            </li>
-            <li>
-                <a th:href="@{/car/add}" class="active">Inventar</a>
-                <ul>
-                    <li><a th:href="@{/cars}">Masinile mele</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="">Căutare mașini</a>
-                <ul>
-                    <li><a href="">Option 1</a></li>
-                    <li><a href="">Option 2</a></li>
-                    <li><a href="">Option 3</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="">Ghid licitare</a>
-            </li>
-        </ul>
-    </nav>
-
-    <script>
-        hamburger = document.querySelector(".hamburger");
-        hamburger.onClick = function () {
-            navBar = document.querySelector(".nav-bar");
-            navBar.classList.toggle("active");
-        }
-    </script>
-</header>
 
 <main>
-    <form th:href="@{/create/auction/car/{id}(id=${car.id})}" method="post">
-        <div class="box">
-            <div class="form">
-                <h2>Creeaza o licitatie</h2>
-
-                <div class="inputBox">
-                    <div class="inputBox">
-                        <label for="minimumPrice"></label>
-                        <input type="text" required="required" id="minimumPrice" name="minimumPrice"
-                               placeholder="Pretul minim">
-
-                        <i></i>
+    <div class="bidding-section">
+        <h2>Introduceți prețul minim pentru mașină</h2>
+        <form th:action="@{/create/auction/car/{id}(id=${car.id})}" method="post">
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="bid-controls">
+                        <button type="button" class="btn-bid-decrement">-</button>
+                        <label for="minimumPrice">
+                            <input type="number" class="form-control" id="minimumPrice" name="minimumPrice"
+                                   placeholder="Prețul minim" required>
+                        </label>
+                        <button type="button" class="btn-bid-increment">+</button>
                     </div>
-
-                    <br>
-                    <input type="submit" value="Adaugă">
                 </div>
             </div>
-        </div>
-    </form>
+            <button type="submit" class="btn-submit-bid">Creeaza licitatie</button>
+        </form>
+    </div>
 </main>
 </body>
 </html>

@@ -2,18 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Vizualizeaza masinile</title>
+    <title>Licitații în curs</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/css/carListStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/navBarStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <script src="/js/yearFromDropDownMenu.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
 <header th:replace="/nav_bar :: nav_bar"></header>
 
-<form method="GET" action="/auctions" th:if="${authenticatedUserCarsListSize > 0}">
+<form method="GET" action="/auctions">
     <div class="search-container" style="margin-top: 200px">
         <div class="input-column">
             <label>
@@ -45,44 +49,49 @@
     </div>
 </form>
 
-<div class="car-list" th:if="${authenticatedUserCarsListSize > 0}">
+<div class="car-list">
     <table class="table">
         <thead>
         <tr>
             <th>Producător</th>
             <th>Model</th>
-            <th>Anul fabricației</th>
+            <th>An fabricație</th>
             <th>Prețul curent</th>
-            <th>Afișează</th>
+            <th>Vizualizează</th>
+            <th>Timp rămas</th>
         </tr>
         </thead>
         <tbody>
         <tr th:if="${authenticatedUserCarsListSize > 0}" th:each="car, stat : ${carPage.content}">
-            <div th:if="${authenticatedUserCarsListSize > 0}">
-                <td th:text="${car.producer}" style="padding-top: 20px;"></td>
-                <td th:text="${car.model}" style="padding-top: 20px;"></td>
-                <td th:text="${car.modelYear}" style="padding-top: 20px;"></td>
-                <!-- if the car is not in an auction then it does not have a minimum price so don`t display this field -->
-                <td>
+            <td th:text="${car.producer}" style="padding-top: 20px;"></td>
+            <td th:text="${car.model}" style="padding-top: 20px;"></td>
+            <td th:text="${car.modelYear}" style="padding-top: 20px;"></td>
+            <!-- if the car is not in an auction then it does not have a minimum price so don`t display this field -->
+            <td>
                  <span th:if="${auctionsMinimumPriceList[stat.index] != 0} and ${car.isAuctioned}"
                        th:text="${auctionsMinimumPriceList[stat.index]}" style="padding-bottom: -20px;">
                  </span>
 
-                    <i th:if="${auctionsMinimumPriceList[stat.index] == 0} and ${!car.isAuctioned}"
-                       class="fas fa-question-circle fa-lg" style="padding-top: 15px"></i>
-                </td>
-                <td>
-                    <a th:href="@{/bid/car/{id}(id=${car.id})}" class="btn btn-get-car">
-                        <i class="fa fa-car"></i>
-                    </a>
-                </td>
-            </div>
+                <i th:if="${auctionsMinimumPriceList[stat.index] == 0} and ${!car.isAuctioned}"
+                   class="fas fa-question-circle fa-lg" style="padding-top: 15px"></i>
+            </td>
+            <td>
+                <a th:href="@{/bid/car/{id}(id=${car.id})}" class="btn btn-get-car">
+                    <i class="fa fa-car"></i>
+                </a>
+            </td>
+            <td th:with="auction=${recommendedAuctionsList[stat.index]}">
+                <span class="watch-icon">⌚</span>
+                <span class="timer" th:id="'timer-' + ${auction.id}"
+                      th:data-start-date="${#dates.format(auction.startTime.toInstant().toEpochMilli(), 'yyyy-MM-dd''T''HH:mm:ss')}"
+                      th:data-end-date="${#dates.format(auction.endTime.toInstant().toEpochMilli(), 'yyyy-MM-dd''T''HH:mm:ss')}"></span>
+            </td>
         </tr>
         </tbody>
     </table>
 </div>
 
-<div class="pagination" th:if="${authenticatedUserCarsListSize > 0}">
+<div class="pagination">
     <ul class="pagination" style="margin-left: 50px">
         <li th:class="${currentPage == 0}? 'disabled' : ''">
             <a th:href="@{/cars(page=0)}">First</a>
@@ -104,27 +113,27 @@
 
 <footer th:replace="/footer :: footer"></footer>
 
-<!-- jQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-<!-- Latest compiled JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const yearFromSelect = document.getElementById("yearFrom");
-        const currentYear = new Date().getFullYear();
+    function Clepsydra() {
+        $('.timer').each(function () {
+            const startDate = new Date($(this).data('start-date'));
+            const endDate = new Date($(this).data('end-date'));
+            const now = new Date();
+            const elapsedTime = Math.max(now - startDate, 0);
+            const remainingTime = Math.max(endDate - startDate - elapsedTime, 0);
 
-        for (let year = 1900; year <= currentYear; year++) {
-            if (year < 2000 && year % 10 !== 0) {
-                continue;
-            }
+            const seconds = Math.floor((remainingTime / 1000) % 60);
+            const minutes = Math.floor((remainingTime / (1000 * 60)) % 60);
+            const hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
+            const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
 
-            const option = document.createElement("option");
-            option.value = year;
-            option.text = year;
-            yearFromSelect.add(option);
-        }
+            $(this).text(`${days}z ${hours}o ${minutes}m ${seconds}s`);
+        });
+    }
+
+    $(document).ready(function () {
+        Clepsydra();
+        setInterval(Clepsydra, 1000);
     });
 </script>
 </body>
