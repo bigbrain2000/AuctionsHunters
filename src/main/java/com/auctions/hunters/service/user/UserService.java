@@ -2,10 +2,8 @@ package com.auctions.hunters.service.user;
 
 import com.auctions.hunters.exceptions.EmailAlreadyExistsException;
 import com.auctions.hunters.exceptions.InvalidEmailException;
-import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.User;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -63,22 +61,13 @@ public interface UserService {
      */
     User update(@NotNull User newUser, String username);
 
-    User updateReminder(Integer id, boolean status);
-
-
     /**
-     * Delete a user by a specific id
+     * Update the status of a {@link User} reminder emails.
      *
-     * @param id persisted user id
+     * @param id     persisted {@link User} id
+     * @param status the reminder status of a {@link User} reminder emails
      */
-    void deleteById(@NotNull Integer id);
-
-    /**
-     * Add a new car to the user car list.
-     *
-     * @param car the car that will be added to the list
-     */
-    void addCarToUserInventory(@Valid Car car);
+    void updateReminder(Integer id, boolean status);
 
     /**
      * Check if the username already exists but no exception is thrown

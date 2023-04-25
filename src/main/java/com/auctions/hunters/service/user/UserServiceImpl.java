@@ -3,7 +3,6 @@ package com.auctions.hunters.service.user;
 import com.auctions.hunters.exceptions.EmailAlreadyExistsException;
 import com.auctions.hunters.exceptions.InvalidEmailException;
 import com.auctions.hunters.exceptions.ResourceNotFoundException;
-import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.ConfirmationToken;
 import com.auctions.hunters.model.Role;
 import com.auctions.hunters.model.User;
@@ -203,45 +202,18 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-//    /**
-//     * Update the status of a car if it`s being auctioned.
-//     *
-//     * @param id            persisted car id
-//     * @param auctionStatus the status of the car. False means it`s not being auctioned and true otherwise.
-//     * @return the new updated car that`s being saved in the database
-//     */
-    public User updateReminder(Integer id, boolean status) {
-        String errorMessage = String.format("Car with the id: %s was not found!", id);
-
+    /**
+     * Update the status of a {@link User} reminder emails.
+     *
+     * @param id     persisted {@link User} id
+     * @param status the reminder status of a {@link User} reminder emails
+     */
+    public void updateReminder(Integer id, boolean status) {
+        String errorMessage = String.format("User with the id: %s was not found!", id);
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(errorMessage));
-        LOGGER.debug("Successfully retrieved car with id {}", user.getId());
-
         user.setReminder(status);
 
-        return userRepository.save(user);
-    }
-
-    @Override
-    public void deleteById(Integer id) {
-        userRepository.findById(id).orElseThrow(() -> {
-            LOGGER.debug("User could not be deleted from the database");
-            return new ResourceNotFoundException("User", "id", id);
-        });
-
-        LOGGER.debug("User successfully deleted from the database");
-        userRepository.deleteById(id);
-    }
-
-    @Override
-    public void addCarToUserInventory(Car car) {
-        String loggedUsername = getLoggedUsername();
-        User user = findByUsername(getLoggedUsername());
-
-        List<Car> carList = user.getCarList();
-        carList.add(car);
-
-        user.setCarList(carList);
-        update(user, loggedUsername);
+        userRepository.save(user);
     }
 
     @Override

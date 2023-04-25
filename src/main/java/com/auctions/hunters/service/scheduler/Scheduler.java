@@ -18,7 +18,7 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
 /**
- * Class used to remind users that their subscription has expired.
+ * Class used to remind users that their bids were overtaken. The scheduler is set to send emails every x minutes.
  */
 @Slf4j
 @Component
@@ -37,10 +37,11 @@ public class Scheduler {
         this.emailService = emailService;
     }
 
-    @Scheduled(cron = "0 * * ? * *") //every minute reminder
+    // @Scheduled(cron = "0 * * ? * *") //every minute reminder
 //    @Scheduled(cron = "*/1 * * * * *") //every second
+    @Scheduled(cron = "0/30 * * ? * *")  //every 30 second
     public void sendEmailIfSubscriptionExpired() {
-
+        log.debug("Scheduler process started");
         List<User> allUsers = userService.findAll();
 
         for (User user : allUsers) {
@@ -52,22 +53,21 @@ public class Scheduler {
                 List<Bid> userBids = bidService.findUserBidsForAuction(user, auction.getId());
                 boolean isUserLastBidder = checkIfUserLastBidWasOvertaken(auction, userBids);
 
-                if(isUserLastBidder) {
-                    userService.updateReminder(user.getId(), FALSE);
-                }
+                setTheLastBidderReminderToFalse(user, isUserLastBidder);
 
-                //if the user has overtaken bids then email him
-                if (!isUserLastBidder && !user.getReminder()) {
-                    Car car = auction.getCar();
-
-                    sendEmailIfUserBidWasOvertaken(user, car);
-
-                    userService.updateReminder(user.getId(), TRUE);
-                }
+                setTheOtherUsersReminderToTrueAndSendEmail(user, auction, isUserLastBidder);
             }
         }
+
+        log.debug("Scheduler process ended");
     }
 
+    /**
+     * If the last {@link Bid} made by the user was overtaken in a {@link Auction} then return TRUE, else return FALSE.
+     *
+     * @param auction  the {@link Auction} for which we want to verify if the user bid was the last one made
+     * @param userBids a list with all the user`s bids
+     */
     private boolean checkIfUserLastBidWasOvertaken(Auction auction, List<Bid> userBids) {
         boolean isUserLastBid = false;
 
@@ -79,6 +79,42 @@ public class Scheduler {
         return isUserLastBid;
     }
 
+    /**
+     * If the user is the last bidder in the participated auctions list and his reminder is TRUE then set his reminder
+     * to FALSE because he does not need a reminder when he is winning the {@link Auction}.
+     *
+     * @param user             the {@link User} for whom the reminder will be set to FALSE
+     * @param isUserLastBidder a flag that indicates if the {@link User} parameter is the last bidder on all his auctions
+     */
+    private void setTheLastBidderReminderToFalse(User user, boolean isUserLastBidder) {
+        if (isUserLastBidder && user.getReminder().equals(TRUE)) {
+            userService.updateReminder(user.getId(), FALSE);
+        }
+    }
+
+    /**
+     * If the user that participated in the {@link Auction} is not the last bidder then set his reminder to TRUE as he
+     * needs a reminder when he is NOT winning the {@link Auction}.
+     *
+     * @param user             the {@link User} for whom the reminder will be set to TRUE
+     * @param isUserLastBidder a flag that indicates if the {@link User} parameter is the last bidder on all his auctions
+     */
+    private void setTheOtherUsersReminderToTrueAndSendEmail(User user, Auction auction, boolean isUserLastBidder) {
+        if (!isUserLastBidder && (user.getReminder().equals(FALSE))) {
+            Car car = auction.getCar();
+
+            sendEmailIfUserBidWasOvertaken(user, car);
+
+            userService.updateReminder(user.getId(), TRUE);
+        }
+    }
+
+    /**
+     * Construct an email template and sends it to the user that bid was overtaken by other participants.
+     *
+     * @param user the {@link User} for whom the email will be sent
+     * @param car  the {@link Car} object that the {@link User} bid
+     */
     private void sendEmailIfUserBidWasOvertaken(User user, Car car) {
         String emailBodyMessage = createEmailBody(user.getUsername(), car);
         String emailSubject = String.format("Oferta dumneavoastră  pentru %s %s a fost depășită.", car.getProducer(), car.getModel());
@@ -88,15 +124,56 @@ public class Scheduler {
                 user.getUsername(), car.getProducer(), car.getModel());
     }
 
-    public String createEmailBody(String userName, Car car) {
-        return "Salut " + userName + ",\n\n" +
-                "Vrem să vă anunțăm că, din păcate, un alt participant a plasat " +
-                "o ofertă mai mare pentru mașina " + car.getProducer() + " " + car.getModel() + " de care erați interesat.\n\n" +
-                "Dacă sunteți în continuare interesat, vă încurajăm să revedeți licitația și să luați în considerare " +
-                "posibilitatea de a plasa o nouă ofertă. Nu uitați că licitația poate fi destul de dinamică, iar dacă " +
-                "o urmăriți cu atenție vă puteți crește șansele de succes.\n\n\n" +
-                "Vă dorim mult noroc în viitoarele licitații!\n\n" +
-                "Numai bine,\n" +
-                "Echipa de licitație";
+    private String createEmailBody(String userName, Car car) {
+        return """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            background-color: #f0f0f0;
+                            color: #333;
+                            margin: 0;
+                            padding: 20px;
+                        }
+
+                        .container {
+                            background-color: #ffffff;
+                            padding: 20px;
+                            border-radius: 4px;
+                        }
+
+                        h1 {
+                            font-size: 24px;
+                            margin: 0 0 10px;
+                        }
+
+                        p {
+                            font-size: 16px;
+                            line-height: 1.5;
+                            margin: 0 0 10px;
+                        }
+
+                        .footer {
+                            font-size: 14px;
+                            color: #777;
+                            margin-top: 20px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <p>Salut %s,</p>
+                        <p>Vrem să vă anunțăm că, din păcate, un alt participant a plasat o ofertă mai mare pentru mașina %s %s de care erați interesat.</p>
+                        <p>Dacă sunteți în continuare interesat, vă încurajăm să revedeți licitația și să luați în considerare posibilitatea de a plasa o nouă ofertă. Nu uitați că licitația poate fi destul de dinamică, iar dacă o urmăriți cu atenție vă puteți crește șansele de succes.</p>
+                        <p>Vă dorim mult noroc în viitoarele licitații!</p>
+                        <p>Numai bine,</p>
+                        <p>Echipa de licitație</p>
+                    </div>
+                </body>
+                </html>
+                """.formatted(userName, car.getProducer(), car.getModel());
     }
 }
