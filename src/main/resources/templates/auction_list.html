@@ -13,7 +13,7 @@
 <body>
 <header th:replace="/nav_bar :: nav_bar"></header>
 
-<form method="GET" action="/auctions" th:if="${authenticatedUserCarsListSize > 0}">
+<form method="GET" action="/auctions">
     <div class="search-container" style="margin-top: 200px">
         <div class="input-column">
             <label>
@@ -45,7 +45,7 @@
     </div>
 </form>
 
-<div class="car-list" th:if="${authenticatedUserCarsListSize > 0}">
+<div class="car-list">
     <table class="table">
         <thead>
         <tr>
@@ -57,32 +57,30 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:if="${authenticatedUserCarsListSize > 0}" th:each="car, stat : ${carPage.content}">
-            <div th:if="${authenticatedUserCarsListSize > 0}">
-                <td th:text="${car.producer}" style="padding-top: 20px;"></td>
-                <td th:text="${car.model}" style="padding-top: 20px;"></td>
-                <td th:text="${car.modelYear}" style="padding-top: 20px;"></td>
-                <!-- if the car is not in an auction then it does not have a minimum price so don`t display this field -->
-                <td>
+        <tr th:each="car, stat : ${carPage.content}">
+            <td th:text="${car.producer}" style="padding-top: 20px;"></td>
+            <td th:text="${car.model}" style="padding-top: 20px;"></td>
+            <td th:text="${car.modelYear}" style="padding-top: 20px;"></td>
+            <!-- if the car is not in an auction then it does not have a minimum price so don`t display this field -->
+            <td>
                  <span th:if="${auctionsMinimumPriceList[stat.index] != 0} and ${car.isAuctioned}"
                        th:text="${auctionsMinimumPriceList[stat.index]}" style="padding-bottom: -20px;">
                  </span>
 
-                    <i th:if="${auctionsMinimumPriceList[stat.index] == 0} and ${!car.isAuctioned}"
-                       class="fas fa-question-circle fa-lg" style="padding-top: 15px"></i>
-                </td>
-                <td>
-                    <a th:href="@{/bid/car/{id}(id=${car.id})}" class="btn btn-get-car">
-                        <i class="fa fa-car"></i>
-                    </a>
-                </td>
-            </div>
+                <i th:if="${auctionsMinimumPriceList[stat.index] == 0} and ${!car.isAuctioned}"
+                   class="fas fa-question-circle fa-lg" style="padding-top: 15px"></i>
+            </td>
+            <td>
+                <a th:href="@{/bid/car/{id}(id=${car.id})}" class="btn btn-get-car">
+                    <i class="fa fa-car"></i>
+                </a>
+            </td>
         </tr>
         </tbody>
     </table>
 </div>
 
-<div class="pagination" th:if="${authenticatedUserCarsListSize > 0}">
+<div class="pagination">
     <ul class="pagination" style="margin-left: 50px">
         <li th:class="${currentPage == 0}? 'disabled' : ''">
             <a th:href="@{/cars(page=0)}">First</a>

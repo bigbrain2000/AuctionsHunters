@@ -26,13 +26,13 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @Async
-    public void sendEmail(String to, String body) {
+    public void sendEmail(String to, String subject, String body) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
             helper.setText(body, true);
             helper.setTo(to);
-            helper.setSubject("Confirm your registration email");
+            helper.setSubject(subject);
             helper.setFrom("auctionshunters@gmail.com");
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {

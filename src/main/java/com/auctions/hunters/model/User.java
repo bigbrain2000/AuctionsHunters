@@ -70,6 +70,9 @@ public class User {
     @Builder.Default
     private Boolean enabled = false;
 
+    @Builder.Default
+    private Boolean reminder = false;
+
     public User(String username,
                 String password,
                 String email,

@@ -4,10 +4,12 @@ import com.auctions.hunters.model.Auction;
 import com.auctions.hunters.model.Bid;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.repository.BidRepository;
-import com.auctions.hunters.service.ml.RecommendationServiceImpl;
+import com.auctions.hunters.service.auction.AuctionService;
 import com.auctions.hunters.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -15,11 +17,14 @@ public class BidServiceImpl implements BidService {
 
     private final BidRepository bidRepository;
     private final UserService userService;
+    private final AuctionService auctionService;
 
     public BidServiceImpl(BidRepository bidRepository,
-                          UserService userService) {
+                          UserService userService,
+                          AuctionService auctionService) {
         this.bidRepository = bidRepository;
         this.userService = userService;
+        this.auctionService = auctionService;
     }
 
     @Override
@@ -34,6 +39,22 @@ public class BidServiceImpl implements BidService {
                 .user(user)
                 .build();
 
+        auctionService.updateAuctionMinimumPrice(auction.getId(), amount);
         return bidRepository.save(bid);
+    }
+
+    @Override
+    public List<Auction> findAuctionsByUser(User user) {
+        return bidRepository.findAuctionsByUser(user);
+    }
+
+    @Override
+    public List<Bid> findUserBidsForAuction(User user, int auctionId) {
+        return bidRepository.findUserBidsForAuction(user, auctionId);
+    }
+
+    @Override
+    public List<Bid> findAllBidsByUser(User user) {
+        return bidRepository.findByUserId(user.getId());
     }
 }

@@ -119,7 +119,7 @@ public class CarController {
                 modelAtr1.addAttribute("currentPage", page1);
                 modelAtr1.addAttribute("pageNumbers", pageNumbers);
                 modelAtr1.addAttribute("authenticatedUserCarsListSize", authenticatedUserCarsList.size());
-                modelAtr1.addAttribute("auctionsMinimumPriceList", auctionsMinimumPriceList);
+                modelAtr1.addAttribute("auctionsMinimumPriceList", auctionsMinimumPriceList); //TODO: schimbat numele modelului in current
                 modelAtr1.addAttribute("recommendedAuctionsList", recommendedAuctionsList);
             }
 

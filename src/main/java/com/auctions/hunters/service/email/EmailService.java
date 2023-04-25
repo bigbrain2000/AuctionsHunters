@@ -10,8 +10,9 @@ public interface EmailService {
     /**
      * Method used for sending an email.
      *
-     * @param to   - addressee
-     * @param body - the email we want to send
+     * @param to      addressee
+     * @param subject the email subject
+     * @param body-   the email we want to send
      */
-    void sendEmail(@NotBlank String to, @NotBlank String body);
+    void sendEmail(@NotBlank String to, @NotBlank String subject, @NotBlank String body);
 }

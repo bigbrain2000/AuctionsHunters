@@ -30,7 +30,7 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
     Auction findByCarId(@Param("carId") Integer carId);
 
     /**
-     * Retrieved an {@link Auction} from the database where the foreign key, user_id is equal to the parameter value.
+     * Retrieved a list of {@link Auction} from the database where the foreign key, user_id is equal to the parameter value.
      */
     @Transactional
     List<Auction> findByUserId(Integer userId);

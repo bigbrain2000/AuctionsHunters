@@ -1,5 +1,6 @@
 package com.auctions.hunters.repository;
 
+import com.auctions.hunters.model.Auction;
 import com.auctions.hunters.model.Car;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,7 +32,7 @@ public interface CarRepository extends JpaRepository<Car, Integer>, JpaSpecifica
     Optional<Car> findCarByVin(@Param("vin") String vin);
 
     /**
-     * Retrieved an {@link Car} from the database where the foreign key, user_id is equal to the parameter value.
+     * Retrieved a list of {@link Car} objects from the database where the foreign key, user_id is equal to the parameter value.
      */
     @Transactional
     List<Car> findByUserId(Integer userId);

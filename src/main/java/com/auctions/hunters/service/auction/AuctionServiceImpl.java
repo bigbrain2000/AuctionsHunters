@@ -178,19 +178,38 @@ public class AuctionServiceImpl implements AuctionService {
 
 
     public List<Float> setMinimumPriceForEachPageCar(Page<Car> carPage) {
-        List<Float> auctionsMinimumPriceList = new ArrayList<>();
+        List<Float> auctionsCurrentPriceList = new ArrayList<>();
         List<Car> content = carPage.getContent();
 
         for (Car car : content) {
             Auction auction = getAuctionByCarId(car.getId());
 
             if (auction != null) {
-                auctionsMinimumPriceList.add(auction.getMinimumPrice());
+                auctionsCurrentPriceList.add(auction.getCurrentPrice());
             } else {
-                auctionsMinimumPriceList.add(0f);
+                auctionsCurrentPriceList.add(0f);
             }
         }
 
-        return auctionsMinimumPriceList;
+        return auctionsCurrentPriceList;
+    }
+
+    /**
+     * Update the minimuum price of an {@link Auction} that`s live.
+     *
+     * @param id           persisted {@link Auction} id
+     * @param currentPrice the new price of the {@link Auction}
+     * @return the new updated {@link Auction} that`s being saved in the database
+     */
+    public Auction updateAuctionMinimumPrice(Integer id, float currentPrice) {
+        String errorMessage = String.format("Auction with the id: %s was not found!", id);
+
+        Auction auction = auctionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(errorMessage));
+        log.debug("Successfully retrieved auction with id {}", auction.getId());
+
+        auction.setCurrentPrice(currentPrice);
+
+        // Save the updated car back to the database
+        return auctionRepository.save(auction);
     }
 }

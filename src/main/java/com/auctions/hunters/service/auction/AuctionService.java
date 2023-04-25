@@ -69,5 +69,8 @@ public interface AuctionService {
     List<Auction> getTopBidAuctions(int limit);
 
     List<Float> setMinimumPriceForEachPageCar(Page<Car> carPage);
+
+
+    Auction updateAuctionMinimumPrice(Integer id, float currentPrice);
 }
 

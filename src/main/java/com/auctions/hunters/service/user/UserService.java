@@ -63,6 +63,9 @@ public interface UserService {
      */
     User update(@NotNull User newUser, String username);
 
+    User updateReminder(Integer id, boolean status);
+
+
     /**
      * Delete a user by a specific id
      *

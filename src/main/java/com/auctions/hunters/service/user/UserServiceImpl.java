@@ -197,8 +197,27 @@ public class UserServiceImpl implements UserService {
         user.setPhoneNumber(newUser.getPhoneNumber());
         user.setLocked(newUser.getLocked());
         user.setEnabled(newUser.getEnabled());
+        user.setReminder(newUser.getReminder());
 
         LOGGER.debug("User successfully updated in the database");
+        return userRepository.save(user);
+    }
+
+//    /**
+//     * Update the status of a car if it`s being auctioned.
+//     *
+//     * @param id            persisted car id
+//     * @param auctionStatus the status of the car. False means it`s not being auctioned and true otherwise.
+//     * @return the new updated car that`s being saved in the database
+//     */
+    public User updateReminder(Integer id, boolean status) {
+        String errorMessage = String.format("Car with the id: %s was not found!", id);
+
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(errorMessage));
+        LOGGER.debug("Successfully retrieved car with id {}", user.getId());
+
+        user.setReminder(status);
+
         return userRepository.save(user);
     }
 
@@ -317,8 +336,7 @@ public class UserServiceImpl implements UserService {
 
         String link = "http://localhost:8080/confirm?token=" + token; //url for validating user account
 
-        emailService.sendEmail(newUser.getEmail(), buildEmail(newUser.getUsername(), link));
-        LOGGER.debug("Email for confirmation token was sent.");
+        sendRegistrationEmail(newUser, link);
 
         return token;
     }
@@ -343,6 +361,13 @@ public class UserServiceImpl implements UserService {
             unlockUser(confirmationToken.getUser().getEmail());
             LOGGER.debug("User enabled his account.");
         }
+    }
+
+    private void sendRegistrationEmail(User newUser, String link) {
+        String emailSubject = "Bine ați venit la Vânătorii de licitații: Verificați adresa dvs. de e-mail pentru a începe";
+        emailService.sendEmail(newUser.getEmail(), emailSubject, buildEmail(newUser.getUsername(), link));
+
+        LOGGER.debug("Email for confirmation token was sent.");
     }
 
     @Contract(pure = true)

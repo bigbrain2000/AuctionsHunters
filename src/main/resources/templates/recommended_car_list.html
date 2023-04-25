@@ -62,7 +62,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:if="${authenticatedUserCarsListSize > 0}" th:each="car, stat : ${carPage.content}">
+        <tr th:each="car, stat : ${carPage.content}">
             <td th:text="${car.producer}" style="padding-top: 20px;"></td>
             <td th:text="${car.model}" style="padding-top: 20px;"></td>
             <td th:text="${car.modelYear}" style="padding-top: 20px;"></td>

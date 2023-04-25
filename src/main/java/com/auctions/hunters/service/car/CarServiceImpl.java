@@ -1,6 +1,7 @@
 package com.auctions.hunters.service.car;
 
 import com.auctions.hunters.exceptions.*;
+import com.auctions.hunters.model.Auction;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.repository.CarRepository;
