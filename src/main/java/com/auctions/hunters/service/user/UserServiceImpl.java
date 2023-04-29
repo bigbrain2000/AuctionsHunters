@@ -28,6 +28,7 @@ import java.util.*;
 
 import static com.auctions.hunters.utils.DateUtils.DATE_TIME_PATTERN;
 import static com.auctions.hunters.utils.DateUtils.getDateTime;
+import static java.lang.Boolean.FALSE;
 import static java.util.List.of;
 
 /**
@@ -37,10 +38,10 @@ import static java.util.List.of;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    final PasswordEncoder passwordEncoder;
-    final RoleService roleService;
-    final ConfirmationTokenService confirmationTokenService;
-    final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
+    private final ConfirmationTokenService confirmationTokenService;
+    private final EmailService emailService;
 
     private static final OffsetDateTime NOW = getDateTime();
 
@@ -172,6 +173,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User save(User user) {
         user.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(user.getPassword()));
+        user.setReminder(false); //by default a user reminder to receive emails for an auction is FALSE
         LOGGER.debug("User {} saved in the database.", user);
         return userRepository.save(user);
     }
@@ -302,7 +304,8 @@ public class UserServiceImpl implements UserService {
                         newUser.getEmail(),
                         newUser.getCityAddress(),
                         newUser.getPhoneNumber(),
-                        newUser.getRole()
+                        newUser.getRole(),
+                        FALSE
                 )
         );
 

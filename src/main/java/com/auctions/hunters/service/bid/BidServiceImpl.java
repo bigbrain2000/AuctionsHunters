@@ -39,7 +39,7 @@ public class BidServiceImpl implements BidService {
                 .user(user)
                 .build();
 
-        auctionService.updateAuctionMinimumPrice(auction.getId(), amount);
+        auctionService.updateAuctionCurrentPrice(auction.getId(), amount, user.getId());
         return bidRepository.save(bid);
     }
 

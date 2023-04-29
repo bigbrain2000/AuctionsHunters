@@ -36,4 +36,7 @@ public interface CarRepository extends JpaRepository<Car, Integer>, JpaSpecifica
      */
     @Transactional
     List<Car> findByUserId(Integer userId);
+
+
+    List<Car> findAllByUserIdIn(List<Integer> userIds);
 }

@@ -92,7 +92,7 @@ public class CarController {
             String loggedUsername = userService.getLoggedUsername();
             User user = userService.findByUsername(loggedUsername);
 
-            List<Auction> recommendedAuctionsList = recommendationService.getUnfinishedAuctions(user);
+            List<Auction> recommendedAuctionsList = recommendationService.getUnfinishedRecommendedAuctions(user);
 
             SearchCriteria searchCriteria = new SearchCriteria();
             Specification<Car> carSpecification = searchCriteria.buildSpec(producer1, model1, minYear1, maxYear1, minPrice1, maxPrice1);
@@ -113,7 +113,7 @@ public class CarController {
                 List<Car> authenticatedUserCarsList = carService.getAuthenticatedUserCarsList();
 
                 //set the minimum price for each car
-                List<Float> auctionsMinimumPriceList = auctionService.setMinimumPriceForEachPageCar(carPage);
+                List<Float> auctionsMinimumPriceList = auctionService.setCurrentPriceForEachCarPage(carPage);
 
                 modelAtr1.addAttribute("carPage", carPage);
                 modelAtr1.addAttribute("currentPage", page1);

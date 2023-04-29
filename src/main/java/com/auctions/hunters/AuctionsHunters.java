@@ -12,13 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import reactor.core.publisher.Mono;
 
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 import static com.auctions.hunters.utils.DateUtils.getDateTime;
+import static java.lang.Boolean.FALSE;
 
 @Slf4j
 @SpringBootApplication
@@ -68,11 +68,10 @@ public class AuctionsHunters implements CommandLineRunner {
             Set<Role> set = new HashSet<>();
             set.add(role);
 
-            User admin = new User(adminData, adminData, adminEmail, adminCityAddress, adminPhoneNumber, set);
+            User admin = new User(adminData, adminData, adminEmail, adminCityAddress, adminPhoneNumber, set, FALSE);
 
             admin.setLocked(false);
             admin.setEnabled(true);
-            admin.setReminder(false);
 
             userService.save(admin);
 

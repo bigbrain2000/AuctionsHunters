@@ -7,6 +7,7 @@ import com.auctions.hunters.model.User;
 import com.auctions.hunters.service.auction.AuctionService;
 import com.auctions.hunters.service.car.CarService;
 import com.auctions.hunters.service.car.SearchCriteria;
+import com.auctions.hunters.service.finishedauction.FinishedAuctionService;
 import com.auctions.hunters.service.ml.RecommendationServiceImpl;
 import com.auctions.hunters.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -30,15 +32,18 @@ public class AuctionController {
     private final AuctionService auctionService;
     private final UserService userService;
     private final RecommendationServiceImpl recommendationService;
+    private final FinishedAuctionService finishedAuctionService;
 
     public AuctionController(CarService carService,
                              AuctionService auctionService,
                              UserService userService,
-                             RecommendationServiceImpl recommendationService) {
+                             RecommendationServiceImpl recommendationService,
+                             FinishedAuctionService finishedAuctionService) {
         this.carService = carService;
         this.auctionService = auctionService;
         this.userService = userService;
         this.recommendationService = recommendationService;
+        this.finishedAuctionService = finishedAuctionService;
     }
 
     @GetMapping("/create/auction/car/{id}")
@@ -63,6 +68,8 @@ public class AuctionController {
 
         return "redirect:/";
     }
+
+    private final List<Auction> finishedAuctions = new ArrayList<>();
 
     @GetMapping("/auctions")
     public String getAuctions(
@@ -98,7 +105,7 @@ public class AuctionController {
                 List<Car> authenticatedUserCarsList = carService.getAuthenticatedUserCarsList();
 
                 //set the minimum price for each car
-                List<Float> auctionsMinimumPriceList = auctionService.setMinimumPriceForEachPageCar(carPage);
+                List<Float> auctionsMinimumPriceList = auctionService.setCurrentPriceForEachCarPage(carPage);
 
                 modelAtr1.addAttribute("carPage", carPage);
                 modelAtr1.addAttribute("currentPage", page1);
@@ -130,7 +137,7 @@ public class AuctionController {
             User user = userService.findByUsername(loggedUsername);
 
             List<Car> recommendedAuctionedCarsList = recommendationService.getRecommendedAuctionedCarsForUser(user);
-            List<Auction> recommendedAuctionsList = recommendationService.getUnfinishedAuctions(user);
+            List<Auction> recommendedAuctionsList = recommendationService.getUnfinishedRecommendedAuctions(user);
 
             SearchCriteria searchCriteria = new SearchCriteria();
             Specification<Car> carSpecification = searchCriteria.buildSpec(producer1, model1, minYear1, maxYear1, minPrice1, maxPrice1);
@@ -140,6 +147,7 @@ public class AuctionController {
             carSpecification = carSpecification.and((root, query, criteriaBuilder) -> root.in(recommendedAuctionedCarsList));
 
             Page<Car> carPage = carService.getCarPage(page1, carSpecification);
+            finishedAuctionService.manageFinishedAuctions(user, carPage);
             int totalPages = carPage.getTotalPages();
 
             if (totalPages > 0) {
@@ -148,7 +156,7 @@ public class AuctionController {
                         .toList();
 
                 List<Car> authenticatedUserCarsList = carService.getAuthenticatedUserCarsList();
-                List<Float> auctionsMinimumPriceList = auctionService.setMinimumPriceForEachPageCar(carPage);
+                List<Float> auctionsMinimumPriceList = auctionService.setCurrentPriceForEachCarPage(carPage);
 
                 modelAtr1.addAttribute("carPage", carPage);
                 modelAtr1.addAttribute("currentPage", page1);
@@ -156,6 +164,7 @@ public class AuctionController {
                 modelAtr1.addAttribute("auctionsMinimumPriceList", auctionsMinimumPriceList);
                 modelAtr1.addAttribute("authenticatedUserCarsListSize", authenticatedUserCarsList.size());
                 modelAtr1.addAttribute("recommendedAuctionsList", recommendedAuctionsList);
+                modelAtr1.addAttribute("recommendedAuctionsListSize", recommendedAuctionsList.size());
             }
 
             return "/recommended_car_list";

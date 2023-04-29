@@ -10,105 +10,111 @@
     <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"
+            integrity="sha512-gHT5OX5/XkAm5/8/5W1VDvJ/nmlC6U2+6U0J6UHKn6PpLzg0/sHWqJ4z4nnMCBL7pEaYYfYlq3nG9kfTq7VSw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/js/yearFromDropDownMenu.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
+
 <header th:replace="/nav_bar :: nav_bar"></header>
 
-<form method="GET" action="/auctions">
-    <div class="search-container" style="margin-top: 200px">
-        <div class="input-column">
-            <label>
-                <input type="text" name="producer" placeholder="Producător">
-            </label>
-            <label>
-                <input type="text" name="model" placeholder="Model">
-            </label>
-        </div>
-        <div class="input-column">
-            <label for="yearFrom"></label>
-            <select id="yearFrom" class="year-dropdown">
-                <option value="" disabled selected>Anul fabricației de la</option>
-            </select>
+<div th:if="${recommendedAuctionsListSize > 0}">
+    <form method="GET" action="/auctions">
+        <div class="search-container" style="margin-top: 200px">
+            <div class="input-column">
+                <label>
+                    <input type="text" name="producer" placeholder="Producător">
+                </label>
+                <label>
+                    <input type="text" name="model" placeholder="Model">
+                </label>
+            </div>
+            <div class="input-column">
+                <label for="yearFrom"></label>
+                <select id="yearFrom" class="year-dropdown">
+                    <option value="" disabled selected>Anul fabricației de la</option>
+                </select>
 
-            <label>
-                <input type="text" name="yearTo" placeholder="Anul fabricației până la">
-            </label>
+                <label>
+                    <input type="text" name="yearTo" placeholder="Anul fabricației până la">
+                </label>
+            </div>
+            <div class="input-column">
+                <label>
+                    <input type="text" name="priceFrom" placeholder="Prețul de la">
+                </label>
+                <label>
+                    <input type="text" name="priceTo" placeholder="Prețul până la">
+                </label>
+            </div>
+            <button class="search-button">Search</button>
         </div>
-        <div class="input-column">
-            <label>
-                <input type="text" name="priceFrom" placeholder="Prețul de la">
-            </label>
-            <label>
-                <input type="text" name="priceTo" placeholder="Prețul până la">
-            </label>
-        </div>
-        <button class="search-button">Search</button>
-    </div>
-</form>
+    </form>
 
-<div class="car-list">
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Producător</th>
-            <th>Model</th>
-            <th>An fabricație</th>
-            <th>Prețul curent</th>
-            <th>Vizualizează</th>
-            <th>Timp rămas</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="car, stat : ${carPage.content}">
-            <td th:text="${car.producer}" style="padding-top: 20px;"></td>
-            <td th:text="${car.model}" style="padding-top: 20px;"></td>
-            <td th:text="${car.modelYear}" style="padding-top: 20px;"></td>
-            <!-- if the car is not in an auction then it does not have a minimum price so don`t display this field -->
-            <td>
+    <div class="car-list">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Producător</th>
+                <th>Model</th>
+                <th>An fabricație</th>
+                <th>Prețul curent</th>
+                <th>Vizualizează</th>
+                <th>Timp rămas</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="car, stat : ${carPage.content}">
+                <td th:text="${car.producer}" style="padding-top: 20px;"></td>
+                <td th:text="${car.model}" style="padding-top: 20px;"></td>
+                <td th:text="${car.modelYear}" style="padding-top: 20px;"></td>
+                <!-- if the car is not in an auction then it does not have a minimum price so don`t display this field -->
+                <td>
                  <span th:if="${auctionsMinimumPriceList[stat.index] != 0} and ${car.isAuctioned}"
                        th:text="${auctionsMinimumPriceList[stat.index]}" style="padding-bottom: -20px;">
                  </span>
 
-                <i th:if="${auctionsMinimumPriceList[stat.index] == 0} and ${!car.isAuctioned}"
-                   class="fas fa-question-circle fa-lg" style="padding-top: 15px"></i>
-            </td>
-            <td>
-                <a th:href="@{/bid/car/{id}(id=${car.id})}" class="btn btn-get-car">
-                    <i class="fa fa-car"></i>
-                </a>
-            </td>
-            <td th:with="auction=${recommendedAuctionsList[stat.index]}">
-                <span class="watch-icon">⌚</span>
-                <span class="timer" th:id="'timer-' + ${auction.id}"
-                      th:data-start-date="${#dates.format(auction.startTime.toInstant().toEpochMilli(), 'yyyy-MM-dd''T''HH:mm:ss')}"
-                      th:data-end-date="${#dates.format(auction.endTime.toInstant().toEpochMilli(), 'yyyy-MM-dd''T''HH:mm:ss')}"></span>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+                    <i th:if="${auctionsMinimumPriceList[stat.index] == 0} and ${!car.isAuctioned}"
+                       class="fas fa-question-circle fa-lg" style="padding-top: 15px"></i>
+                </td>
+                <td>
+                    <a th:href="@{/bid/car/{id}(id=${car.id})}" class="btn btn-get-car">
+                        <i class="fa fa-car"></i>
+                    </a>
+                </td>
+                <td th:with="auction=${recommendedAuctionsList[stat.index]}">
+                    <span class="timer" th:id="'timer-' + ${auction.id}"
+                          th:data-start-date="${#dates.format(auction.startTime.toInstant().toEpochMilli(), 'yyyy-MM-dd''T''HH:mm:ss')}"
+                          th:data-end-date="${#dates.format(auction.endTime.toInstant().toEpochMilli(), 'yyyy-MM-dd''T''HH:mm:ss')}"></span>
+                    <span class="watch-icon"><i class="fas fa-clock"></i></span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
-<div class="pagination">
-    <ul class="pagination" style="margin-left: 50px">
-        <li th:class="${currentPage == 0}? 'disabled' : ''">
-            <a th:href="@{/cars(page=0)}">First</a>
-        </li>
-        <li th:class="${currentPage == 0}? 'disabled' : ''">
-            <a th:href="@{/cars(page=${currentPage - 1})}">Previous</a>
-        </li>
-        <li th:each="pageNumber : ${pageNumbers}" th:class="${currentPage == pageNumber}? 'active' : ''">
-            <a th:href="@{/cars(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
-        </li>
-        <li th:class="${currentPage == pageNumbers.size() - 1}? 'disabled' : ''">
-            <a th:href="@{/cars(page=${currentPage + 1})}">Next</a>
-        </li>
-        <li th:class="${currentPage == pageNumbers.size() - 1}? 'disabled' : ''">
-            <a th:href="@{/cars(page=${pageNumbers.size() - 1})}">Last</a>
-        </li>
-    </ul>
+    <div class="pagination">
+        <ul class="pagination" style="margin-left: 50px">
+            <li th:class="${currentPage == 0}? 'disabled' : ''">
+                <a th:href="@{/cars(page=0)}">First</a>
+            </li>
+            <li th:class="${currentPage == 0}? 'disabled' : ''">
+                <a th:href="@{/cars(page=${currentPage - 1})}">Previous</a>
+            </li>
+            <li th:each="pageNumber : ${pageNumbers}" th:class="${currentPage == pageNumber}? 'active' : ''">
+                <a th:href="@{/cars(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+            </li>
+            <li th:class="${currentPage == pageNumbers.size() - 1}? 'disabled' : ''">
+                <a th:href="@{/cars(page=${currentPage + 1})}">Next</a>
+            </li>
+            <li th:class="${currentPage == pageNumbers.size() - 1}? 'disabled' : ''">
+                <a th:href="@{/cars(page=${pageNumbers.size() - 1})}">Last</a>
+            </li>
+        </ul>
+    </div>
 </div>
 
 <footer th:replace="/footer :: footer"></footer>
@@ -125,9 +131,8 @@
             const seconds = Math.floor((remainingTime / 1000) % 60);
             const minutes = Math.floor((remainingTime / (1000 * 60)) % 60);
             const hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
-            const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
 
-            $(this).text(`${days}z ${hours}o ${minutes}m ${seconds}s`);
+            $(this).text(`${hours}:${minutes}:${seconds}`);
         });
     }
 

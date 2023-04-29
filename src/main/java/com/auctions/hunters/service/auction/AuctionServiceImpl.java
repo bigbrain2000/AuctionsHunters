@@ -10,14 +10,14 @@ import com.auctions.hunters.service.car.CarService;
 import com.auctions.hunters.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
+import static com.auctions.hunters.utils.DateUtils.getDateTime;
 import static java.lang.Boolean.TRUE;
 import static java.util.List.of;
 
@@ -54,7 +54,7 @@ public class AuctionServiceImpl implements AuctionService {
                 .car(car)
                 .user(user)
                 .startTime(now)
-                .endTime(now.plusDays(1))  //end date is current date + 1
+                .endTime(now.plusMinutes(7))  //end date is current date + 1
                 .minimumPrice(minimumPrice)
                 .startingPrice(minimumPrice)
                 .currentPrice(minimumPrice)
@@ -176,12 +176,11 @@ public class AuctionServiceImpl implements AuctionService {
                 .toList();
     }
 
-
-    public List<Float> setMinimumPriceForEachPageCar(Page<Car> carPage) {
+    public List<Float> setCurrentPriceForEachCarPage(Page<Car> carPage) {
         List<Float> auctionsCurrentPriceList = new ArrayList<>();
-        List<Car> content = carPage.getContent();
+        List<Car> carList = carPage.getContent();
 
-        for (Car car : content) {
+        for (Car car : carList) {
             Auction auction = getAuctionByCarId(car.getId());
 
             if (auction != null) {
@@ -195,21 +194,84 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     /**
-     * Update the minimuum price of an {@link Auction} that`s live.
+     * Retrieves a list of {@link Auction} objects, representing the finished auctions from the car pages.
      *
-     * @param id           persisted {@link Auction} id
+     * @param carPage the car pages displayed to the users
+     * @param user the user for whom the {@link Auction} objects are retrieved
+     * @return
+     */
+    public List<Auction> retrieveAllFinishedAuctionsFromACarPage(Page<Car> carPage, User user) {
+        //get all the auctions from a page of cars
+        List<Auction> auctionList = carPage.getContent().stream()
+                .map(car -> getAuctionByCarId(car.getId()))
+                .filter(Objects::nonNull)
+                .toList();
+
+        if (auctionList.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        //filter the auctions list to see if they are finished
+        OffsetDateTime now = getDateTime();
+        List<Auction> userAuctionList = auctionList.stream()
+                .filter(auction -> now.getMinute() > auction.getEndTime().getMinute())
+                .filter(auction -> auction.getBuyerId() != null && auction.getBuyerId().equals(user.getId()))
+                .distinct()
+                .toList();
+
+        String logMessage = String.format("Retrieved %d finished won auctions for user %s", userAuctionList.size(), user.getUsername());
+        log.info(logMessage);
+
+        return userAuctionList;
+    }
+
+    /**
+     * Update the current price of an {@link Auction} that`s live.
+     *
+     * @param auctionId    persisted {@link Auction} auctionId
      * @param currentPrice the new price of the {@link Auction}
      * @return the new updated {@link Auction} that`s being saved in the database
      */
-    public Auction updateAuctionMinimumPrice(Integer id, float currentPrice) {
-        String errorMessage = String.format("Auction with the id: %s was not found!", id);
+    public Auction updateAuctionCurrentPrice(Integer auctionId, float currentPrice, Integer buyerId) {
+        String errorMessage = String.format("Auction with the auctionId: %s was not found!", auctionId);
 
-        Auction auction = auctionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(errorMessage));
-        log.debug("Successfully retrieved auction with id {}", auction.getId());
+        Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new IllegalArgumentException(errorMessage));
+        log.debug("Successfully retrieved auction with auctionId {}", auction.getId());
 
         auction.setCurrentPrice(currentPrice);
+        auction.setBuyerId(buyerId);
 
         // Save the updated car back to the database
         return auctionRepository.save(auction);
+    }
+
+    public void deleteFinishedAuctionsFromLiveAuctions(List<Auction> auctions, Page<Car> carPage) {
+        List<Car> carList = auctions.stream()
+                .map(Auction::getCar)
+                .toList();
+
+        List<Integer> carIdsList = carList.stream()
+                .map(Car::getId)
+                .toList();
+
+        if (!carList.isEmpty()) {
+            //creates a new list from so that the delete operations works
+            //carPage.getContent() returns an unmodifiableList
+            List<Car> pageContent = new ArrayList<>(carPage.getContent());
+
+            //remove the wanted cars from the page content
+            pageContent.removeAll(carList);
+
+            //update the page
+            Page<Car> updatedPage = new PageImpl<>(pageContent, carPage.getPageable(), carPage.getTotalElements());
+            carPage.getContent().addAll(updatedPage.getContent());
+
+            //remove all the finished auctions from the live auctions database
+            auctionRepository.deleteAll(auctions);
+
+            log.debug(String.format("%s cars with IDs %s were deleted from the live auctions.", carList.size(), carIdsList));
+        }
+
+        log.debug("No cars were found to be processed as the list of finished auctions is empty.");
     }
 }

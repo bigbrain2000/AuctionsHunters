@@ -26,5 +26,5 @@ public interface RecommendationService {
      * @param user the user for which the auctions will be returned
      * @return a list with {@link Auction} objects
      */
-    List<Auction> getUnfinishedAuctions(User user);
+    List<Auction> getUnfinishedRecommendedAuctions(User user);
 }

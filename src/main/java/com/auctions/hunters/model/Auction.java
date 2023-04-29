@@ -16,7 +16,7 @@ import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name = "auction")
+@Table(name = "live_auction")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -36,6 +36,9 @@ public class Auction {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Column(name = "buyer_id")
+    private Integer buyerId;
 
     @OneToMany(mappedBy = "auction", cascade = ALL, fetch = LAZY)
     private List<Bid> bidders;

@@ -78,7 +78,8 @@ public class User {
                 String email,
                 String cityAddress,
                 String phoneNumber,
-                Set<Role> role) {
+                Set<Role> role,
+                Boolean reminder) {
 
         this.username = username;
         this.password = password;
@@ -86,6 +87,7 @@ public class User {
         this.cityAddress = cityAddress;
         this.phoneNumber = phoneNumber;
         this.role = role;
+        this.reminder = reminder;
     }
 }
 

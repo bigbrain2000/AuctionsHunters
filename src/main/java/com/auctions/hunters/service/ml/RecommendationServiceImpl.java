@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -44,9 +45,10 @@ public class RecommendationServiceImpl implements RecommendationService {
      * @return a list with {@link Auction} objects
      */
     @Override
-    public List<Auction> getUnfinishedAuctions(User user) {
+    public List<Auction> getUnfinishedRecommendedAuctions(User user) {
         return getRecommendations(user.getId()).stream()
-                .filter(auction -> auction.getEndTime().isAfter(auction.getStartTime()))
+                .filter(auction -> auction.getStartTime().toLocalDateTime().isBefore(LocalDateTime.now()))
+                .filter(auction -> auction.getEndTime().toLocalDateTime().isAfter(LocalDateTime.now()))
                 .distinct()
                 .toList();
     }
