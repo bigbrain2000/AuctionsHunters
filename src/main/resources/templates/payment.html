@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Insert title here</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/navBarStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/paymentStyle.css">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<header th:replace="/nav_bar :: nav_bar"></header>
+
+<main>
+    <div class="container payment-form">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="payment-header">
+                    <h3>Payment</h3>
+                    <div class="icon-container">
+                        <i class="fa fa-cc-visa" style="color:navy;"></i>
+                        <i class="fa fa-cc-amex" style="color:blue;"></i>
+                        <i class="fa fa-cc-mastercard" style="color:red;"></i>
+                        <i class="fa fa-cc-discover" style="color:orange;"></i>
+                    </div>
+                </div>
+                <form method="post" action="/pay">
+                    <div class="form-group">
+                        <label for="totalAmount">Total</label>
+                        <input type="text" class="form-control" id="totalAmount" name="totalAmount" value="10">
+                    </div>
+
+                    <input type="submit" value="Continue to checkout" class="btn btn-success">
+                </form>
+            </div>
+
+            <div class="col-md-4" style="margin-top: 200px">
+                <div class="cart">
+                    <h4>Cart <span class="price" style="color:black"><i class="fa fa-shopping-cart"></i> <b>4</b></span>
+                    </h4>
+                    <p><a href="#">Product 1</a> <span class="price">$1</span></p>
+                    <p><a href="#">Product 2</a> <span class="price">$4</span></p>
+                    <p><a href="#">Product 3</a> <span class="price">$3</span></p>
+                    <p><a href="#">Product 4</a> <span class="price">$2</span></p>
+                    <hr>
+                    <p>Total <span class="price" style="color:black"><b>$10</b></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="/footer :: footer"></footer>
+
+</body>
+</html>
+

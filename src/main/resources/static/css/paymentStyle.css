@@ -1,0 +1,54 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 17px;
+    padding: 8px;
+}
+
+.payment-form {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+.payment-header {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.icon-container {
+    font-size: 24px;
+}
+
+.icon-container i {
+    margin-right: 5px;
+}
+
+.payment-form .form-group label {
+    font-weight: bold;
+}
+
+.payment-form .btn {
+    width: 100%;
+    font-size: 17px;
+}
+
+.cart {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.cart h4 {
+    margin-bottom: 1rem;
+}
+
+.cart p {
+    display: flex;
+    justify-content: space-between;
+}
+
+.cart hr {
+    margin: 1rem 0;
+}
