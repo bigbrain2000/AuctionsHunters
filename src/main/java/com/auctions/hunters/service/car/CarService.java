@@ -1,7 +1,6 @@
 package com.auctions.hunters.service.car;
 
 import com.auctions.hunters.exceptions.*;
-import com.auctions.hunters.model.Auction;
 import com.auctions.hunters.model.Car;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -66,4 +65,6 @@ public interface CarService {
      * @return a list with all the cars that belong to the authenticated user, an empty list otherwise
      */
     List<Car> getAuthenticatedUserCarsList();
+
+    List<Car> findAllByIdIn(List<Integer> carsIdList);
 }

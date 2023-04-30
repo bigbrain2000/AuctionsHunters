@@ -22,6 +22,8 @@ public interface AuctionService {
      */
     Auction save(Car car, float minimumPrice);
 
+    void updateAuctionList(List<Auction> auctionList);
+
     /**
      * Retrieve a list with all the auctions from the database.
      *
@@ -74,6 +76,16 @@ public interface AuctionService {
 
     Auction updateAuctionCurrentPrice(Integer auctionId, float currentPrice, Integer buyerId);
 
-    void deleteFinishedAuctionsFromLiveAuctions(List<Auction> auctions, Page<Car> carPage);
+    Page<Car> updateLiveAuctionsIntoFinishAuctions(List<Auction> auctions, Page<Car> carPage);
+
+    Page<Car> manageFinishedAuctions(User user, Page<Car> carPage);
+
+    List<Car> getCarsFromFinishedAuctionsForBuyerId();
+
+    void updateFinishedAuctionsStatusAsSold();
+
+    List<Float> getFinishedAuctionsCurrentPrice();
+
+    Float getTotalPriceToPay();
 }
 

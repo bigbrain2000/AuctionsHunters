@@ -279,6 +279,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.unlockUser(email);
     }
 
+    /**
+     * Get the username of the logged user.
+     *
+     * @return the logged username if he is logged in the app
+     */
     @Override
     public String getLoggedUsername() {
         //load the current security context

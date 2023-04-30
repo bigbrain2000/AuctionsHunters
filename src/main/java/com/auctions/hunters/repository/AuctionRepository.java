@@ -1,8 +1,8 @@
 package com.auctions.hunters.repository;
 
 import com.auctions.hunters.model.Auction;
-import com.auctions.hunters.model.Bid;
-import com.auctions.hunters.model.User;
+import com.auctions.hunters.model.Car;
+import com.auctions.hunters.model.enums.AuctionStatus;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -36,4 +36,12 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
      */
     @Transactional
     List<Auction> findByUserId(Integer userId);
+
+    /**
+     * Retrieves a list of {@link Auction} objects from the database where the foreign key, buyer_id is equal to the parameter value
+     * and the provided {@code status} matches the {@code CLOSED} status from {@link AuctionStatus}.
+     */
+    List<Auction> findAllByBuyerIdAndStatus(Integer buyerId, AuctionStatus status);
+
+    List<Car> findAllByBuyerIdIn(List<Integer> buyerIds);
 }

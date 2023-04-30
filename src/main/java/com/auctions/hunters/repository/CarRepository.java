@@ -1,6 +1,5 @@
 package com.auctions.hunters.repository;
 
-import com.auctions.hunters.model.Auction;
 import com.auctions.hunters.model.Car;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -37,6 +36,5 @@ public interface CarRepository extends JpaRepository<Car, Integer>, JpaSpecifica
     @Transactional
     List<Car> findByUserId(Integer userId);
 
-
-    List<Car> findAllByUserIdIn(List<Integer> userIds);
+    List<Car> findAllByIdIn(List<Integer> carsIdList);
 }

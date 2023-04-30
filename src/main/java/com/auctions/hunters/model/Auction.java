@@ -1,5 +1,6 @@
 package com.auctions.hunters.model;
 
+import com.auctions.hunters.model.enums.AuctionStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
@@ -60,6 +61,7 @@ public class Auction {
     @Column(name = "current_price")
     private float currentPrice;
 
-    @Column(name = "is_active", nullable = false)
-    private boolean isActive = false;
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AuctionStatus status;
 }

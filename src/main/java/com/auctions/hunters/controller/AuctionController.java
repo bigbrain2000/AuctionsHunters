@@ -7,7 +7,6 @@ import com.auctions.hunters.model.User;
 import com.auctions.hunters.service.auction.AuctionService;
 import com.auctions.hunters.service.car.CarService;
 import com.auctions.hunters.service.car.SearchCriteria;
-import com.auctions.hunters.service.finishedauction.FinishedAuctionService;
 import com.auctions.hunters.service.ml.RecommendationServiceImpl;
 import com.auctions.hunters.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -32,18 +31,15 @@ public class AuctionController {
     private final AuctionService auctionService;
     private final UserService userService;
     private final RecommendationServiceImpl recommendationService;
-    private final FinishedAuctionService finishedAuctionService;
 
     public AuctionController(CarService carService,
                              AuctionService auctionService,
                              UserService userService,
-                             RecommendationServiceImpl recommendationService,
-                             FinishedAuctionService finishedAuctionService) {
+                             RecommendationServiceImpl recommendationService) {
         this.carService = carService;
         this.auctionService = auctionService;
         this.userService = userService;
         this.recommendationService = recommendationService;
-        this.finishedAuctionService = finishedAuctionService;
     }
 
     @GetMapping("/create/auction/car/{id}")
@@ -147,8 +143,9 @@ public class AuctionController {
             carSpecification = carSpecification.and((root, query, criteriaBuilder) -> root.in(recommendedAuctionedCarsList));
 
             Page<Car> carPage = carService.getCarPage(page1, carSpecification);
-            finishedAuctionService.manageFinishedAuctions(user, carPage);
-            int totalPages = carPage.getTotalPages();
+            Page<Car> updatedCarPage = auctionService.manageFinishedAuctions(user, carPage);
+
+            int totalPages = updatedCarPage.getTotalPages();
 
             if (totalPages > 0) {
                 List<Integer> pageNumbers = IntStream.rangeClosed(0, totalPages - 1)
@@ -156,9 +153,9 @@ public class AuctionController {
                         .toList();
 
                 List<Car> authenticatedUserCarsList = carService.getAuthenticatedUserCarsList();
-                List<Float> auctionsMinimumPriceList = auctionService.setCurrentPriceForEachCarPage(carPage);
+                List<Float> auctionsMinimumPriceList = auctionService.setCurrentPriceForEachCarPage(updatedCarPage);
 
-                modelAtr1.addAttribute("carPage", carPage);
+                modelAtr1.addAttribute("carPage", updatedCarPage);
                 modelAtr1.addAttribute("currentPage", page1);
                 modelAtr1.addAttribute("pageNumbers", pageNumbers);
                 modelAtr1.addAttribute("auctionsMinimumPriceList", auctionsMinimumPriceList);

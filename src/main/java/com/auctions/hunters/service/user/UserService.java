@@ -120,9 +120,9 @@ public interface UserService {
     String register(@NotNull User request) throws InvalidEmailException, EmailAlreadyExistsException;
 
     /**
-     * Method used for retrieving the username of the logged user.
+     * Get the username of the logged user.
      *
-     * @return username of user
+     * @return the logged username if he is logged in the app
      */
     String getLoggedUsername();
 

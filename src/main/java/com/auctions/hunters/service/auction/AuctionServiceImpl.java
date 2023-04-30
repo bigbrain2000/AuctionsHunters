@@ -1,10 +1,8 @@
 package com.auctions.hunters.service.auction;
 
 import com.auctions.hunters.exceptions.ResourceNotFoundException;
-import com.auctions.hunters.model.Auction;
-import com.auctions.hunters.model.Bid;
-import com.auctions.hunters.model.Car;
-import com.auctions.hunters.model.User;
+import com.auctions.hunters.model.*;
+import com.auctions.hunters.model.enums.AuctionStatus;
 import com.auctions.hunters.repository.AuctionRepository;
 import com.auctions.hunters.service.car.CarService;
 import com.auctions.hunters.service.user.UserService;
@@ -17,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.OffsetDateTime;
 import java.util.*;
 
+import static com.auctions.hunters.model.enums.AuctionStatus.*;
 import static com.auctions.hunters.utils.DateUtils.getDateTime;
 import static java.lang.Boolean.TRUE;
 import static java.util.List.of;
@@ -39,7 +38,7 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     /**
-     * Save an {@link Auction} in the database based on the provided car id and logged username.
+     * Creates a {@link Auction} in the database based on the provided car id and logged username.
      *
      * @param car          the car that will be put on an auction
      * @param minimumPrice the minimum price that the seller demands for his car
@@ -54,11 +53,11 @@ public class AuctionServiceImpl implements AuctionService {
                 .car(car)
                 .user(user)
                 .startTime(now)
-                .endTime(now.plusMinutes(7))  //end date is current date + 1
+                .endTime(now.plusMinutes(10))  //end date is current date + 1
                 .minimumPrice(minimumPrice)
                 .startingPrice(minimumPrice)
                 .currentPrice(minimumPrice)
-                .isActive(true)
+                .status(ACTIVE)
                 .build();
 
         //if a car is placed on an auction then change it`s status
@@ -68,6 +67,10 @@ public class AuctionServiceImpl implements AuctionService {
         log.debug("Auction with id {} has been create.", newAuction.getId());
 
         return newAuction;
+    }
+
+    public void updateAuctionList(List<Auction> auctionList) {
+        auctionRepository.saveAll(auctionList);
     }
 
     /**
@@ -158,7 +161,7 @@ public class AuctionServiceImpl implements AuctionService {
         return auctionRepository.findAll().stream()
                 // the auctions with the most bidders will be listed
                 .sorted(Comparator.comparing(a -> a.getBidders().size(), Comparator.reverseOrder()))
-                .filter(Auction::isActive)
+                .filter(auction -> auction.getStatus().equals(ACTIVE))
                 .limit(limit)
                 .toList();
     }
@@ -197,7 +200,7 @@ public class AuctionServiceImpl implements AuctionService {
      * Retrieves a list of {@link Auction} objects, representing the finished auctions from the car pages.
      *
      * @param carPage the car pages displayed to the users
-     * @param user the user for whom the {@link Auction} objects are retrieved
+     * @param user    the user for whom the {@link Auction} objects are retrieved
      * @return
      */
     public List<Auction> retrieveAllFinishedAuctionsFromACarPage(Page<Car> carPage, User user) {
@@ -245,8 +248,9 @@ public class AuctionServiceImpl implements AuctionService {
         return auctionRepository.save(auction);
     }
 
-    public void deleteFinishedAuctionsFromLiveAuctions(List<Auction> auctions, Page<Car> carPage) {
-        List<Car> carList = auctions.stream()
+
+    public Page<Car> updateLiveAuctionsIntoFinishAuctions(List<Auction> finishedAuctionList, Page<Car> carPage) {
+        List<Car> carList = finishedAuctionList.stream()
                 .map(Auction::getCar)
                 .toList();
 
@@ -255,23 +259,107 @@ public class AuctionServiceImpl implements AuctionService {
                 .toList();
 
         if (!carList.isEmpty()) {
-            //creates a new list from so that the delete operations works
-            //carPage.getContent() returns an unmodifiableList
-            List<Car> pageContent = new ArrayList<>(carPage.getContent());
+            // Update the status of all finished auctions to CLOSED
+            updateAuctionStatus(finishedAuctionList, CLOSED);
 
-            //remove the wanted cars from the page content
-            pageContent.removeAll(carList);
+            // Save the updated auctions to the database
+            updateAuctionList(finishedAuctionList);
 
-            //update the page
-            Page<Car> updatedPage = new PageImpl<>(pageContent, carPage.getPageable(), carPage.getTotalElements());
-            carPage.getContent().addAll(updatedPage.getContent());
+            // Filter the carPage content to exclude finished auctions
+            List<Car> filteredCarList = carPage.getContent().stream()
+                    .filter(car -> !carList.contains(car))
+                    .toList();
 
-            //remove all the finished auctions from the live auctions database
-            auctionRepository.deleteAll(auctions);
+            Page<Car> updatedPage = new PageImpl<>(filteredCarList, carPage.getPageable(), carPage.getTotalElements() - carList.size());
 
-            log.debug(String.format("%s cars with IDs %s were deleted from the live auctions.", carList.size(), carIdsList));
+            log.debug(String.format("%s cars with IDs %s were deleted from the live finishedAuctionList.", carList.size(), carIdsList));
+            return updatedPage;
         }
 
-        log.debug("No cars were found to be processed as the list of finished auctions is empty.");
+        log.debug("No cars were found to be processed as the list of finished finishedAuctionList is empty.");
+        return carPage;
+    }
+
+    private void updateAuctionStatus(List<Auction> finishedAuctionList, AuctionStatus status) {
+        log.debug("Starting updating finished auction list to status {}.", status);
+        finishedAuctionList.forEach(auction -> auction.setStatus(status));
+        log.debug("Update complete.");
+    }
+
+    /**
+     * Manages all the finished auctions. The finished auctions are removed from the live table of {@link Auction}
+     * and from the {@link Auction} table, and they are inserted in the new table, {@link FinishedAuction}.
+     *
+     * @param user
+     * @param carPage
+     */
+    @Override
+    public Page<Car> manageFinishedAuctions(User user, Page<Car> carPage) {
+        log.debug("Start processing the finished auctions.");
+
+        List<Auction> finishedUserAuctionsList = retrieveAllFinishedAuctionsFromACarPage(carPage, user);
+
+        Page<Car> updatedCarPage = updateLiveAuctionsIntoFinishAuctions(finishedUserAuctionsList, carPage);
+
+        log.debug("Stop processing the finished auctions.");
+        return updatedCarPage;
+    }
+
+    /**
+     * Retrieves a list of {@link Auction} from the database where the specified buyer has won.
+     *
+     * @return A list of {@link Auction} objects, containing all the finished auctions won by the specified buyer.
+     * If no auctions are found for the given buyer, an empty list is returned.
+     */
+    public List<Auction> getFinishedAuctionsByUserId() {
+        String loggedUsername = userService.getLoggedUsername();
+        User buyer = userService.findByUsername(loggedUsername);
+
+        List<Auction> userFinishedAuctionList = auctionRepository.findAllByBuyerIdAndStatus(buyer.getId(), CLOSED);
+        log.debug("Retrieved {} CLOSED auctions.", userFinishedAuctionList.size());
+
+        return userFinishedAuctionList;
+    }
+
+    public void updateFinishedAuctionsStatusAsSold() {
+        List<Auction> finishedAuctionsByUserId = getFinishedAuctionsByUserId();
+
+        updateAuctionStatus(finishedAuctionsByUserId, SOLD);
+    }
+
+    /**
+     * Retrieves a list of {@link Car} from the database by the id of the new owner
+     *
+     * @return A list of {@link Car} objects, containing all the cars won by the user identified by the id param.
+     * If no cars are found for the given buyer, an empty list is returned.
+     */
+    public List<Car> getCarsFromFinishedAuctionsForBuyerId() {
+        List<Auction> finishedAuctions = getFinishedAuctionsByUserId();
+
+        List<Integer> carsIdList = finishedAuctions.stream()
+                .map(auction -> auction.getCar().getId())
+                .toList();
+
+        List<Car> carToBeBoughtList = carService.findAllByIdIn(carsIdList);
+        log.debug("Retrieved {} cars to be purchased", carToBeBoughtList.size());
+        return carToBeBoughtList;
+    }
+
+    public List<Float> getFinishedAuctionsCurrentPrice() {
+        return getFinishedAuctionsByUserId().stream()
+                .map(Auction::getCurrentPrice)
+                .toList();
+    }
+
+    /**
+     * Get the total price that the user needs to pay for the bought cars.
+     *
+     * @return a {@link Float} number representing the auctions finals price that the user needs to pay for.
+     */
+    public Float getTotalPriceToPay() {
+        List<Float> finishedAuctionsCurrentPriceList = getFinishedAuctionsCurrentPrice();
+
+        return finishedAuctionsCurrentPriceList.stream()
+                .reduce(0.0f, Float::sum);
     }
 }

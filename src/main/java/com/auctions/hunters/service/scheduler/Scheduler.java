@@ -37,6 +37,7 @@ public class Scheduler {
         this.emailService = emailService;
     }
 
+    //TODO: modificat la 5 min poate
     // @Scheduled(cron = "0 * * ? * *") //every minute reminder
 //    @Scheduled(cron = "*/1 * * * * *") //every second
     @Scheduled(cron = "0/30 * * ? * *")  //every 30 second
