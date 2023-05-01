@@ -5,6 +5,7 @@ import com.auctions.hunters.model.Auction;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.service.auction.AuctionService;
+import com.auctions.hunters.service.auction.observer.AuctionEventListener;
 import com.auctions.hunters.service.car.CarService;
 import com.auctions.hunters.service.car.SearchCriteria;
 import com.auctions.hunters.service.ml.RecommendationServiceImpl;
@@ -31,15 +32,18 @@ public class AuctionController {
     private final AuctionService auctionService;
     private final UserService userService;
     private final RecommendationServiceImpl recommendationService;
+    private final AuctionEventListener auctionEventListener;
 
     public AuctionController(CarService carService,
                              AuctionService auctionService,
                              UserService userService,
-                             RecommendationServiceImpl recommendationService) {
+                             RecommendationServiceImpl recommendationService,
+                             AuctionEventListener auctionEventListener) {
         this.carService = carService;
         this.auctionService = auctionService;
         this.userService = userService;
         this.recommendationService = recommendationService;
+        this.auctionEventListener = auctionEventListener;
     }
 
     @GetMapping("/create/auction/car/{id}")
@@ -143,8 +147,7 @@ public class AuctionController {
             carSpecification = carSpecification.and((root, query, criteriaBuilder) -> root.in(recommendedAuctionedCarsList));
 
             Page<Car> carPage = carService.getCarPage(page1, carSpecification);
-            Page<Car> updatedCarPage = auctionService.manageFinishedAuctions(user, carPage);
-
+            Page<Car> updatedCarPage = auctionService.getUpdatedCarPage(user, carPage);
             int totalPages = updatedCarPage.getTotalPages();
 
             if (totalPages > 0) {

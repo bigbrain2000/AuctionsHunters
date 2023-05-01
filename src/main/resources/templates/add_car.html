@@ -114,8 +114,8 @@
     function closeModal() {
         modal.style.display = "none";
     }
-    window.onclick = function (event) {
-        if (event.target === modal) {
+    window.onclick = function (auctionEvent) {
+        if (auctionEvent.target === modal) {
             modal.style.display = "none";
         }
     };
@@ -127,8 +127,8 @@
     function closeModal2() {
         modal2.style.display = "none";
     }
-    window.onclick = function (event) {
-        if (event.target === modal2) {
+    window.onclick = function (auctionEvent) {
+        if (auctionEvent.target === modal2) {
             modal2.style.display = "none";
         }
     };
