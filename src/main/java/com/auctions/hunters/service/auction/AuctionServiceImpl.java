@@ -1,7 +1,10 @@
 package com.auctions.hunters.service.auction;
 
 import com.auctions.hunters.exceptions.ResourceNotFoundException;
-import com.auctions.hunters.model.*;
+import com.auctions.hunters.model.Auction;
+import com.auctions.hunters.model.Bid;
+import com.auctions.hunters.model.Car;
+import com.auctions.hunters.model.User;
 import com.auctions.hunters.model.enums.AuctionStatus;
 import com.auctions.hunters.repository.AuctionRepository;
 import com.auctions.hunters.service.car.CarService;
@@ -38,11 +41,15 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     /**
-     * Creates a {@link Auction} in the database based on the provided car id and logged username.
+     * Creates an {@link Auction} object and save it in the database based on the provided car id and logged username.
+     * <p>
+     * The default time to live for an {@link Auction} is 1 day. After that, the it will close.
+     * When creating an {@link Auction}, the user needs to enter the minimum price that he will agree to sell the car for.
+     * The status of a live {@link Auction} is {@link AuctionStatus#ACTIVE}.
      *
-     * @param car          the car that will be put on an auction
+     * @param car          the {@link Car} entity that will be auctioned
      * @param minimumPrice the minimum price that the seller demands for his car
-     * @return the auction model that was persisted in the database
+     * @return the {@link Auction} model that was persisted in the database
      */
     @Override
     public Auction save(Car car, float minimumPrice) {
@@ -53,7 +60,7 @@ public class AuctionServiceImpl implements AuctionService {
                 .car(car)
                 .user(user)
                 .startTime(now)
-                .endTime(now.plusMinutes(10))  //end date is current date + 1
+                .endTime(now.plusMinutes(5))  //end date is current date + 1
                 .minimumPrice(minimumPrice)
                 .startingPrice(minimumPrice)
                 .currentPrice(minimumPrice)
@@ -69,14 +76,23 @@ public class AuctionServiceImpl implements AuctionService {
         return newAuction;
     }
 
+    /**
+     * Updates the list of {@link Auction} objects in the database.
+     * The method saves all the items in the list using the {@link AuctionRepository#saveAll} method.
+     * If an auction with the same ID already exists in the database, it will be updated with the values from the provided object.
+     * If it does not exist, a new auction will be created.
+     *
+     * @param auctionList a {@link List} of {@link Auction} objects to be updated or saved in the database
+     */
+    @Override
     public void updateAuctionList(List<Auction> auctionList) {
         auctionRepository.saveAll(auctionList);
     }
 
     /**
-     * Retrieve a list with all the {@link Auction} from the database.
+     * RetrieveS a list with all the {@link Auction} objects from the database.
      *
-     * @return the auctions list if exists, empty otherwise
+     * @return a {@link List} of {@link Auction} objects if exists, empty otherwise
      */
     @Override
     public List<Auction> findAll() {
@@ -92,9 +108,9 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     /**
-     * Retrieves an {@link Auction} from the database where the foreign key, car_id is equal to the specified parameter value.
+     * Retrieves an {@link Auction} object from the database where the foreign key, car_id is equal to the specified parameter value.
      *
-     * @param carId the ID of the car associated with the auction to retrieve from the database
+     * @param carId the ID of the {@link Car}, which is the FK of the {@link Auction} table
      * @return an {@link Auction} object if found in the database, or null if not found
      */
     @Override
@@ -105,9 +121,10 @@ public class AuctionServiceImpl implements AuctionService {
     /**
      * Retrieves from the database a list of {@link Bid} objects for the given {@link Auction} id.
      *
-     * @param auctionId the ID of the auction to retrieve from the database
+     * @param auctionId the ID of the auction to retrieve the bids from the database
      * @return a list of {@link Bid} objects for the found {@link Auction} id, or an empty list if not found
      */
+    @Override
     public List<Bid> getAllBidsByAuctionId(Integer auctionId) {
         Auction auction = auctionRepository.findById(auctionId).orElse(null);
 
@@ -126,6 +143,7 @@ public class AuctionServiceImpl implements AuctionService {
      * @param userId the ID of the user for which the auctions will be retrieved from the database
      * @return a list of {@link Auction} objects for the found {@link User} id, or an empty list if not found
      */
+    @Override
     public List<Auction> getAllAuctionsByUserId(Integer userId) {
         List<Auction> userAuctionsList = auctionRepository.findByUserId(userId);
 
@@ -138,21 +156,10 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     /**
-     * Find a specific {@link Auction} object based on id.
-     *
-     * @param auctionId the id of the wanted {@link Auction}
-     * @return found {@link Auction}
-     */
-    @Override
-    public Auction findById(Integer auctionId) {
-        return auctionRepository.findById(auctionId).orElseThrow(() -> {
-            log.debug("Could not find the auction by the auctionId {} ", auctionId);
-            return new ResourceNotFoundException("Auction", "id", auctionId);
-        });
-    }
-
-    /**
-     * Retrieve a limited by size list with all the ACTIVE {@link Auction} objects from the database that have the most bidders.
+     * Retrieves a limited by size list with all the ACTIVE {@link Auction} objects from the database that have the most bidders.
+     * <p>
+     * Sort descendent the auctions list to het the top bidders, filter only the auctions that have {@link AuctionStatus#ACTIVE}
+     * as status and limit the number of list elements by the parameter value.
      *
      * @param limit the list limitation size
      * @return a list of {@link Auction} objects if the bidders bid on auctions / an empty list otherwise
@@ -236,10 +243,10 @@ public class AuctionServiceImpl implements AuctionService {
      * @return the new updated {@link Auction} that`s being saved in the database
      */
     public Auction updateAuctionCurrentPrice(Integer auctionId, float currentPrice, Integer buyerId) {
-        String errorMessage = String.format("Auction with the auctionId: %s was not found!", auctionId);
+        String errorMessage = String.format("Auction with the id: %s was not found!", auctionId);
 
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new IllegalArgumentException(errorMessage));
-        log.debug("Successfully retrieved auction with auctionId {}", auction.getId());
+        log.debug("Successfully retrieved auction with id {}", auction.getId());
 
         auction.setCurrentPrice(currentPrice);
         auction.setBuyerId(buyerId);
@@ -288,7 +295,6 @@ public class AuctionServiceImpl implements AuctionService {
 
     /**
      * Manages all the finished auctions. The finished auctions are removed from the live table of {@link Auction}
-     * and from the {@link Auction} table, and they are inserted in the new table, {@link FinishedAuction}.
      *
      * @param user
      * @param carPage

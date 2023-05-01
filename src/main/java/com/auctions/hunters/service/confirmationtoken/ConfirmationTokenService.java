@@ -34,11 +34,4 @@ public interface ConfirmationTokenService {
      * @return - the persisted searched token
      */
     Optional<ConfirmationToken> getToken(@NotBlank String token);
-
-    /**
-     * Delete a token based on his id
-     *
-     * @param id - the token id we want to delete
-     */
-    void delete(@NotNull Integer id) throws ResourceNotFoundException;
 }

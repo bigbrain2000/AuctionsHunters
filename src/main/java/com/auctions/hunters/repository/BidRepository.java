@@ -7,16 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Repository
+@Transactional
 public interface BidRepository extends JpaRepository<Bid, Integer> {
-
-    /**
-     * Retrieved an {@link Bid} from the database where the foreign key, user_id is equal to the parameter value.
-     */
-    List<Bid> findByUserId(Integer userId);
 
     /**
      * Retrieved a list of {@link Auction} objects from the database based on the provided {@link User} that created them.

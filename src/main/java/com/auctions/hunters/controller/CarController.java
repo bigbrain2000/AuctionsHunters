@@ -158,9 +158,13 @@ public class CarController {
     @PostMapping("/bid/car/{carId}")
     public String createNewBid(@PathVariable Integer carId, @RequestParam("bidAmount") Integer bidAmount) {
         Auction auction = auctionService.getAuctionByCarId(carId);
-        bidService.save(bidAmount, auction);
 
-        log.info("Bidul este {}", bidAmount);
+        try {
+            bidService.save(bidAmount, auction);
+        } catch (LowBidAmountException e) {
+            return "redirect:/auctions"; //TODO: add a new page for error
+        }
+
         return "redirect:/auctions"; //redirect to the auctions endpoint
     }
 

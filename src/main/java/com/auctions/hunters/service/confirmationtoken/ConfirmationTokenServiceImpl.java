@@ -1,7 +1,5 @@
 package com.auctions.hunters.service.confirmationtoken;
 
-
-import com.auctions.hunters.exceptions.ResourceNotFoundException;
 import com.auctions.hunters.model.ConfirmationToken;
 import com.auctions.hunters.repository.ConfirmationTokenRepository;
 import org.slf4j.Logger;
@@ -26,28 +24,35 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
         this.confirmationTokenRepository = confirmationTokenRepository;
     }
 
+    /**
+     * Save a token after it has been confirmed
+     *
+     * @param token -  the token we want to save
+     * @return - the saved token
+     */
     public ConfirmationToken saveConfirmationToken(ConfirmationToken token) {
         LOGGER.debug("Token was successfully inserted in the database");
         return confirmationTokenRepository.save(token);
     }
 
+    /**
+     * Get a saved token from the DB
+     *
+     * @param token - the token we want to search
+     * @return - the persisted searched token
+     */
     public Optional<ConfirmationToken> getToken(String token) {
         LOGGER.debug("Token was successfully retrieved from the database");
         return confirmationTokenRepository.findByToken(token);
     }
 
+    /**
+     * Set a token confirmation date
+     *
+     * @param token - the token we want to save
+     */
     public void setConfirmedAt(String token) {
         LOGGER.debug("Token was successfully updated in the database");
         confirmationTokenRepository.updateTokenConfirmationDate(token, getDateTime());
-    }
-
-    public void delete(Integer id) throws ResourceNotFoundException {
-        confirmationTokenRepository.findById(id).orElseThrow(() -> {
-            LOGGER.debug("Token with id {} could not be deleted from the database", id);
-            throw new ResourceNotFoundException("Token", "id", id);
-        });
-
-        LOGGER.debug("Token successfully deleted from the database");
-        confirmationTokenRepository.deleteById(id);
     }
 }

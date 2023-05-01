@@ -22,6 +22,11 @@ public interface AuctionService {
      */
     Auction save(Car car, float minimumPrice);
 
+    /**
+     * Insert new auctions or update existing entities in the database.
+     *
+     * @param auctionList the list of {@link Auction} objects to be updated
+     */
     void updateAuctionList(List<Auction> auctionList);
 
     /**
@@ -43,14 +48,6 @@ public interface AuctionService {
      * @return a list of {@link Auction} objects for the found {@link User} id, or an empty list if not found
      */
     List<Auction> getAllAuctionsByUserId(Integer userId);
-
-    /**
-     * Find a specific {@link Auction} object based on id.
-     *
-     * @param auctionId the id of the wanted {@link Auction}
-     * @return found {@link Auction}
-     */
-    Auction findById(Integer auctionId);
 
     List<Bid> getAllBidsByAuctionId(Integer auctionId);
 
