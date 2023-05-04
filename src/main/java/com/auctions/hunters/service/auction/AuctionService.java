@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface AuctionService {
 
-    Page<Car> getUpdatedCarPage(User user, Page<Car> carPage);
+    void checkAndPublishFinishedAuctions(User user, Page<Car> carPage, int carPageKey);
 
     /**
      * Save an auction in the database based on the provided car id and logged username.

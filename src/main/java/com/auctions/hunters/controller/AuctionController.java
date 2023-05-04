@@ -1,6 +1,5 @@
 package com.auctions.hunters.controller;
 
-
 import com.auctions.hunters.model.Auction;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.User;
@@ -147,7 +146,7 @@ public class AuctionController {
             carSpecification = carSpecification.and((root, query, criteriaBuilder) -> root.in(recommendedAuctionedCarsList));
 
             Page<Car> carPage = carService.getCarPage(page1, carSpecification);
-            Page<Car> updatedCarPage = auctionService.getUpdatedCarPage(user, carPage);
+            Page<Car> updatedCarPage = auctionEventListener.getUpdatedCarPage(user, carPage);
             int totalPages = updatedCarPage.getTotalPages();
 
             if (totalPages > 0) {
