@@ -3,6 +3,7 @@ package com.auctions.hunters.service.car;
 import com.auctions.hunters.exceptions.*;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.User;
+import com.auctions.hunters.model.enums.CarStatus;
 import com.auctions.hunters.repository.CarRepository;
 import com.auctions.hunters.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.auctions.hunters.model.enums.CarStatus.AUCTIONED;
+import static com.auctions.hunters.model.enums.CarStatus.NOT_AUCTIONED;
 import static java.util.List.of;
 
 @Slf4j
@@ -34,7 +37,7 @@ public class CarServiceImpl implements CarService {
     }
 
     /**
-     * Saves a car in the database for the logged user.
+     * Saves a {@link Car} object in the database for the logged user. Default, the car status is not auctioned.
      *
      * @param vin the car`s VIN
      */
@@ -46,12 +49,13 @@ public class CarServiceImpl implements CarService {
         }
 
         Car car = vinDecoderService.decodeVin(vin);
+        car.setStatus(NOT_AUCTIONED);
 
         return carRepository.save(car);
     }
 
     /**
-     * Delete a car by a specific id if the id is found in the database.
+     * Delete a car by a specific id if the id is found in the database if the car is not present in an auction.
      *
      * @param carId persisted car id
      * @throws IllegalArgumentException if the car with the given id can not be found in the database
@@ -62,7 +66,7 @@ public class CarServiceImpl implements CarService {
 
         if (optionalCar.isPresent()) {
             //delete the found car only if the car is not being auctioned
-            if (optionalCar.get().getIsAuctioned().equals(false)) {
+            if (optionalCar.get().getStatus().equals(NOT_AUCTIONED)) {
                 Car car = optionalCar.get();
 
                 removeCarFromUserList(car);
@@ -127,20 +131,20 @@ public class CarServiceImpl implements CarService {
     }
 
     /**
-     * Update the status of a car if it`s being auctioned.
+     * Update the status of a {@link Car} when it`s placed in an auction.
      *
      * @param id            persisted car id
      * @param auctionStatus the status of the car. False means it`s not being auctioned and true otherwise.
      * @return the new updated car that`s being saved in the database
      */
-    public Car updateCarAuctionStatus(Integer id, boolean auctionStatus) {
+    public Car updateCarAuctionStatus(Integer id, CarStatus auctionStatus) {
         String errorMessage = String.format("Car with the id: %s was not found!", id);
 
         Car car = carRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(errorMessage));
         log.debug("Successfully retrieved car with id {}", car.getId());
 
         // update the car auction state
-        car.setIsAuctioned(auctionStatus);
+        car.setStatus(auctionStatus);
 
         // Save the updated car back to the database
         return carRepository.save(car);

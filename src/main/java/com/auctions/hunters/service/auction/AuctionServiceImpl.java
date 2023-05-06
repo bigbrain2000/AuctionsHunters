@@ -6,6 +6,7 @@ import com.auctions.hunters.model.Bid;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.model.enums.AuctionStatus;
+import com.auctions.hunters.model.enums.CarStatus;
 import com.auctions.hunters.repository.AuctionRepository;
 import com.auctions.hunters.service.car.CarService;
 import com.auctions.hunters.service.user.UserService;
@@ -21,8 +22,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import static com.auctions.hunters.model.enums.AuctionStatus.*;
+import static com.auctions.hunters.model.enums.CarStatus.AUCTIONED;
 import static com.auctions.hunters.utils.DateUtils.getDateTime;
-import static java.lang.Boolean.TRUE;
 import static java.util.List.of;
 
 @Slf4j
@@ -62,7 +63,7 @@ public class AuctionServiceImpl implements AuctionService {
                 .car(car)
                 .user(user)
                 .startTime(now)
-                .endTime(now.plusMinutes(5))  //end date is current date + 1
+                .endTime(now.plusDays(1))  //end date is current date + 1 day
                 .minimumPrice(minimumPrice)
                 .startingPrice(minimumPrice)
                 .currentPrice(minimumPrice)
@@ -70,7 +71,7 @@ public class AuctionServiceImpl implements AuctionService {
                 .build();
 
         //if a car is placed on an auction then change it`s status
-        carService.updateCarAuctionStatus(car.getId(), TRUE);
+        carService.updateCarAuctionStatus(car.getId(), AUCTIONED);
 
         auctionRepository.save(newAuction);
         log.debug("Auction with id {} has been create.", newAuction.getId());
@@ -92,13 +93,15 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     /**
-     * RetrieveS a list with all the {@link Auction} objects from the database.
+     * RetrieveS a list with all the {@link Auction} objects from the database which have ACTIVE status.
      *
      * @return a {@link List} of {@link Auction} objects if exists, empty otherwise
      */
     @Override
-    public List<Auction> findAll() {
-        List<Auction> auctionList = auctionRepository.findAll();
+    public List<Auction> findAllActiveAuctions() {
+        List<Auction> auctionList = auctionRepository.findAll().stream()
+                .filter(auction -> auction.getStatus().equals(ACTIVE))
+                .toList();
 
         if (auctionList.isEmpty()) {
             log.debug("The auctions list was empty.");
@@ -215,17 +218,22 @@ public class AuctionServiceImpl implements AuctionService {
     public List<Auction> retrieveAllFinishedAuctionsFromACarPage(Page<Car> carPage, User buyer) {
         //filter the auctions list to see if they are finished
         OffsetDateTime now = getDateTime();
-        List<Auction> userAuctionList = auctionRepository.findAll().stream()
-                .filter(auction -> now.getMinute() > auction.getEndTime().getMinute())
-                .filter(auction -> auction.getBuyerId() != null && auction.getBuyerId().equals(buyer.getId()))
-                .filter(auction -> auction.getStatus().equals(ACTIVE))
-                .distinct()
+        List<Auction> endedAuctions = auctionRepository.findAll().stream()
+                .filter(auction -> now.isAfter(auction.getEndTime()))
                 .toList();
 
-        String logMessage = String.format("Retrieved %d finished won auctions for user %s", userAuctionList.size(), buyer.getUsername());
+        List<Auction> endedAuctionsForBuyer = endedAuctions.stream()
+                .filter(auction -> auction.getBuyerId() != null && auction.getBuyerId().equals(buyer.getId()))
+                .toList();
+
+        List<Auction> finishedAuctions = endedAuctionsForBuyer.stream()
+                .filter(auction -> auction.getStatus().equals(ACTIVE))
+                .toList();
+
+        String logMessage = String.format("Retrieved %d finished won auctions for user %s", finishedAuctions.size(), buyer.getUsername());
         log.info(logMessage);
 
-        return userAuctionList;
+        return finishedAuctions;
     }
 
     /**
@@ -253,11 +261,15 @@ public class AuctionServiceImpl implements AuctionService {
                 .map(Auction::getCar)
                 .toList();
 
+        List<Car> updatedCarList = carList.stream()
+                .map(car -> carService.updateCarAuctionStatus(car.getId(), CarStatus.SOLD))
+                .toList();
+
         List<Integer> carIdsList = carList.stream()
                 .map(Car::getId)
                 .toList();
 
-        if (!carList.isEmpty()) {
+        if (!updatedCarList.isEmpty()) {
             // Update the status of all finished auctions to CLOSED
             updateAuctionStatus(finishedAuctionList, CLOSED);
 
@@ -266,12 +278,12 @@ public class AuctionServiceImpl implements AuctionService {
 
             // Filter the carPage content to exclude finished auctions
             List<Car> filteredCarList = carPage.getContent().stream()
-                    .filter(car -> !carList.contains(car))
+                    .filter(car -> !updatedCarList.contains(car))
                     .toList();
 
-            Page<Car> updatedPage = new PageImpl<>(filteredCarList, carPage.getPageable(), carPage.getTotalElements() - carList.size());
+            Page<Car> updatedPage = new PageImpl<>(filteredCarList, carPage.getPageable(), carPage.getTotalElements() - updatedCarList.size());
 
-            log.debug(String.format("%s cars with IDs %s were deleted from the live finishedAuctionList.", carList.size(), carIdsList));
+            log.debug(String.format("%s cars with IDs %s were deleted from the live finishedAuctionList.", updatedCarList.size(), carIdsList));
             return updatedPage;
         }
 

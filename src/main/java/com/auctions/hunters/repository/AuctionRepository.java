@@ -42,6 +42,4 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
      * and the provided {@code status} matches the {@code CLOSED} status from {@link AuctionStatus}.
      */
     List<Auction> findAllByBuyerIdAndStatus(Integer buyerId, AuctionStatus status);
-
-    List<Car> findAllByBuyerIdIn(List<Integer> buyerIds);
 }

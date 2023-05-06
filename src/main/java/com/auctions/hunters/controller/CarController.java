@@ -5,6 +5,7 @@ import com.auctions.hunters.model.Auction;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.Image;
 import com.auctions.hunters.model.User;
+import com.auctions.hunters.model.enums.CarStatus;
 import com.auctions.hunters.service.auction.AuctionService;
 import com.auctions.hunters.service.bid.BidService;
 import com.auctions.hunters.service.car.CarService;
@@ -14,6 +15,7 @@ import com.auctions.hunters.service.ml.RecommendationService;
 import com.auctions.hunters.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -88,11 +90,15 @@ public class CarController {
             @RequestParam(value = "maxPrice", required = false) Integer maxPrice,
             Model modelAtr) {
 
+        //if the user did not register any cars for sale, then display an informative template
+        List<Car> authenticatedUserCarsList = carService.getAuthenticatedUserCarsList();
+        if(authenticatedUserCarsList.isEmpty()) {
+            return "/no_car";
+        }
+
         CarsListPaginator pager = (page1, producer1, model1, minYear1, maxYear1, minPrice1, maxPrice1, modelAtr1) -> {
             String loggedUsername = userService.getLoggedUsername();
             User user = userService.findByUsername(loggedUsername);
-
-            List<Auction> recommendedAuctionsList = recommendationService.getUnfinishedRecommendedAuctions(user);
 
             SearchCriteria searchCriteria = new SearchCriteria();
             Specification<Car> carSpecification = searchCriteria.buildSpec(producer1, model1, minYear1, maxYear1, minPrice1, maxPrice1);
@@ -100,27 +106,32 @@ public class CarController {
             //filter for displaying only the cars that MATCH the authenticated user id
             carSpecification = carSpecification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("user"), user));
 
+            //filter just the cars that are in ACTIVE auctions
             Page<Car> carPage = carService.getCarPage(page1, carSpecification);
-            int totalPages = carPage.getTotalPages();
+            List<Car> carPageContent = carPage.getContent();
+            List<Car> carList = carPageContent.stream()
+                    .filter(car -> car.getStatus().equals(CarStatus.NOT_AUCTIONED) || car.getStatus().equals(CarStatus.AUCTIONED))
+                    .toList();
+
+            if(carList.isEmpty()) {
+                return "/no_car";
+            }
+
+            Page<Car> updatedPage = new PageImpl<>(carList, carPage.getPageable(), carPage.getTotalElements() - carList.size());
+            int totalPages = updatedPage.getTotalPages();
 
             if (totalPages > 0) {
                 List<Integer> pageNumbers = IntStream.rangeClosed(0, totalPages - 1)
                         .boxed()
                         .toList();
 
-                //hook needed for displaying the car list if there are ay cars to display,
-                //a message will appear otherwise
-                List<Car> authenticatedUserCarsList = carService.getAuthenticatedUserCarsList();
-
                 //set the minimum price for each car
-                List<Float> auctionsMinimumPriceList = auctionService.setCurrentPriceForEachCarPage(carPage);
+                List<Float> auctionsCurrentPriceList = auctionService.setCurrentPriceForEachCarPage(updatedPage);
 
-                modelAtr1.addAttribute("carPage", carPage);
+                modelAtr1.addAttribute("carPage", updatedPage);
                 modelAtr1.addAttribute("currentPage", page1);
                 modelAtr1.addAttribute("pageNumbers", pageNumbers);
-                modelAtr1.addAttribute("authenticatedUserCarsListSize", authenticatedUserCarsList.size());
-                modelAtr1.addAttribute("auctionsMinimumPriceList", auctionsMinimumPriceList); //TODO: schimbat numele modelului in current
-                modelAtr1.addAttribute("recommendedAuctionsList", recommendedAuctionsList);
+                modelAtr1.addAttribute("auctionsMinimumPriceList", auctionsCurrentPriceList);
             }
 
             return "/car_list";

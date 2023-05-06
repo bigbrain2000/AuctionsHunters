@@ -34,7 +34,7 @@ public interface AuctionService {
      *
      * @return the auctions list
      */
-    List<Auction> findAll();
+    List<Auction> findAllActiveAuctions();
 
     /**
      * Retrieved an {@link Auction} from the database where the foreign key, car_id is equal to the parameter value.

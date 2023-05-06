@@ -1,5 +1,6 @@
 package com.auctions.hunters.model;
 
+import com.auctions.hunters.model.enums.CarStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -73,6 +74,6 @@ public class Car {
     private String maxRoofLoad;
     private String abs;
 
-    @Builder.Default
-    private Boolean isAuctioned = false;
+    @Enumerated(EnumType.STRING)
+    private CarStatus status;
 }

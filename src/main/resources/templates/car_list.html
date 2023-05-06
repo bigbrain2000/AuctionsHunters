@@ -4,59 +4,28 @@
     <meta charset="utf-8">
     <title>Vizualizeaza masinile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/css/carListStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/navBarStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/noCarStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/paginationStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
-    <script src="/js/yearFromDropDownMenu.js"></script>
+    <script src="/js/yearDropDownMenu.js"></script>
+    <script src="/js/priceDropDownMenu.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
+
 <header th:replace="/nav_bar :: nav_bar"></header>
 
-<div class="container" th:if="${authenticatedUserCarsListSize == 0}">
-    <h1 class="heading">Se pare că nu aveți nicio mașină de vânzare în acest moment.</h1>
-    <p class="message">Adăugați o mașină în inventarul dumneavoastră pentru a începe să o vindeți.</p>
-</div>
+<div th:include="/searchMenu :: form" style="margin-top: 200px"></div>
 
-<form method="GET" action="/cars" th:if="${authenticatedUserCarsListSize > 0}">
-    <div class="search-container" style="margin-top: 200px">
-        <div class="input-column">
-            <label>
-                <input type="text" name="producer" placeholder="Producător">
-            </label>
-            <label>
-                <input type="text" name="model" placeholder="Model">
-            </label>
-        </div>
-        <div class="input-column">
-            <select id="yearFrom" class="year-dropdown">
-                <option value="" disabled selected>Anul fabricației de la</option>
-            </select>
-            <label>
-                <input type="text" name="yearTo" placeholder="Anul fabricației până la">
-            </label>
-        </div>
-        <div class="input-column">
-            <label>
-                <input type="text" name="priceFrom" placeholder="Prețul de la">
-            </label>
-            <label>
-                <input type="text" name="priceTo" placeholder="Prețul până la">
-            </label>
-        </div>
-        <button class="search-button">Search</button>
-    </div>
-</form>
-
-<div class="car-list" th:if="${authenticatedUserCarsListSize > 0}">
+<div class="car-list">
     <table class="table">
         <thead>
-        <tr >
+        <tr>
             <th>Producător</th>
             <th>Model</th>
             <th>An fabricați</th>
@@ -67,27 +36,32 @@
         </tr>
         </thead>
         <tbody>
-        <tr  th:if="${authenticatedUserCarsListSize > 0}" th:each="car, stat : ${carPage.content}">
-            <div th:if="${authenticatedUserCarsListSize > 0}">
+        <tr th:each="car, stat : ${carPage.content}">
+            <div>
                 <td th:text="${car.producer}" style="padding-top: 20px;"></td>
                 <td th:text="${car.model}" style="padding-top: 20px;"></td>
                 <td th:text="${car.modelYear}" style="padding-top: 20px;"></td>
                 <!-- if the car is not in an auction then it does not have a minimum price so don`t display this field -->
                 <td>
-                 <span th:if="${auctionsMinimumPriceList[stat.index] != 0} and ${car.isAuctioned}"
+                 <span th:if="${auctionsMinimumPriceList[stat.index] != 0} and ${car.status == T(com.auctions.hunters.model.enums.CarStatus).AUCTIONED}"
                        th:text="${auctionsMinimumPriceList[stat.index]}" style="padding-bottom: -20px;">
                  </span>
 
-                    <i th:if="${auctionsMinimumPriceList[stat.index] == 0} and ${!car.isAuctioned}"
-                       class="fas fa-question-circle fa-lg" style="padding-top: 15px"></i>
+                    <i th:if="${auctionsMinimumPriceList[stat.index] == 0} and ${car.status == T(com.auctions.hunters.model.enums.CarStatus).NOT_AUCTIONED}"
+                       class="fas fa-question-circle fa-lg" style="padding-top: 15px"
+                       th:title="${car.status == T(com.auctions.hunters.model.enums.CarStatus).NOT_AUCTIONED} ? 'Prețul nu este stabilit' : ''">
+                    </i>
                 </td>
                 <!-- if the car is in an auction then it can`t be deleted by the seller -->
                 <td>
-                    <a th:disabled="${car.isAuctioned}" disabled th:href="@{/cars/{id}(id=${car.id})}"
-                       class="btn btn-get-car" style="background-color: #d9534f">
+                    <a th:disabled="${car.status == T(com.auctions.hunters.model.enums.CarStatus).AUCTIONED}"
+                       disabled th:href="@{/cars/{id}(id=${car.id})}"
+                       class="btn btn-get-car" style="background-color: #d9534f"
+                       th:title="${car.status == T(com.auctions.hunters.model.enums.CarStatus).AUCTIONED} ? 'Mașina nu poate fi stearsă deoarece se află intr-o licitatie' : ''">
                         <i class="fa fa-trash"></i>
                     </a>
                 </td>
+
                 <td>
                     <a th:href="@{/car/{id}(id=${car.id})}" class="btn btn-get-car">
                         <i class="fa fa-car"></i>
@@ -95,11 +69,18 @@
                 </td>
                 <!-- if the car is in an auction then it will display its status, otherwise a button will be displayed -->
                 <td>
-                    <a th:if="${!car.isAuctioned}" th:href="@{/create/auction/car/{id}(id=${car.id})}"
+                    <a th:if="${car.status == T(com.auctions.hunters.model.enums.CarStatus).NOT_AUCTIONED}"
+                       th:href="@{/create/auction/car/{id}(id=${car.id})}"
                        class="btn btn-get-car btn-primary" style="background-color: #2044f5">
                         <i class="fas fa-gavel"></i>
                     </a>
-                    <span th:if="${car.isAuctioned}" class="active-text">Activ</span>
+
+                    <!--TODO: UPDATE SPAN WITH DEV/P SO THAT THE STYLE IS APPLIED AND THE FIELDS ARE ALIGN-->
+                    <span th:if="${car.status == T(com.auctions.hunters.model.enums.CarStatus).AUCTIONED}"
+                          class="active-text" style="margin-top: 10px; width: 20px">Activ</span>
+
+                    <span th:if="${car.status == T(com.auctions.hunters.model.enums.CarStatus).SOLD}"
+                          class="active-text" style="margin-top: 10px; width: 20px">Vândut</span>
                 </td>
             </div>
         </tr>
@@ -107,7 +88,7 @@
     </table>
 </div>
 
-<div class="pagination" th:if="${authenticatedUserCarsListSize > 0}">
+<div class="pagination">
     <ul class="pagination" style="margin-left: 50px">
         <li th:class="${currentPage == 0}? 'disabled' : ''">
             <a th:href="@{/cars(page=0)}">First</a>
@@ -127,7 +108,7 @@
     </ul>
 </div>
 
-<footer th:replace="/footer :: footer"></footer>
+<footer th:replace="/footer :: footer" style="margin-top: 200px;padding-top: 200px"></footer>
 
 </body>
 </html>

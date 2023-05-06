@@ -64,7 +64,12 @@ public class ImageServiceImpl implements ImageService {
     }
 
     private byte[] createThumbnail(byte[] imageBytes, int targetWidth, int targetHeight) throws IOException {
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes); //TODO:UPDATE TO ACCEPT 0 images
+        // Check if the input imageBytes is empty or null
+        if (imageBytes == null || imageBytes.length == 0) {
+            return new byte[0];
+        }
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         Thumbnails.of(inputStream)

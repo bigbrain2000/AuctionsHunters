@@ -2,6 +2,7 @@ package com.auctions.hunters.service.car;
 
 import com.auctions.hunters.exceptions.*;
 import com.auctions.hunters.model.Car;
+import com.auctions.hunters.model.enums.CarStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.validation.annotation.Validated;
@@ -51,7 +52,7 @@ public interface CarService {
      * @param auctionStatus the status of the car. False means it`s not being auctioned and true otherwise.
      * @return the new updated car that`s being saved in the database
      */
-    Car updateCarAuctionStatus(Integer id, boolean auctionStatus);
+    Car updateCarAuctionStatus(Integer id, CarStatus auctionStatus);
 
 
     /**

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Licitații în curs</title>
+    <title>Licitații recomandate</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="/css/paginationStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/carListStyle.css">
@@ -13,7 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"
             integrity="sha512-gHT5OX5/XkAm5/8/5W1VDvJ/nmlC6U2+6U0J6UHKn6PpLzg0/sHWqJ4z4nnMCBL7pEaYYfYlq3nG9kfTq7VSw=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="/js/yearFromDropDownMenu.js"></script>
+    <script src="/js/yearDropDownMenu.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
@@ -21,39 +21,9 @@
 
 <header th:replace="/nav_bar :: nav_bar"></header>
 
-<div th:if="${recommendedAuctionsListSize > 0}">
-    <form method="GET" action="/auctions">
-        <div class="search-container" style="margin-top: 200px">
-            <div class="input-column">
-                <label>
-                    <input type="text" name="producer" placeholder="Producător">
-                </label>
-                <label>
-                    <input type="text" name="model" placeholder="Model">
-                </label>
-            </div>
-            <div class="input-column">
-                <label for="yearFrom"></label>
-                <select id="yearFrom" class="year-dropdown">
-                    <option value="" disabled selected>Anul fabricației de la</option>
-                </select>
+<div th:include="/searchMenu :: form"></div>
 
-                <label>
-                    <input type="text" name="yearTo" placeholder="Anul fabricației până la">
-                </label>
-            </div>
-            <div class="input-column">
-                <label>
-                    <input type="text" name="priceFrom" placeholder="Prețul de la">
-                </label>
-                <label>
-                    <input type="text" name="priceTo" placeholder="Prețul până la">
-                </label>
-            </div>
-            <button class="search-button">Search</button>
-        </div>
-    </form>
-
+<main>
     <div class="car-list">
         <table class="table">
             <thead>
@@ -73,11 +43,11 @@
                 <td th:text="${car.modelYear}" style="padding-top: 20px;"></td>
                 <!-- if the car is not in an auction then it does not have a minimum price so don`t display this field -->
                 <td>
-                 <span th:if="${auctionsMinimumPriceList[stat.index] != 0} and ${car.isAuctioned}"
+                 <span th:if="${auctionsMinimumPriceList[stat.index] != 0} and ${car.status == T(com.auctions.hunters.model.enums.CarStatus).AUCTIONED}"
                        th:text="${auctionsMinimumPriceList[stat.index]}" style="padding-bottom: -20px;">
                  </span>
 
-                    <i th:if="${auctionsMinimumPriceList[stat.index] == 0} and ${!car.isAuctioned}"
+                    <i th:if="${auctionsMinimumPriceList[stat.index] == 0} and ${car.status == T(com.auctions.hunters.model.enums.CarStatus).NOT_AUCTIONED}"
                        class="fas fa-question-circle fa-lg" style="padding-top: 15px"></i>
                 </td>
                 <td>
@@ -97,7 +67,7 @@
     </div>
 
     <div class="pagination">
-        <ul class="pagination" style="margin-left: 50px">
+        <ul class="pagination" style="margin-left: 50px;margin-top: -10px;">
             <li th:class="${currentPage == 0}? 'disabled' : ''">
                 <a th:href="@{/cars(page=0)}">First</a>
             </li>
@@ -115,7 +85,7 @@
             </li>
         </ul>
     </div>
-</div>
+</main>
 
 <footer th:replace="/footer :: footer"></footer>
 

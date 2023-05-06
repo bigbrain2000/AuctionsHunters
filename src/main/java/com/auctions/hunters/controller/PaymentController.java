@@ -1,22 +1,19 @@
 package com.auctions.hunters.controller;
 
 import com.auctions.hunters.exceptions.PayPalPaymentException;
-import com.auctions.hunters.model.Auction;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.PaymentRequest;
-import com.auctions.hunters.model.User;
 import com.auctions.hunters.service.auction.AuctionService;
 import com.auctions.hunters.service.paypal.PayPalService;
-import com.auctions.hunters.service.user.UserService;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -28,22 +25,24 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class PaymentController {
 
     private final PayPalService payPalService;
-    private final UserService userService;
     private final AuctionService auctionService;
 
     private static final String PAYMENT_ERROR_TEMPLATE = "/paymentError";
 
     public PaymentController(PayPalService payPalService,
-                             UserService userService,
                              AuctionService auctionService) {
         this.payPalService = payPalService;
-        this.userService = userService;
         this.auctionService = auctionService;
     }
 
     @GetMapping("/pay")
     public String getPaymentLobby(Model model) {
         List<Car> carsToBuyList = auctionService.getCarsFromFinishedAuctionsForBuyerId();
+
+        if(carsToBuyList.isEmpty()) {
+            return "/no_auction_to_pay";
+        }
+
         List<Float> finishedAuctionsCurrentPrice = auctionService.getFinishedAuctionsCurrentPrice();
         Float totalPrice = auctionService.getTotalPriceToPay();
 

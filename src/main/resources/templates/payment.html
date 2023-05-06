@@ -2,62 +2,86 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title>Insert title here</title>
+    <title>Plătește</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="/css/navBarStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/paymentStyle.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <style>
+        .price {
+            font-weight: bold;
+        }
+        .car-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+    </style>
+
 </head>
 <body>
 
 <header th:replace="/nav_bar :: nav_bar"></header>
 
 <main>
-    <div class="container payment-form" style="margin-top: 200px">
-        <div class="row">
-            <div class="col-md-8">
-                <div class="payment-header">
-                    <h3>Payment</h3>
-                    <div class="icon-container">
-                        <i class="fa fa-cc-visa" style="color:navy;"></i>
-                        <i class="fa fa-cc-amex" style="color:blue;"></i>
-                        <i class="fa fa-cc-mastercard" style="color:red;"></i>
-                        <i class="fa fa-cc-discover" style="color:orange;"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4" style="margin-top: 200px">
-                <div class="cart">
-                    <div th:each="car, count: ${carsToBuyList}">
-                        <p>
-                            <a th:href="@{/car/{id}(id=${car.id})}" th:text="${car.producer} + ' ' + ${car.model}"></a>
-                            <span class="price" th:text="${'$' + carsPriceList[count.index]}"></span>
+    <div class="container payment-form" style="margin-top: 150px">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="car-list mb-4">
+                            <div th:each="car, count: ${carsToBuyList}" class="car-item">
+                                <a th:href="@{/car/{id}(id=${car.id})}"
+                                   th:text="${car.producer} + ' ' + ${car.model}"></a>
+                                <span class="price" th:text="${'$' + carsPriceList[count.index]}"></span>
+                            </div>
+                        </div>
+
+                        <p>Total
+                            <span class="price" style="color:black" th:text="'Pretul total: ' + ${totalPrice}"></span>
                         </p>
+
+                        <form method="post" action="/pay">
+                            <input type="submit" value="Continue to checkout" class="btn btn-success">
+                        </form>
                     </div>
-                    <hr>
-                    <!-- You may want to calculate the total price using JavaScript or server-side logic -->
-                    <p>Total <span class="price" style="color:black"><b>$10</b></span></p>
                 </div>
             </div>
-
-            <form method="post" action="/pay">
-                <p>Total
-                    <span class="price" style="color:black" th:text="'Pretul total: ' + ${totalPrice}"></span>
-                </p>
-
-                <input type="submit" value="Continue to checkout" class="btn btn-success">
-            </form>
         </div>
     </div>
 </main>
 
-<footer th:replace="/footer :: footer"></footer>
+<footer class="footer" style="margin-top: 300px">
+    <div class="footer-container">
+        <div class="footer-column">
+            <h4>Ajutor și suport</h4>
+            <ul>
+                <li><a href="#">Ghid de licitare</a></li>
+                <li><a href="#">Politică de confidențialitate</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h4>Înregistrare în aplicație</h4>
+            <ul>
+                <li><a href="#">Login</a></li>
+                <li><a href="#">Register</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h4>Top 5 cele mai căutate tipuri de mașini</h4>
+            <ul>
+                <li><a href="#">Sedan</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2023 Vânătorii de Licitații. Toate drepturile sunt rezervate.</p>
+    </div>
+</footer>
 
 </body>
 </html>

@@ -7,12 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="/css/navBarStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/uploadImagesStyle.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap"/>
-    <link rel="stylesheet" type="text/css" href="/css/uploadImagesStyle.css">
 </head>
 <body>
+
 <header th:replace="/nav_bar :: nav_bar"></header>
 
 <section>
@@ -23,14 +25,14 @@
                     <div class="upload-area">
                         <i class="fas fa-cloud-upload-alt fa-3x"></i>
                         <label for="images" class="upload-text">
-                            Drag &amp; Drop or <span>Browse</span>
+                            <span>Selectează fișierul</span>
                         </label>
                         <input type="file" id="images" name="images" accept="image/*" class="form-control-file"
                                multiple>
                     </div>
 
                     <div class="thumbnails"></div>
-                    <button type="submit" class="btn btn-primary">Încarcă imaginile</button>
+                    <button type="submit" class="btn button">Încarcă imaginile</button>
                 </form>
             </div>
         </div>
@@ -41,6 +43,5 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/retrieveThumbnailImages.js"></script>
-
 </body>
 </html>

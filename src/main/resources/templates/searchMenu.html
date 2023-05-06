@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Meniu de căutare</title>
+</head>
+<body>
+<div th:fragment="form">
+    <form method="GET" action="/cars">
+        <div class="search-container" style="margin-top: 150px">
+            <div class="input-column">
+                <label>
+                    <input type="text" name="producer" placeholder="Producător">
+                </label>
+                <label>
+                    <input type="text" name="model" placeholder="Model">
+                </label>
+            </div>
+            <div class="input-column">
+                <label for="yearFrom"></label>
+                <select id="yearFrom" class="year-dropdown">
+                    <option value="" disabled selected>Anul fabricației de la</option>
+                </select>
+
+                <label for="yearTo"></label>
+                <select id="yearTo" class="year-dropdown">
+                    <option value="" disabled selected>Anul fabricației până la</option>
+                </select>
+            </div>
+
+            <div class="input-column">
+                <label for="priceFrom"></label>
+                <select id="priceFrom" class="price-dropdown">
+                    <option value="" disabled selected>Prețul de la</option>
+                </select>
+
+                <label for="priceTo"></label>
+                <select id="priceTo" class="price-dropdown">
+                    <option value="" disabled selected>Prețul până la</option>
+                </select>
+            </div>
+            <button class="search-button">Search</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

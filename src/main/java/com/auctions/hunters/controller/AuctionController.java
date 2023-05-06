@@ -10,12 +10,12 @@ import com.auctions.hunters.service.ml.RecommendationServiceImpl;
 import com.auctions.hunters.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -64,8 +64,6 @@ public class AuctionController {
         return "redirect:/";
     }
 
-    private final List<Auction> finishedAuctions = new ArrayList<>();
-
     @GetMapping("/auctions")
     public String getAuctions(
             @RequestParam(defaultValue = "0") int page,
@@ -87,26 +85,34 @@ public class AuctionController {
             //filter for displaying only the cars that DO NOT MATCH the authenticated user id
             carSpecification = carSpecification.and((root, query, criteriaBuilder) -> criteriaBuilder.notEqual(root.get("user"), user));
 
+            //retrieve all ACTIVE auctions
             Page<Car> carPage = carService.getCarPage(page1, carSpecification);
-            int totalPages = carPage.getTotalPages();
+            List<Auction> allActiveAuctionsList = auctionService.findAllActiveAuctions();
+            if (allActiveAuctionsList.isEmpty()) {
+                return "/no_car";
+            }
+
+            //get the cars from the auctions
+            List<Car> carList = allActiveAuctionsList.stream()
+                    .map(Auction::getCar)
+                    .toList();
+
+            Page<Car> updatedPage = new PageImpl<>(carList, carPage.getPageable(), carPage.getTotalElements() - carList.size());
+            int totalPages = updatedPage.getTotalPages();
 
             if (totalPages > 0) {
                 List<Integer> pageNumbers = IntStream.rangeClosed(0, totalPages - 1)
                         .boxed()
                         .toList();
 
-                //hook needed for displaying the car list if there are ay cars to display,
-                //a message will appear otherwise
-                List<Car> authenticatedUserCarsList = carService.getAuthenticatedUserCarsList();
-
                 //set the minimum price for each car
-                List<Float> auctionsMinimumPriceList = auctionService.setCurrentPriceForEachCarPage(carPage);
+                List<Float> auctionsMinimumPriceList = auctionService.setCurrentPriceForEachCarPage(updatedPage);
 
-                modelAtr1.addAttribute("carPage", carPage);
+                modelAtr1.addAttribute("carPage", updatedPage);
                 modelAtr1.addAttribute("currentPage", page1);
                 modelAtr1.addAttribute("pageNumbers", pageNumbers);
-                modelAtr1.addAttribute("authenticatedUserCarsListSize", authenticatedUserCarsList.size());
                 modelAtr1.addAttribute("auctionsMinimumPriceList", auctionsMinimumPriceList);
+                modelAtr1.addAttribute("allActiveAuctionsList", allActiveAuctionsList);
             }
 
             return "/auction_list";
@@ -160,7 +166,6 @@ public class AuctionController {
                 modelAtr1.addAttribute("auctionsMinimumPriceList", auctionsMinimumPriceList);
                 modelAtr1.addAttribute("authenticatedUserCarsListSize", authenticatedUserCarsList.size());
                 modelAtr1.addAttribute("recommendedAuctionsList", recommendedAuctionsList);
-                modelAtr1.addAttribute("recommendedAuctionsListSize", recommendedAuctionsList.size());
             }
 
             return "/recommended_car_list";
