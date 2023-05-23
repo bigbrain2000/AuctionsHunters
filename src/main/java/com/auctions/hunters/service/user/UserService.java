@@ -42,7 +42,6 @@ public interface UserService {
      * Update all information for a specific {@link User} entity.
      *
      * @param newUser  the user who will be persisted
-     * @param username current user username
      * @return updated {@link User} object
      */
      User update(@NotNull User newUser);
