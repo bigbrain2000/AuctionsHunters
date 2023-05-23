@@ -47,6 +47,12 @@ public class Auction {
     @Column(name = "minimum_price", nullable = false)
     private float minimumPrice;
 
+    @Column(name = "starting_price", nullable = false)
+    private float startingPrice;
+
+    @Column(name = "current_price")
+    private float currentPrice;
+
     @JsonFormat(shape = STRING, pattern = DATE_TIME_PATTERN)
     @Column(name = "start_time", nullable = false)
     private OffsetDateTime startTime;
@@ -54,12 +60,6 @@ public class Auction {
     @JsonFormat(shape = STRING, pattern = DATE_TIME_PATTERN)
     @Column(name = "endTime", nullable = false)
     private OffsetDateTime endTime;
-
-    @Column(name = "starting_price", nullable = false)
-    private float startingPrice;
-
-    @Column(name = "current_price")
-    private float currentPrice;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)

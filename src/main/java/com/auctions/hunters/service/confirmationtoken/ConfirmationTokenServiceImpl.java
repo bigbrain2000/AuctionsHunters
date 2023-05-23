@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 import static com.auctions.hunters.utils.DateUtils.getDateTime;
@@ -25,33 +27,33 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
     }
 
     /**
-     * Save a token after it has been confirmed
+     * Save a {@link ConfirmationToken} in the database.
      *
-     * @param token -  the token we want to save
-     * @return - the saved token
+     * @param token the {@link ConfirmationToken} to be saved
+     * @return the saved {@link ConfirmationToken}
      */
-    public ConfirmationToken saveConfirmationToken(ConfirmationToken token) {
+    public ConfirmationToken saveConfirmationToken(@NotNull ConfirmationToken token) {
         LOGGER.debug("Token was successfully inserted in the database");
         return confirmationTokenRepository.save(token);
     }
 
     /**
-     * Get a saved token from the DB
+     * Get a saved {@link ConfirmationToken} from the DB
      *
-     * @param token - the token we want to search
-     * @return - the persisted searched token
+     * @param token the token to be retrieved
+     * @return the persisted searched token
      */
-    public Optional<ConfirmationToken> getToken(String token) {
+    public Optional<ConfirmationToken> getToken(@NotBlank String token) {
         LOGGER.debug("Token was successfully retrieved from the database");
         return confirmationTokenRepository.findByToken(token);
     }
 
     /**
-     * Set a token confirmation date
+     * Set a token confirmation date.
      *
-     * @param token - the token we want to save
+     * @param token the token we want to save
      */
-    public void setConfirmedAt(String token) {
+    public void setConfirmedAt(@NotBlank String token) {
         LOGGER.debug("Token was successfully updated in the database");
         confirmationTokenRepository.updateTokenConfirmationDate(token, getDateTime());
     }

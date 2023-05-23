@@ -41,7 +41,7 @@ public class Scheduler {
     // @Scheduled(cron = "0 * * ? * *") //every minute reminder
 //    @Scheduled(cron = "*/1 * * * * *") //every second
     @Scheduled(cron = "0/30 * * ? * *")  //every 30 second
-    public void sendEmailIfSubscriptionExpired() {
+    public void sendEmailIfUserBidsWereOvertaken() {
         log.debug("Scheduler process started");
         List<User> allUsers = userService.findAll();
 

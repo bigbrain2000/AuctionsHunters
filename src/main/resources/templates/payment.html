@@ -37,16 +37,15 @@
                             <div th:each="car, count: ${carsToBuyList}" class="car-item">
                                 <a th:href="@{/car/{id}(id=${car.id})}"
                                    th:text="${car.producer} + ' ' + ${car.model}"></a>
-                                <span class="price" th:text="${'$' + carsPriceList[count.index]}"></span>
                             </div>
                         </div>
 
-                        <p>Total
-                            <span class="price" style="color:black" th:text="'Pretul total: ' + ${totalPrice}"></span>
+                        <p>
+                            <span class="price" style="color:black" th:text="'Pretul total: ' + ${totalPrice} + ' RON'"></span>
                         </p>
 
                         <form method="post" action="/pay">
-                            <input type="submit" value="Continue to checkout" class="btn btn-success">
+                            <input type="submit" value="Finalizează achiziția" class="btn btn-success">
                         </form>
                     </div>
                 </div>

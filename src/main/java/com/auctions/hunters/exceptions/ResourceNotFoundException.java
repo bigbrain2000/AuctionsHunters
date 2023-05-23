@@ -1,11 +1,13 @@
 package com.auctions.hunters.exceptions;
 
+import lombok.Getter;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.io.Serial;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+@Getter
 @ResponseStatus(value = NOT_FOUND)
 public class ResourceNotFoundException extends RuntimeException {
 

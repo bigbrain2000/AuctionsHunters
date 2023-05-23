@@ -12,11 +12,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.auctions.hunters.model.enums.CarStatus.AUCTIONED;
 import static com.auctions.hunters.model.enums.CarStatus.NOT_AUCTIONED;
 import static java.util.List.of;
 
@@ -42,7 +43,7 @@ public class CarServiceImpl implements CarService {
      * @param vin the car`s VIN
      */
     @Override
-    public Car save(String vin) throws NotEnoughLookupsException, CarPayloadFailedToCreateException, UnrecognizedVinException, CarVinAlreadyExistsException {
+    public Car save(@NotBlank String vin) throws NotEnoughLookupsException, CarPayloadFailedToCreateException, UnrecognizedVinException, CarVinAlreadyExistsException {
 
         if (isCarAlreadySaved(vin)) {
             throw new CarVinAlreadyExistsException(String.format("Car with VIN %s already exists.", vin));
@@ -55,13 +56,31 @@ public class CarServiceImpl implements CarService {
     }
 
     /**
+     * Query the database to see if the car`s VIN already exists for a record.
+     *
+     * @param vin the car`s VIN
+     * @return true if a car with the given VIN is present in the database, false otherwise
+     */
+    private boolean isCarAlreadySaved(@NotBlank String vin) {
+        Optional<Car> optionalCar = carRepository.findCarByVin(vin);
+
+        if (optionalCar.isPresent()) {
+            log.debug("A car already exists with id {} and vin {}.", optionalCar.get().getId(), optionalCar.get().getVin());
+            return true;
+        }
+
+        log.debug("A car with vin {} does not exists.", vin);
+        return false;
+    }
+
+    /**
      * Delete a car by a specific id if the id is found in the database if the car is not present in an auction.
      *
      * @param carId persisted car id
      * @throws IllegalArgumentException if the car with the given id can not be found in the database
      */
     @Override
-    public void deleteById(Integer carId) throws CarExistsInAuctionException {
+    public void deleteById(@NotNull Integer carId) throws CarExistsInAuctionException {
         Optional<Car> optionalCar = carRepository.findById(carId);
 
         if (optionalCar.isPresent()) {
@@ -79,6 +98,19 @@ public class CarServiceImpl implements CarService {
             }
         } else {
             throw new IllegalArgumentException("Car with ID " + carId + " does not exist.");
+        }
+    }
+
+    /**
+     * Remove the provided car from the user list.
+     *
+     * @param car the car that will be deleted
+     */
+    private void removeCarFromUserList(@NotNull Car car) {
+        User user = car.getUser();
+        if (user != null) {
+            user.getCarList().remove(car);
+            userService.update(user); // update the user
         }
     }
 
@@ -101,7 +133,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public Car getCarById(Integer carId) {
+    public Car getCarById(@NotNull Integer carId) {
         Optional<Car> optionalCar = carRepository.findById(carId);
 
         if (optionalCar.isPresent()) {
@@ -113,31 +145,14 @@ public class CarServiceImpl implements CarService {
     }
 
     /**
-     * Query the database to see if the car`s VIN already exists for a record.
-     *
-     * @param vin the car`s VIN
-     * @return true if a car with the given VIN is present in the database, false otherwise
-     */
-    public boolean isCarAlreadySaved(String vin) {
-        Optional<Car> optionalCar = carRepository.findCarByVin(vin);
-
-        if (optionalCar.isPresent()) {
-            log.debug("A car already exists with id {} and vin {}.", optionalCar.get().getId(), optionalCar.get().getVin());
-            return true;
-        }
-
-        log.debug("A car with vin {} does not exists.", vin);
-        return false;
-    }
-
-    /**
      * Update the status of a {@link Car} when it`s placed in an auction.
      *
      * @param id            persisted car id
      * @param auctionStatus the status of the car. False means it`s not being auctioned and true otherwise.
      * @return the new updated car that`s being saved in the database
      */
-    public Car updateCarAuctionStatus(Integer id, CarStatus auctionStatus) {
+    @Override
+    public Car updateCarAuctionStatus(@NotNull Integer id, @NotNull CarStatus auctionStatus) {
         String errorMessage = String.format("Car with the id: %s was not found!", id);
 
         Car car = carRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(errorMessage));
@@ -153,7 +168,8 @@ public class CarServiceImpl implements CarService {
     /**
      * Retrieve a set car page with 10 cars.
      */
-    public Page<Car> getCarPage(int page, Specification<Car> spec) {
+    @Override
+    public Page<Car> getCarPage(@NotNull int page, @NotNull Specification<Car> spec) {
         int pageSize = 10; //the number of elements in a page
         return carRepository.findAll(spec, PageRequest.of(page, pageSize));
     }
@@ -170,31 +186,27 @@ public class CarServiceImpl implements CarService {
     }
 
     /**
-     * Remove the provided car from the user list.
+     * Retrieve a {@link List} of {@link Car} objects from the database based on the {@link User} id.
      *
-     * @param car the car that will be deleted
+     * @return a {@link List} of {@link Car} objects if the user has added cars to his inventory, empty otherwise
      */
-    private void removeCarFromUserList(Car car) {
-        User user = car.getUser();
-        if (user != null) {
-            user.getCarList().remove(car);
-            userService.update(user, user.getUsername()); // update the user
-        }
+    private List<Car> getAllCarsByUserId(@NotNull Integer userId) {
+        return carRepository.findByUserId(userId);
     }
 
-    private List<Car> getAllCarsByUserId(Integer userId) {
-        List<Car> userCarList = carRepository.findByUserId(userId);
-
-        if (userCarList == null) {
-            log.debug("Could not find the car list for user id {} ", userId);
-            throw new ResourceNotFoundException("User", "id", userId);
-        }
-
-        return userCarList;
-    }
-
-
-    public List<Car> findAllByIdIn(List<Integer> carsIdList) {
+    /**
+     * Retrieve a list of {@link Car} objects from the database that match the given id list.
+     */
+    public List<Car> findAllByIdIn(@NotNull List<Integer> carsIdList) {
         return carRepository.findAllByIdIn(carsIdList);
+    }
+
+    /**
+     * Retrieved a list of {@link Car} objects from the database where the body type is specified by the input param.
+     *
+     * @return a list of {@link Car} objects, empty if no car with the specified body type was found
+     */
+    public List<Car> getAllCarsByBodyType(@NotBlank String bodyType) {
+        return carRepository.findByBody(bodyType);
     }
 }

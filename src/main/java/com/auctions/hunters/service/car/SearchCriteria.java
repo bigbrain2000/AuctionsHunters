@@ -2,7 +2,6 @@ package com.auctions.hunters.service.car;
 
 import com.auctions.hunters.model.Car;
 import lombok.Data;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.domain.Specification;
 
 import static java.lang.Character.isUpperCase;
@@ -24,19 +23,12 @@ public class SearchCriteria {
     }
 
     /**
-     *  Method builds up a {@link Specification} object that is used to construct a JPA query for the {@link Car} entity.
-     * @param producer
-     * @param model
-     * @param minYear
-     * @param maxYear
-     * @param minPrice
-     * @param maxPrice
-     * @return
+     * Method builds up a {@link Specification} object that is used to construct a JPA query for the {@link Car} entity.
      */
     public Specification<Car> buildSpec(String producer, String model, Integer minYear, Integer maxYear, Integer minPrice, Integer maxPrice) {
         Specification<Car> spec = Specification.where(null);
         if (producer != null && !producer.isEmpty()) {
-            if(isUpperCase(model.charAt(0))) {
+            if (isUpperCase(model.charAt(0))) {
                 spec = spec.and(new CarSpecification(new SearchCriteria("producer", ":", producer)));
             }
 
@@ -44,7 +36,7 @@ public class SearchCriteria {
             spec = spec.and(new CarSpecification(new SearchCriteria("producer", ":", insensitiveCaseModelString)));
         }
         if (model != null && !model.isEmpty()) {
-            if(isUpperCase(model.charAt(0))) {
+            if (isUpperCase(model.charAt(0))) {
                 spec = spec.and(new CarSpecification(new SearchCriteria("model", ":", model)));
             }
 
@@ -66,8 +58,7 @@ public class SearchCriteria {
         return spec;
     }
 
-    @NotNull
-    private static String getStringWithFirstCharToUpperCase(String model) {
+    private String getStringWithFirstCharToUpperCase(String model) {
         char firstCharacter = model.charAt(0);
         char firstCharacterToUpperCase = toUpperCase(firstCharacter);
         return model.replace(firstCharacter, firstCharacterToUpperCase);

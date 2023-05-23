@@ -4,88 +4,118 @@
     <meta charset="utf-8">
     <title>Adaugă o mașină</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="/css/addCarStyle.css">
+<!--     <link rel="stylesheet" type="text/css" href="/css/addCarStyle.css">-->
     <link rel="stylesheet" type="text/css" href="/css/navBarStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/popoutStyle.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--  //  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">-->
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap"/>
     <style>
-
-        a {
-            text-decoration: none;
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
         }
 
-        a:hover {
-            text-decoration: underline;
-            border-bottom: 1px solid black;
+        .input-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .vin_input {
+            font-size: 2rem;
+            padding: 1rem 2rem;
+            border: 2px solid #333;
+            text-align: center;
+        }
+
+        .button {
+            font-size: 2rem;
+            background-color: #333;
+            color: #fff;
+            border: 2px solid #333;
+            padding: 1rem 2rem;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+
+        .button:hover {
+            background-color: #fff;
+            color: #333;
+        }
+
+        .info-links {
+            display: flex;
+            justify-content: space-between;
+            width: 50%;
+        }
+
+        .info-links a {
+            font-size: 1.2rem;
         }
     </style>
 </head>
 <body>
+
 <header th:replace="/nav_bar :: nav_bar"></header>
 
-<form th:action="@{/car/add}" method="post">
-    <div class="input-container">
-        <label for="vin"></label>
-        <input class="vin_input" type="text" required="required" id="vin" name="vin"
-               placeholder="Serie șasiu">
-        <input class="button" type="submit" value="Adaugă">
+
+<div class="main-content">
+    <form th:action="@{/car/add}" method="post">
+        <div class="input-container">
+            <input class="vin_input" type="text" required="required" id="vin" name="vin"
+                   placeholder="Serie șasiu">
+            <input class="button" type="submit" value="Adaugă">
+        </div>
+    </form>
+
+    <div class="info-links">
+        <a onclick="openModal()">Ce este seria de șasiu?</a>
+        <a onclick="openModal2()">Unde găsesc seria de șasiu?</a>
     </div>
-</form>
-
-<a onclick="openModal()">Ce este seria de șasiu?</a>
-
-<a onclick="openModal2()">Unde găsesc seria de șasiu?</a>
+</div>
 
 <div id="myModal" class="modal">
     <div class="modal-content">
         <div class="modal-line"></div>
         <span class="close" style="margin-top: -23px" onclick="closeModal()">&times;</span>
         <p class="modal-text" style="margin-top: 40px">
-            Numarul seriei de sasiu, abreviat VIN (Vehicle Identification Number în țările europene) este o
+            Numărul seriei de șasiu, abreviat VIN (Vehicle Identification Number în țările europene) este o
             combinație unică de 17 caractere care identifică un anumit vehicul.
             Acest număr este atribuit vehiculului de către producător și identifică nu numai seria, modelul și anul de
             fabricație, ci și anumite informații, cum ar fi tipul de motor.
         </p>
         <p class="modal-text">
             Producătorii de vehicule sunt direct responsabili pentru unicitatea seriei lor de șasiu.
-            Puteți urmări istoricul vehiculului (defecțiuni și furt) cu un VIN unic pentru fiecare vehicul.
         </p>
         <p class="modal-text">
             Seria de sasiu contine 3 componente:
         </p>
 
         <ul>
-            <li class="modal-text" style="margin-left: 40px"> prima parte alcatuita din 3 caractere (WMI) face referire
-                la producatorul masinii (comnaine, corporatie
-                sau chiar persoana fizica)
+            <li class="modal-text" style="margin-left: 40px"> prima parte alcătuită din 3 caractere face referire la producătorul mașinii
             </li>
-            <li class="modal-text" style="margin-left: 40px">a doua parte (VDS) consta in 6 caractere si ofera
-                informatii generale despre vehicul (tipul de
-                codificare si
-                secventa acestor caractere difera de la un producator la altul)
+            <li class="modal-text" style="margin-left: 40px">a două parte constă în 6 caractere și oferă informații generale despre vehicul
+                (tipul de codificare și secvență acestor caractere diferă de la un producător la altul)
             </li>
-            <li class="modal-text" style="margin-left: 40px"> a treia parte (VIS) consta in 8 caractere cu ultimele 4
-                obligatoriu cifre. Daca producatorul
-                specifica aici anul si seria fabricatiei, de regula va inscriptiona mai intai anul fabricatiei si apoi
-                codul de serie in partea a doua.
+            <li class="modal-text" style="margin-left: 40px"> a treia parte constă în 8 caractere în care sunt specificate anul fabricației
+                și apoi codul de serie în partea a două.
             </li>
         </ul>
 
         <p class="modal-text">
-            In alcatuirea seriei de sasiu sunt permise cifre arabe si majuscule latine. Exemplu: 1, 2, 3, 4,
+            În alcătuirea seriei de șasiu sunt permise cifre arabe și majuscule latine. Exemplu: 1, 2, 3, 4,
             5, 6, 7, 8,
-            9, 0 and: A, B, C, D, E, F, G, H, J, K, L, M, N, P, R, S, T, U, V, W, X, Y, Z exceprie facand:
+            9, 0 și: A, B, C, D, E, F, G, H, J, K, L, M, N, P, R, S, T, U, V, W, X, Y, Z excepție făcând:
             I,O,Q.
         </p>
         <p class="modal-text">
-            Aditional, pot fi folosite diverse tipuri de separatoare. Acestea pot fi semne, simboluri care sa
-            indice unde incepe si unde se termina seria de sasiu. Selectia separatoarelor este tot la alegerea
-            producatorului, dar nu poate fi unul din caracterele deja utilizate in seria de sasiu sau un caracter
-            similar acestora. In acte, semnele de separatie nu sunt utilizate, iar seria de sasiu este trecuta
-            pe o singura linie, fara spatii.
+            Seria de șasiu este trecută pe o singură linie, fără spații.
         </p>
     </div>
 </div>
@@ -98,14 +128,11 @@
             Seria de șasiu (număr unic de identificare) este marcată pe elementele care sunt conectate permanent la
             vehicul (șasiu). Se găsește de obicei la exteriorul vehiculului, pe bord, lângă șofer, lângă geam, sau în
             altă locație aleasă de producătorul vehiculului, în documentele tehnice, precum și în alte documente precum
-            documentele de asigurare și de înmatriculare. De asemenea, puteți găsi informații despre locațiile seriei de
-            șasiu în forumurile online, Centrele de service autorizate (ASO) și Stațiile de inspecție tehnică periodică
-            (ITP) ale anumitor fani de mașini sau mărci.
+            documentele de asigurare și de înmatriculare.
         </p>
     </div>
 </div>
 
-<!--TODO: move the functions in the js directory-->
 <script>
     const modal = document.getElementById("myModal");
     function openModal() {

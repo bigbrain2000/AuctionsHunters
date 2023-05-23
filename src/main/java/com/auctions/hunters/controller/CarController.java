@@ -11,7 +11,6 @@ import com.auctions.hunters.service.bid.BidService;
 import com.auctions.hunters.service.car.CarService;
 import com.auctions.hunters.service.car.SearchCriteria;
 import com.auctions.hunters.service.image.ImageService;
-import com.auctions.hunters.service.ml.RecommendationService;
 import com.auctions.hunters.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,6 +26,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static com.auctions.hunters.service.image.ImageUtil.decompressImage;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
@@ -40,20 +40,17 @@ public class CarController {
     private final AuctionService auctionService;
     private final UserService userService;
     private final BidService bidService;
-    private final RecommendationService recommendationService;
 
     public CarController(CarService carService,
                          ImageService imageService,
                          AuctionService auctionService,
                          UserService userService,
-                         BidService bidService,
-                         RecommendationService recommendationService) {
+                         BidService bidService) {
         this.carService = carService;
         this.imageService = imageService;
         this.auctionService = auctionService;
         this.userService = userService;
         this.bidService = bidService;
-        this.recommendationService = recommendationService;
     }
 
     @GetMapping("/car/add")
@@ -92,7 +89,7 @@ public class CarController {
 
         //if the user did not register any cars for sale, then display an informative template
         List<Car> authenticatedUserCarsList = carService.getAuthenticatedUserCarsList();
-        if(authenticatedUserCarsList.isEmpty()) {
+        if (authenticatedUserCarsList.isEmpty()) {
             return "/no_car";
         }
 
@@ -113,7 +110,7 @@ public class CarController {
                     .filter(car -> car.getStatus().equals(CarStatus.NOT_AUCTIONED) || car.getStatus().equals(CarStatus.AUCTIONED))
                     .toList();
 
-            if(carList.isEmpty()) {
+            if (carList.isEmpty()) {
                 return "/no_car";
             }
 
@@ -145,15 +142,14 @@ public class CarController {
         try {
             carService.deleteById(id);
         } catch (CarExistsInAuctionException e) {
-            return "redirect:/user/cars"; //TODO: ADD a new redirect for the car the user cannot delete the car
-            //because the car is in an auction
+            return "redirect:/cars";
         }
 
         return "redirect:/cars";
     }
 
     @GetMapping("/car/{id}")
-    public String getCar(@PathVariable Integer id, Model model) {
+    public String getCarById(@PathVariable Integer id, Model model) {
         getAllImagesForTheSavedCar(id, model);
 
         return "/view_car";
@@ -166,6 +162,19 @@ public class CarController {
         return "/view_auctioned_car";
     }
 
+    private void getAllImagesForTheSavedCar(Integer id, Model model) {
+        Car car = carService.getCarById(id);
+        model.addAttribute("car", car);
+
+        List<Image> images = imageService.findAllImagesByCarId(id);
+        List<String> base64Images = images.stream()
+                .map(image -> Base64.getEncoder().encodeToString(decompressImage(image.getData())))
+                .toList();
+
+        model.addAttribute("images", base64Images);
+        model.addAttribute("contentTypes", images.stream().map(Image::getContentType).toList());
+    }
+
     @PostMapping("/bid/car/{carId}")
     public String createNewBid(@PathVariable Integer carId, @RequestParam("bidAmount") Integer bidAmount) {
         Auction auction = auctionService.getAuctionByCarId(carId);
@@ -173,22 +182,11 @@ public class CarController {
         try {
             bidService.save(bidAmount, auction);
         } catch (LowBidAmountException e) {
-            return "redirect:/auctions"; //TODO: add a new page for error
+            return "redirect:/bid/car/{carId}";
         }
 
-        return "redirect:/auctions"; //redirect to the auctions endpoint
+        return "redirect:/auctions";
     }
 
-    private void getAllImagesForTheSavedCar(Integer id, Model model) {
-        Car car = carService.getCarById(id);
-        model.addAttribute("car", car);
 
-        List<Image> images = imageService.findAllImagesByCarId(id);
-        List<String> base64Images = images.stream()
-                .map(image -> Base64.getEncoder().encodeToString(image.getData()))
-                .toList();
-
-        model.addAttribute("images", base64Images);
-        model.addAttribute("contentTypes", images.stream().map(Image::getContentType).toList());
-    }
 }

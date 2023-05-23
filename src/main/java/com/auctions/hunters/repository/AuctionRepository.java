@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
+@Transactional
 public interface AuctionRepository extends JpaRepository<Auction, Integer> {
 
     /**
@@ -28,13 +29,11 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
      * Retrieves an {@link Auction} from the database where the foreign key, car_id is equal to the parameter value.
      */
     @Query("SELECT a FROM Auction a WHERE a.car.id = ?1")
-    @Transactional
     Auction findByCarId(@Param("carId") Integer carId);
 
     /**
      * Retrieves a list of {@link Auction} from the database where the foreign key, user_id is equal to the parameter value.
      */
-    @Transactional
     List<Auction> findByUserId(Integer userId);
 
     /**
@@ -42,4 +41,9 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
      * and the provided {@code status} matches the {@code CLOSED} status from {@link AuctionStatus}.
      */
     List<Auction> findAllByBuyerIdAndStatus(Integer buyerId, AuctionStatus status);
+
+    /**
+     * Retrieves a list of {@link Auction} from the database where based on the cars list provided.
+     */
+    List<Auction> findByCarIn(List<Car> cars);
 }

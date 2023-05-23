@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/noCarStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/paginationStyle.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
 
     <script src="/js/yearDropDownMenu.js"></script>
     <script src="/js/priceDropDownMenu.js"></script>
@@ -54,11 +54,18 @@
                 </td>
                 <!-- if the car is in an auction then it can`t be deleted by the seller -->
                 <td>
-                    <a th:disabled="${car.status == T(com.auctions.hunters.model.enums.CarStatus).AUCTIONED}"
-                       disabled th:href="@{/cars/{id}(id=${car.id})}"
-                       class="btn btn-get-car" style="background-color: #d9534f"
+                    <a th:if="${car.status == T(com.auctions.hunters.model.enums.CarStatus).AUCTIONED}"
+                       th:disabled="${car.status == T(com.auctions.hunters.model.enums.CarStatus).AUCTIONED}" disabled
+                       th:href="@{/cars/{id}(id=${car.id})}"
+                       class="btn btn-get-car" style="background-color: #606060"
                        th:title="${car.status == T(com.auctions.hunters.model.enums.CarStatus).AUCTIONED} ? 'Mașina nu poate fi stearsă deoarece se află intr-o licitatie' : ''">
-                        <i class="fa fa-trash"></i>
+                        <i class="fa fa-trash" style="color: white"></i>
+                    </a>
+
+                    <a th:if="${car.status == T(com.auctions.hunters.model.enums.CarStatus).NOT_AUCTIONED}"
+                       th:href="@{/cars/{id}(id=${car.id})}"
+                       class="btn btn-get-car" style="background-color: #ff0000">
+                        <i class="fa fa-trash" style="color: white"></i>
                     </a>
                 </td>
 

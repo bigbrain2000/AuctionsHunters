@@ -16,6 +16,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 import static java.math.RoundingMode.HALF_UP;
 
@@ -41,6 +42,13 @@ public class PayPalService {
         }
     }
 
+    /**
+     * Creates a {@link Payment} object by setting the Intent,  {@link Payer}, the {@link List} of {@link Transaction} objects,
+     * and the {@link RedirectUrls}.
+     *
+     * @param paymentRequest the request for the payment to be processed
+     * @return a {@link Payment} object that represent the processed object obtained after the request was made
+     */
     private Payment buildPayment(@NotNull @Valid PaymentRequest paymentRequest) {
         Amount amount = createAmount(paymentRequest.getTotalAmount());
         Transaction transaction = createTransaction(amount);
@@ -56,7 +64,15 @@ public class PayPalService {
         return payment;
     }
 
-    private Amount createAmount(@NotNull Double total) {
+    /**
+     * Creates the total amount for a {@link Payment} entity wrapped in a {@link Amount} object
+     *
+     * @param total the price that the user needs to pay
+     * @return the price that the user needs to pay wrapped in an {@link Amount} object
+     */
+    private Amount createAmount(Double total) {
+        Objects.requireNonNull(total, "total cannot be null");
+
         Amount amount = new Amount();
         amount.setCurrency(payPalProperties.getCurrency());
 
@@ -66,6 +82,12 @@ public class PayPalService {
         return amount;
     }
 
+    /**
+     * Creates a {@link Transaction} that contains the total price that the user needs to pay.
+     *
+     * @param amount the price that the user needs to pay wrapped in a {@link Amount} object
+     * @return the new created {@link Transaction} object
+     */
     private Transaction createTransaction(@NotNull Amount amount) {
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
@@ -73,6 +95,12 @@ public class PayPalService {
         return transaction;
     }
 
+    /**
+     * Creates a {@link Payer} object that will pay the {@link Transaction} total price.
+     *
+     * @param method the paying method
+     * @return the new created {@link Payer} object
+     */
     private Payer createPayer(@NotBlank String method) {
         Payer payer = new Payer();
         payer.setPaymentMethod(method);
@@ -80,6 +108,21 @@ public class PayPalService {
         return payer;
     }
 
+    /**
+     * Creates the redirecting URLS.
+     * <p>
+     * Components:
+     * <ul>
+     *     <li>
+     *         successUrl - the URL if the payments was successful and the transaction was finished
+     *     </li>
+     *      <li>
+     *         cancelUrl - the URL if the payments was unsuccessful
+     *     </li>
+     * </ul>
+     *
+     * @return the URLs set for the {@link RedirectUrls} object
+     */
     private RedirectUrls createRedirectUrls(@NotBlank String cancelUrl, @NotBlank String successUrl) {
         RedirectUrls redirectUrls = new RedirectUrls();
         redirectUrls.setCancelUrl(cancelUrl);
@@ -88,7 +131,15 @@ public class PayPalService {
         return redirectUrls;
     }
 
-    public Payment executePayment(String paymentId, String payerId) throws PayPalPaymentException {
+    /**
+     * Process the created {@link Payment}.
+     *
+     * @param paymentId the  {@link Payment} ID
+     * @param payerId   the id of the user that will pay the price of the  {@link Payment}
+     * @return the processed  {@link Payment}
+     * @throws PayPalPaymentException is thrown if the {@link Payment} processing fails
+     */
+    public Payment executePayment(@NotBlank String paymentId, @NotBlank String payerId) throws PayPalPaymentException {
         try {
             Payment payment = new Payment();
             payment.setId(paymentId);

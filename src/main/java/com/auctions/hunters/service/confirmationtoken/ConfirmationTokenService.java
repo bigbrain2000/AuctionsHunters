@@ -1,6 +1,5 @@
 package com.auctions.hunters.service.confirmationtoken;
 
-import com.auctions.hunters.exceptions.ResourceNotFoundException;
 import com.auctions.hunters.model.ConfirmationToken;
 
 import javax.validation.constraints.NotBlank;
@@ -13,25 +12,25 @@ import java.util.Optional;
 public interface ConfirmationTokenService {
 
     /**
-     * Set a token confirmation date
+     * Save a {@link ConfirmationToken} in the database.
      *
-     * @param token - the token we want to save
-     */
-    void setConfirmedAt(@NotBlank String token);
-
-    /**
-     * Save a token after it has been confirmed
-     *
-     * @param token -  the token we want to save
-     * @return - the saved token
+     * @param token the {@link ConfirmationToken} to be saved
+     * @return the saved {@link ConfirmationToken}
      */
     ConfirmationToken saveConfirmationToken(@NotNull ConfirmationToken token);
 
     /**
-     * Get a saved token from the DB
+     * Get a saved {@link ConfirmationToken} from the DB
      *
-     * @param token - the token we want to search
-     * @return - the persisted searched token
+     * @param token the token to be retrieved
+     * @return the persisted searched token
      */
     Optional<ConfirmationToken> getToken(@NotBlank String token);
+
+    /**
+     * Set a token confirmation date.
+     *
+     * @param token the token we want to save
+     */
+    void setConfirmedAt(@NotBlank String token);
 }

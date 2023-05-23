@@ -1,6 +1,6 @@
 body {
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 17px;
+    font-size: 18px;
     padding: 8px;
 }
 
@@ -30,7 +30,8 @@ body {
 
 .payment-form .btn {
     width: 100%;
-    font-size: 17px;
+    font-size: 18px;
+    padding: 10px 0;
 }
 
 .cart {
@@ -38,15 +39,23 @@ body {
     padding: 20px;
     border-radius: 5px;
     border: 1px solid #dee2e6;
+    margin-bottom: 20px;
 }
 
 .cart h4 {
     margin-bottom: 1rem;
+    font-size: 22px;
 }
 
 .cart p {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.cart span.price {
+    font-size: 20px;
+    font-weight: bold;
 }
 
 .cart hr {

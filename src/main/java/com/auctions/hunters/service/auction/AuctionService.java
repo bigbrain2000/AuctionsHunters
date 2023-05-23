@@ -71,7 +71,7 @@ public interface AuctionService {
 
     List<Auction> retrieveAllFinishedAuctionsFromACarPage(Page<Car> carPage, User user);
 
-    Auction updateAuctionCurrentPrice(Integer auctionId, float currentPrice, Integer buyerId);
+    void updateAuctionCurrentPrice(Integer auctionId, float currentPrice, Integer buyerId);
 
     Page<Car> updateLiveAuctionsIntoFinishAuctions(List<Auction> auctions, Page<Car> carPage);
 
@@ -84,5 +84,7 @@ public interface AuctionService {
     List<Float> getFinishedAuctionsCurrentPrice();
 
     Float getTotalPriceToPay();
+
+    List<Auction> findAuctionsByCars(List<Car> cars);
 }
 

@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @Repository
-@Transactional(readOnly = true)
+@Transactional
 public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationToken, Integer> {
 
     /**

@@ -2,6 +2,7 @@ package com.auctions.hunters.service.user;
 
 import com.auctions.hunters.exceptions.EmailAlreadyExistsException;
 import com.auctions.hunters.exceptions.InvalidEmailException;
+import com.auctions.hunters.exceptions.ResourceNotFoundException;
 import com.auctions.hunters.model.User;
 
 import javax.validation.constraints.NotBlank;
@@ -14,118 +15,76 @@ import java.util.List;
 public interface UserService {
 
     /**
-     * Get a list with all the users
+     * Get a list with all the users from the database,
      *
      * @return a list with all the users
      */
     List<User> findAll();
 
     /**
-     * Find a specific user based on id.
+     * Find a specific {@link User} based on the username.
      *
-     * @param id user id
-     * @return found user
+     * @param username username of {@link User}
+     * @return found {@link User}
+     * @throws ResourceNotFoundException if the {@link User} was not find by the given username
      */
-    User findById(@NotNull Integer id);
+    User findByUsername(@NotBlank String username) throws ResourceNotFoundException;
 
     /**
-     * Find a specific user based on email
+     * Save a {@link User} in the database. By default, a {@link User} reminder to receive emails for an auction is FALSE.
      *
-     * @param email email of user
-     * @return found user
-     */
-    User findByEmail(@NotBlank String email);
-
-    /**
-     * Find a specific user based on username
-     *
-     * @param username username of user
-     * @return found user
-     */
-    User findByUsername(@NotBlank String username);
-
-    /**
-     * Save a user in the database
-     *
-     * @param user user entity
-     * @return saved user
+     * @param user the {@link User} entity to be saved in the database
+     * @return saved {@link User}
      */
     User save(@NotNull User user);
 
     /**
-     * Update all information for a specific user
+     * Update all information for a specific {@link User} entity.
      *
      * @param newUser  the user who will be persisted
      * @param username current user username
-     * @return updated user.
+     * @return updated {@link User} object
      */
-    User update(@NotNull User newUser, String username);
+     User update(@NotNull User newUser);
 
     /**
-     * Update the status of a {@link User} reminder emails.
+     * Update the status of a {@link User} reminder for receiving emails.
      *
      * @param id     persisted {@link User} id
      * @param status the reminder status of a {@link User} reminder emails
      */
-    void updateReminder(Integer id, boolean status);
+    void updateReminder(Integer id, boolean status) throws ResourceNotFoundException;
 
     /**
-     * Check if the username already exists but no exception is thrown
+     * Check if the {@link User} email already exists.
      *
-     * @param username username of user
-     * @return true if the username already exist, otherwise false
+     * @param email the email of {@link User}
+     * @return true if the email already exist, otherwise false
      */
-    boolean isUserEmailAlreadyRegistered(@NotBlank String username) throws EmailAlreadyExistsException;
+    boolean isUserEmailAlreadyRegistered(@NotBlank String email) throws EmailAlreadyExistsException;
 
     /**
-     * Verify is the user email is valid
+     * Based on entered data, a new user will be saved in the DB and a token
+     * is generated for validating email within the next 30 minutes from registering.
      *
-     * @param email email of user
-     * @throws InvalidEmailException if a user email is invalid
+     * @param newUser the user who register in the app
+     * @return a String which contains the unique token generated for the registered user
+     * @throws InvalidEmailException       if a user email is invalid
+     * @throws EmailAlreadyExistsException if a user with the same email already exists
      */
-    void checkIfEmailIsValid(@NotBlank String email) throws InvalidEmailException;
+    String register(@NotNull User newUser) throws InvalidEmailException, EmailAlreadyExistsException;
 
     /**
-     * Set user account as enabled once the email validation was completed.
-     *
-     * @param email of user
-     * @return an integer
-     */
-    int enableUser(@NotBlank String email);
-
-    /**
-     * Set user account as unlocked once the email validation was completed.
-     *
-     * @param email of user
-     * @return an integer
-     */
-    int unlockUser(@NotBlank String email);
-
-    /**
-     * After the email is confirmed, the token will be set as confirmed the user acc will be enabled
+     * After the email is confirmed, the token will be set as confirmed and the {@link User} account will be enabled.
      *
      * @param token the unique generated token for a new user
      */
     void confirmToken(@NotBlank String token);
 
     /**
-     * Based on entered data, a new user will be saved in the DB and a token
-     * is generated for validating email within the next 30 minutes from registering.
-     *
-     * @param request the user who register in the app
-     * @return a String which contains the unique token generated for the registered user
-     * @throws InvalidEmailException       if a user email is invalid
-     * @throws EmailAlreadyExistsException if a user with the same email already exists
-     */
-    String register(@NotNull User request) throws InvalidEmailException, EmailAlreadyExistsException;
-
-    /**
-     * Get the username of the logged user.
+     * Get the username of the logged {@link User}.
      *
      * @return the logged username if he is logged in the app
      */
     String getLoggedUsername();
-
-
-    String signUpUser(@NotNull User user) throws EmailAlreadyExistsException;
 }

@@ -83,6 +83,7 @@ public class PaymentController {
     @GetMapping("/pay/success")
     public String getSuccessPayment(@RequestParam("paymentId") String paymentId,
                                     @RequestParam("PayerID") String payerId) {
+
         try {
             Payment payment = payPalService.executePayment(paymentId, payerId);
 
@@ -90,7 +91,6 @@ public class PaymentController {
                 auctionService.updateFinishedAuctionsStatusAsSold();
                 return "/paymentSuccess";
             }
-
         } catch (PayPalPaymentException e) {
             return PAYMENT_ERROR_TEMPLATE;
         }

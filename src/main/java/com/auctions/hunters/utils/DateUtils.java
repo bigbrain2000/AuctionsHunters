@@ -15,10 +15,6 @@ public class DateUtils {
 
     public static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
 
-    private DateUtils() {
-        throw new IllegalStateException("Reflection should not be used for instantiate this class: " + DateUtils.class.getName() + ".");
-    }
-
     /**
      * Obtains the current date-time from the system clock in the default time-zone and return a OffsetDateTime having
      * the DATE_TIME_PATTERN.

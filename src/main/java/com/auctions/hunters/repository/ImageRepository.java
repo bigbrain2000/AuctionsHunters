@@ -4,17 +4,13 @@ import com.auctions.hunters.model.Image;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
+@Transactional
 public interface ImageRepository extends JpaRepository<Image, Integer> {
-
-    /**
-     * Retrieved an {@link Optional<Image>} from the database where the foreign key, car_id is equal to the parameter value.
-     */
-    Optional<Image> findByCarId(Integer carId);
 
     /**
      * Retrieve all images from the database.

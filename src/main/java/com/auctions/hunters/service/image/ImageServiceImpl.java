@@ -1,6 +1,5 @@
 package com.auctions.hunters.service.image;
 
-import com.auctions.hunters.exceptions.ResourceNotFoundException;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.Image;
 import com.auctions.hunters.repository.ImageRepository;
@@ -15,10 +14,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
+import static com.auctions.hunters.service.image.ImageUtil.compressImage;
 
 /**
- * Service class used for managing roles and implementing the {@link ImageService} interface.
+ * Service class used for managing images and implementing the {@link ImageService} interface.
  */
 @Slf4j
 @Service
@@ -34,9 +34,9 @@ public class ImageServiceImpl implements ImageService {
 
     /**
      * Save multiple files in the DB.
-     * Retrieve the latest car saved in the database and save the files as parameters for that specific car.
+     * Retrieve the latest saved {@link Car} from the database and save the files as parameters for that specific {@link Car}.
      *
-     * @param files the file that will be persisted in the database
+     * @param files the files that will be persisted in the database
      */
     @Override
     public void save(MultipartFile[] files) throws IOException {
@@ -50,7 +50,7 @@ public class ImageServiceImpl implements ImageService {
             byte[] originalImageBytes = file.getBytes();
             byte[] thumbnailImageBytes = createThumbnail(originalImageBytes, 600, 600);
 
-            image.setData(thumbnailImageBytes);
+            image.setData(compressImage(thumbnailImageBytes));
             image.setContentType(file.getContentType());
 
             imagesList.add(image);
@@ -63,6 +63,13 @@ public class ImageServiceImpl implements ImageService {
         imageRepository.saveAll(imagesList);
     }
 
+    /**
+     * Create thumbnails of the given images.
+     *
+     * @param imageBytes   image data
+     * @param targetWidth  the wanted width of the thumbnail
+     * @param targetHeight the wanted height of the thumbnail
+     */
     private byte[] createThumbnail(byte[] imageBytes, int targetWidth, int targetHeight) throws IOException {
         // Check if the input imageBytes is empty or null
         if (imageBytes == null || imageBytes.length == 0) {
@@ -81,49 +88,22 @@ public class ImageServiceImpl implements ImageService {
         return outputStream.toByteArray();
     }
 
-    @Override
-    public Image findById(Integer id) {
-        return imageRepository.findById(id).orElseThrow(() -> {
-            log.debug("Could not find the image by the id {} ", id);
-            return new ResourceNotFoundException("Image", "id", id);
-        });
-    }
-
+    /**
+     * Get all images from the database for a specific car id.
+     *
+     * @return found images
+     */
     @Override
     public List<Image> findAllImagesByCarId(Integer carId) {
         List<Image> allImages = imageRepository.findAll();
         List<Image> wantedImageList = new ArrayList<>();
 
-        for(Image image : allImages) {
-            if(image.getCar().getId().equals(carId)) {
+        for (Image image : allImages) {
+            if (image.getCar().getId().equals(carId)) {
                 wantedImageList.add(image);
             }
         }
 
         return wantedImageList;
-    }
-
-    @Override
-    public void deleteAll(List<Image> images) {
-        if (images != null) {
-            for (Image image : images) {
-                imageRepository.deleteById(image.getId());
-            }
-            log.debug("All images were deleted.");
-        }
-
-        log.error("Images list was empty.");
-    }
-
-    /**
-     * Find a specific image based on the provided car id.
-     *
-     * @param car the car for what we want to get the image from
-     * @return found image
-     */
-    public Image findImageByCarId(Car car) {
-        Optional<Image> optionalImage = imageRepository.findByCarId(car.getId());
-        return optionalImage.orElseThrow(() ->
-                new IllegalArgumentException(String.format("Provided car id %s is not present", car.getId())));
     }
 }

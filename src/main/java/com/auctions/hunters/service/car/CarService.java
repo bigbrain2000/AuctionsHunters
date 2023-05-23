@@ -5,15 +5,14 @@ import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.enums.CarStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
  * Interface used for declaring the method signatures that can be performed with a {@link Car} entity.
  */
-@Validated
 public interface CarService {
 
     /**
@@ -21,7 +20,7 @@ public interface CarService {
      *
      * @param vin the car`s VIN
      */
-    Car save(String vin) throws NotEnoughLookupsException, CarPayloadFailedToCreateException, UnrecognizedVinException, CarVinAlreadyExistsException;
+    Car save(@NotBlank String vin) throws NotEnoughLookupsException, CarPayloadFailedToCreateException, UnrecognizedVinException, CarVinAlreadyExistsException;
 
     /**
      * Delete a car by a specific id if the id is found in the database.
@@ -43,7 +42,7 @@ public interface CarService {
      *
      * @return the found car
      */
-    Car getCarById(Integer carId);
+    Car getCarById(@NotNull Integer carId);
 
     /**
      * Update the status of a car if it`s being auctioned.
@@ -52,13 +51,12 @@ public interface CarService {
      * @param auctionStatus the status of the car. False means it`s not being auctioned and true otherwise.
      * @return the new updated car that`s being saved in the database
      */
-    Car updateCarAuctionStatus(Integer id, CarStatus auctionStatus);
-
+    Car updateCarAuctionStatus(@NotNull Integer id, @NotNull CarStatus auctionStatus);
 
     /**
      * Retrieve a set car page with 10 cars.
      */
-    Page<Car> getCarPage(int page, Specification<Car> spec);
+    Page<Car> getCarPage(@NotNull int page, @NotNull Specification<Car> spec);
 
     /**
      * Returns all the cars that belong to the authenticated user.
@@ -67,5 +65,15 @@ public interface CarService {
      */
     List<Car> getAuthenticatedUserCarsList();
 
-    List<Car> findAllByIdIn(List<Integer> carsIdList);
+    /**
+     * Retrieve a list of {@link Car} objects from the database that match the given id list.
+     */
+    List<Car> findAllByIdIn(@NotNull List<Integer> carsIdList);
+
+    /**
+     * Returns a list with all the SUV cars from the database.
+     *
+     * @return a list with all the cars / empty if the list has 0 cars found
+     */
+    List<Car> getAllCarsByBodyType(String bodyType);
 }

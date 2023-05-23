@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotBlank;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,7 +37,7 @@ public class VinDecoderService {
         this.converter = converter;
     }
 
-    public Car decodeVin(String vin) throws CarPayloadFailedToCreateException, NotEnoughLookupsException, UnrecognizedVinException {
+    public Car decodeVin(@NotBlank String vin) throws CarPayloadFailedToCreateException, NotEnoughLookupsException, UnrecognizedVinException {
 
         if (!isVinValid(vin)) {
             throw new UnrecognizedVinException("Provide VIN is not valid!");
@@ -62,8 +63,7 @@ public class VinDecoderService {
         }
     }
 
-    @NotNull
-    private StringBuilder readDataFromConnection(HttpURLConnection connection) throws IOException {
+    private StringBuilder readDataFromConnection(@NotNull HttpURLConnection connection) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String inputLine;
         StringBuilder response = new StringBuilder();
@@ -76,7 +76,7 @@ public class VinDecoderService {
         return response;
     }
 
-    private void checkPotentialErrorsInJson(StringBuilder response) throws JsonProcessingException, NotEnoughLookupsException, UnrecognizedVinException {
+    private void checkPotentialErrorsInJson(@NotNull StringBuilder response) throws JsonProcessingException, NotEnoughLookupsException, UnrecognizedVinException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(response.toString());
         if (jsonNode.has("error")) {
@@ -94,7 +94,7 @@ public class VinDecoderService {
         }
     }
 
-    private String sha1(String input) throws NoSuchAlgorithmException {
+    private String sha1(@NotNull String input) throws NoSuchAlgorithmException {
         MessageDigest mDigest = MessageDigest.getInstance("SHA1");
         byte[] result = mDigest.digest(input.getBytes());
         StringBuilder sb = new StringBuilder();

@@ -46,12 +46,12 @@ public class AuctionServiceImpl implements AuctionService {
     /**
      * Creates an {@link Auction} object and save it in the database based on the provided car id and logged username.
      * <p>
-     * The default time to live for an {@link Auction} is 1 day. After that, the it will close.
+     * The default time to live for an {@link Auction} is 1 day. After that, then it will close.
      * When creating an {@link Auction}, the user needs to enter the minimum price that he will agree to sell the car for.
      * The status of a live {@link Auction} is {@link AuctionStatus#ACTIVE}.
-     *
-     * @param car          the {@link Car} entity that will be auctioned
-     * @param minimumPrice the minimum price that the seller demands for his car
+     *        the {@link Car} entity that will be auctioned
+     * @param minimumPrice the
+     *      * @param car  minimum price that the seller demands for his car
      * @return the {@link Auction} model that was persisted in the database
      */
     @Override
@@ -70,7 +70,7 @@ public class AuctionServiceImpl implements AuctionService {
                 .status(ACTIVE)
                 .build();
 
-        //if a car is placed on an auction then change it`s status
+        //if a car is placed in an auction then change it`s status
         carService.updateCarAuctionStatus(car.getId(), AUCTIONED);
 
         auctionRepository.save(newAuction);
@@ -241,9 +241,8 @@ public class AuctionServiceImpl implements AuctionService {
      *
      * @param auctionId    persisted {@link Auction} auctionId
      * @param currentPrice the new price of the {@link Auction}
-     * @return the new updated {@link Auction} that`s being saved in the database
      */
-    public Auction updateAuctionCurrentPrice(Integer auctionId, float currentPrice, Integer buyerId) {
+    public void updateAuctionCurrentPrice(Integer auctionId, float currentPrice, Integer buyerId) {
         String errorMessage = String.format("Auction with the id: %s was not found!", auctionId);
 
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new IllegalArgumentException(errorMessage));
@@ -253,7 +252,7 @@ public class AuctionServiceImpl implements AuctionService {
         auction.setBuyerId(buyerId);
 
         // Save the updated car back to the database
-        return auctionRepository.save(auction);
+        auctionRepository.save(auction);
     }
 
     public Page<Car> updateLiveAuctionsIntoFinishAuctions(List<Auction> finishedAuctionList, Page<Car> carPage) {
@@ -368,5 +367,14 @@ public class AuctionServiceImpl implements AuctionService {
 
         return finishedAuctionsCurrentPriceList.stream()
                 .reduce(0.0f, Float::sum);
+    }
+
+    /**
+     * TODO:// ADD DESCRIPTION
+     * @param cars
+     * @return
+     */
+    public List<Auction> findAuctionsByCars(List<Car> cars) {
+        return auctionRepository.findByCarIn(cars);
     }
 }

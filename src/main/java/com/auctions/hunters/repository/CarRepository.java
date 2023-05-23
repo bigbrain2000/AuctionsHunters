@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@Transactional
 public interface CarRepository extends JpaRepository<Car, Integer>, JpaSpecificationExecutor<Car> {
 
     /**
@@ -25,16 +26,23 @@ public interface CarRepository extends JpaRepository<Car, Integer>, JpaSpecifica
     List<Car> findAll();
 
     /**
-     * Retrieved an Optional of {@link Car} from the database based on the VIN parameter.
+     * Retrieve an Optional of {@link Car} from the database based on the VIN parameter.
      */
     @Query("SELECT car from Car car Where car.vin = :vin")
     Optional<Car> findCarByVin(@Param("vin") String vin);
 
     /**
-     * Retrieved a list of {@link Car} objects from the database where the foreign key, user_id is equal to the parameter value.
+     * Retrieve a list of {@link Car} objects from the database where the foreign key, user_id is equal to the parameter value.
      */
-    @Transactional
     List<Car> findByUserId(Integer userId);
 
+    /**
+     * Retrieve a list of {@link Car} objects from the database that match the given id list.
+     */
     List<Car> findAllByIdIn(List<Integer> carsIdList);
+
+    /**
+     * Retrieve a list of {@link Car} objects from the database based on the body type.
+     */
+    List<Car> findByBody(String body);
 }

@@ -43,23 +43,27 @@
             </div>
         </div>
 
-        <div class="bidding-section">
-            <h2>Introduceți prețul</h2>
-            <form th:action="@{/bid/car/{id}(id=${car.id})}" method="post">
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="bid-controls">
-                            <button type="button" class="btn-bid-decrement">-</button>
-                            <label for="bidAmount">
-                                <input type="number" class="form-control" id="bidAmount" name="bidAmount"
-                                       placeholder="Prețul minim" required>
-                            </label>
-                            <button type="button" class="btn-bid-increment">+</button>
+        <div style="margin-top: 100px">
+            <div class="bid-form-wrapper">
+                <h2 class="bid-form-title">Introduceți suma licitației</h2>
+                <form th:action="@{/bid/car/{id}(id=${car.id})}" method="post">
+                    <div class="form-group">
+                        <div class="bid-form-input-wrapper">
+                            <label for="bidAmount"></label>
+                            <div class="input-group">
+                                <div class="bid-controls">
+                                    <button type="button" class="btn-bid-decrement">-</button>
+                                    <input type="number" class="form-control bid-input" id="bidAmount" name="bidAmount"
+                                           placeholder="Prețul minim" required>
+                                    <button type="button" class="btn-bid-increment">+</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <button type="submit" class="btn-submit-bid">Liciteaza</button>
-            </form>
+
+                    <button type="submit" class="btn btn-primary btn-submit-bid bid-form-submit">Licitează</button>
+                </form>
+            </div>
         </div>
 
         <div class="car-details" style="margin-top: 100px">
