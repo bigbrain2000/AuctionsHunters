@@ -4,80 +4,31 @@
     <meta charset="utf-8">
     <title>Adaugă o mașină</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-<!--     <link rel="stylesheet" type="text/css" href="/css/addCarStyle.css">-->
     <link rel="stylesheet" type="text/css" href="/css/navBarStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/popoutStyle.css">
-<!--  //  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" type="text/css" href="/css/addCarStyle.css">
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap"/>
-    <style>
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 80vh;
-            text-align: center;
-        }
-
-        .input-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 1rem;
-        }
-
-        .vin_input {
-            font-size: 2rem;
-            padding: 1rem 2rem;
-            border: 2px solid #333;
-            text-align: center;
-        }
-
-        .button {
-            font-size: 2rem;
-            background-color: #333;
-            color: #fff;
-            border: 2px solid #333;
-            padding: 1rem 2rem;
-            cursor: pointer;
-            margin-left: 0.5rem;
-        }
-
-        .button:hover {
-            background-color: #fff;
-            color: #333;
-        }
-
-        .info-links {
-            display: flex;
-            justify-content: space-between;
-            width: 50%;
-        }
-
-        .info-links a {
-            font-size: 1.2rem;
-        }
-    </style>
 </head>
 <body>
 
 <header th:replace="/nav_bar :: nav_bar"></header>
 
-
-<div class="main-content">
+<div class="container" style="margin-top: 270px;margin-bottom: 250px">
     <form th:action="@{/car/add}" method="post">
-        <div class="input-container">
-            <input class="vin_input" type="text" required="required" id="vin" name="vin"
-                   placeholder="Serie șasiu">
-            <input class="button" type="submit" value="Adaugă">
+        <div class="input-field">
+            <input type="text" id="vin" name="vin" required="required" placeholder="Introduce-ți numărul seriei de șasiu">
+            <label for="vin"></label>
         </div>
-    </form>
 
-    <div class="info-links">
-        <a onclick="openModal()">Ce este seria de șasiu?</a>
-        <a onclick="openModal2()">Unde găsesc seria de șasiu?</a>
-    </div>
+        <div class="info-links">
+            <a href="#" onclick="openModal()">Ce este seria de șasiu?</a>
+            <a href="#" onclick="openModal2()">Unde găsesc seria de șasiu?</a>
+        </div>
+
+        <button type="submit" style="margin-top: 30px">Salvare</button>
+    </form>
 </div>
 
 <div id="myModal" class="modal">
@@ -162,5 +113,6 @@
 </script>
 
 <footer th:replace="/footer :: footer" style="margin-top: 20%"></footer>
+
 </body>
 </html>

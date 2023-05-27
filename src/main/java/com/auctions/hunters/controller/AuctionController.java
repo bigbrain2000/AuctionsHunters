@@ -6,6 +6,7 @@ import com.auctions.hunters.model.User;
 import com.auctions.hunters.service.auction.AuctionService;
 import com.auctions.hunters.service.car.CarService;
 import com.auctions.hunters.service.car.SearchCriteria;
+import com.auctions.hunters.service.car.vincario.CarPriceAnalysis;
 import com.auctions.hunters.service.ml.RecommendationServiceImpl;
 import com.auctions.hunters.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -30,22 +32,28 @@ public class AuctionController {
     private final AuctionService auctionService;
     private final UserService userService;
     private final RecommendationServiceImpl recommendationService;
+    private final CarPriceAnalysis carPriceAnalysis;
 
     public AuctionController(CarService carService,
                              AuctionService auctionService,
                              UserService userService,
-                             RecommendationServiceImpl recommendationService) {
+                             RecommendationServiceImpl recommendationService,
+                             CarPriceAnalysis carPriceAnalysis) {
         this.carService = carService;
         this.auctionService = auctionService;
         this.userService = userService;
         this.recommendationService = recommendationService;
+        this.carPriceAnalysis = carPriceAnalysis;
     }
 
     @GetMapping("/create/auction/car/{id}")
-    public String getAuction(@PathVariable Integer id, Model model) {
+    public String getAuction(@PathVariable Integer id, Model model) throws NoSuchAlgorithmException {
         Car car = carService.getCarById(id);
-        model.addAttribute("car", car);
 
+        String analyzedCarPrice = carPriceAnalysis.analyzeCarPrice(car);
+
+        model.addAttribute("car", car);
+        model.addAttribute("analyzedCarPrice", analyzedCarPrice);
         return "/auction";
     }
 
@@ -364,5 +372,10 @@ public class AuctionController {
         };
 
         return pager.createPaginationListForCars(page, producer, model, minYear, maxYear, minPrice, maxPrice, modelAtr);
+    }
+
+    @GetMapping("/auctions/guide")
+    public String getAuctionGuide() {
+        return "/auction_guide";
     }
 }

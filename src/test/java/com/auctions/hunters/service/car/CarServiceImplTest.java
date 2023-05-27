@@ -4,6 +4,7 @@ import com.auctions.hunters.exceptions.*;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.repository.CarRepository;
+import com.auctions.hunters.service.car.vincario.VinDecoderService;
 import com.auctions.hunters.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,17 +1,24 @@
 package com.auctions.hunters;
 
+
 import com.auctions.hunters.exceptions.EmailAlreadyExistsException;
+import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.ConfirmationToken;
 import com.auctions.hunters.model.Role;
 import com.auctions.hunters.model.User;
+import com.auctions.hunters.service.car.vincario.CarPriceAnalysis;
 import com.auctions.hunters.service.confirmationtoken.ConfirmationTokenService;
 import com.auctions.hunters.service.role.RoleService;
 import com.auctions.hunters.service.user.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -40,14 +47,14 @@ public class AuctionsHunters implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws EmailAlreadyExistsException {
+    public void run(String... args) throws EmailAlreadyExistsException, JsonProcessingException {
         insertPredefinedAdmin();
     }
 
     /**
      * Method used for inserting a predefined administrator account into the database at the service start.
      */
-    private void insertPredefinedAdmin() throws EmailAlreadyExistsException {
+    private void insertPredefinedAdmin() throws EmailAlreadyExistsException, JsonProcessingException {
         String adminData = "a";
         String adminPhoneNumber = "1234567890";
         String adminEmail = "auctionshunters@gmail.com";

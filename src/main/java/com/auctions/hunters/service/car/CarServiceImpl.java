@@ -5,6 +5,7 @@ import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.User;
 import com.auctions.hunters.model.enums.CarStatus;
 import com.auctions.hunters.repository.CarRepository;
+import com.auctions.hunters.service.car.vincario.VinDecoderService;
 import com.auctions.hunters.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

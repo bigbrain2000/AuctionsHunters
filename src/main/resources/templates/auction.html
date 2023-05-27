@@ -1,36 +1,114 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Vizualizeaza masinile</title>
+    <title>Adaugă o mașină</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="/css/viewCarStyle.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/navBarStyle.css">
-</head>
+    <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/popoutStyle.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap"/>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
 
+        body {
+            color: #333;
+            background: #f4f4f4;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2em;
+            text-align: center;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: .8em;
+            border: 2px solid #333;
+            border-radius: 5px;
+            font-size: 1.2em;
+        }
+
+        .input-field label {
+            position: absolute;
+            top: .8em;
+            left: .8em;
+            transition: .3s ease;
+            pointer-events: none;
+        }
+
+        .input-field input:focus + label {
+            top: -.5em;
+            left: .2em;
+            font-size: .8em;
+            color: #333;
+        }
+
+        button {
+            display: block;
+            margin: 0 auto;
+            padding: 1em 2em;
+            font-size: 1.2em;
+            background-color: #013856;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: .3s ease;
+        }
+
+        .info-links a {
+            color: #333;
+            font-size: 1.2em;
+            text-decoration: none;
+            transition: .3s ease;
+        }
+
+        .info-links a:hover {
+            color: #013856;
+        }
+    </style>
+</head>
 <body>
+
+<header th:replace="/nav_bar :: nav_bar"></header>
+
 <main>
-    <div class="bidding-section">
+    <div class="container" style="margin-top: 270px;margin-bottom: 250px">
         <h2>Introduceți prețul minim pentru mașină</h2>
         <form th:action="@{/create/auction/car/{id}(id=${car.id})}" method="post">
-            <div class="form-group">
-                <div class="input-group">
-                    <div class="bid-controls">
-                        <button type="button" class="btn-bid-decrement">-</button>
-                        <label for="minimumPrice">
-                            <input type="number" class="form-control" id="minimumPrice" name="minimumPrice"
-                                   placeholder="Prețul minim" required>
-                        </label>
-                        <button type="button" class="btn-bid-increment">+</button>
-                    </div>
-                </div>
+            <div class="input-group">
+                <label for="minimumPrice">
+                    <input type="number" class="form-control" id="minimumPrice" name="minimumPrice"
+                           placeholder="Prețul minim" required>
+                </label>
             </div>
             <button type="submit" class="btn-submit-bid">Creeaza licitatie</button>
         </form>
     </div>
 </main>
+
+<!--<div class="container" style="margin-top: 270px;margin-bottom: 250px">-->
+<!--    <form th:action="@{/create/auction/car/{id}(id=${car.id})}" method="post">-->
+<!--        <div class="input-field">-->
+<!--            <label for="minimumPrice">-->
+<!--                <input type="number" class="form-control" id="minimumPrice" name="minimumPrice"-->
+<!--                       placeholder="Prețul minim" required>-->
+<!--            </label>-->
+<!--        </div>-->
+<!--        <button type="submit" class="btn-submit-bid">Creeaza licitatie</button>-->
+<!--    </form>-->
+<!--</div>-->
+
+<footer th:replace="/footer :: footer" style="margin-top: 20%"></footer>
+
 </body>
 </html>

@@ -1,24 +1,76 @@
-.input-container {
-    display: flex;
-    align-items: center;
-    margin-top: 150px;
-}
-
-.vin_input {
-    font-size: 22px;
-    padding: 10px 12px 12px 2px;
-    width: auto;
-    margin-left: 40vw;
+* {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
 }
 
-.button {
-    background-color: green;
-    color: white;
-    font-size: 24px;
-    padding: 12px 20px;
+body {
+    color: #333;
+    background: #f4f4f4;
+}
+
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2em;
+    text-align: center;
+}
+
+.input-field {
+    position: relative;
+    margin-bottom: 2em;
+}
+
+.input-field input {
+    width: 100%;
+    padding: .8em;
+    border: 2px solid #333;
+    border-radius: 5px;
+    font-size: 1.2em;
+}
+
+.input-field label {
+    position: absolute;
+    top: .8em;
+    left: .8em;
+    transition: .3s ease;
+    pointer-events: none;
+}
+
+.input-field input:focus + label {
+    top: -.5em;
+    left: .2em;
+    font-size: .8em;
+    color: #333;
+}
+
+button {
+    display: block;
+    margin: 0 auto;
+    padding: 1em 2em;
+    font-size: 1.2em;
+    background-color: #013856;
+    color: #fff;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
-    height: 60px;
-    margin-left: -2px;
+    transition: .3s ease;
+}
+
+.info-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2em;
+}
+
+.info-links a {
+    color: #333;
+    font-size: 1.2em;
+    text-decoration: none;
+    transition: .3s ease;
+}
+
+.info-links a:hover {
+    color: #013856;
 }

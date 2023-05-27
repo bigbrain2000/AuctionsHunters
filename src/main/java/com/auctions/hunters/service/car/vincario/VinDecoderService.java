@@ -1,4 +1,4 @@
-package com.auctions.hunters.service.car;
+package com.auctions.hunters.service.car.vincario;
 
 import com.auctions.hunters.config.VincarioProperties;
 import com.auctions.hunters.exceptions.CarPayloadFailedToCreateException;
@@ -19,8 +19,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import static com.auctions.hunters.service.car.vincario.EncryptUtils.sha1;
 
 @Slf4j
 @Component
@@ -92,18 +93,6 @@ public class VinDecoderService {
                 throw new NotEnoughLookupsException("The number of lookups has been reached.");
             }
         }
-    }
-
-    private String sha1(@NotNull String input) throws NoSuchAlgorithmException {
-        MessageDigest mDigest = MessageDigest.getInstance("SHA1");
-        byte[] result = mDigest.digest(input.getBytes());
-        StringBuilder sb = new StringBuilder();
-
-        for (byte b : result) {
-            sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
-        }
-
-        return sb.toString();
     }
 
     public boolean isVinValid(String vin) throws UnrecognizedVinException {

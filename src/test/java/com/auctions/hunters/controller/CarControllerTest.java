@@ -48,6 +48,7 @@ class CarControllerTest {
     private Auction auction;
     @Mock
     private Bid bid;
+
     private final String VALID_VIN = "WBAEY31090KS46562";
 
     @Test

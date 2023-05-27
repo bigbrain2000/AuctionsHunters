@@ -4,6 +4,7 @@ import com.auctions.hunters.config.VincarioProperties;
 import com.auctions.hunters.exceptions.UnrecognizedVinException;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.service.car.coverter.CarPayloadConverter;
+import com.auctions.hunters.service.car.vincario.VinDecoderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

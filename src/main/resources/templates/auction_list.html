@@ -69,19 +69,19 @@
     <div class="pagination">
         <ul class="pagination" style="margin-left: 50px">
             <li th:class="${currentPage == 0}? 'disabled' : ''">
-                <a th:href="@{/cars(page=0)}">First</a>
+                <a th:href="@{/cars(page=0)}">Prima</a>
             </li>
             <li th:class="${currentPage == 0}? 'disabled' : ''">
-                <a th:href="@{/cars(page=${currentPage - 1})}">Previous</a>
+                <a th:href="@{/cars(page=${currentPage - 1})}">Anterior</a>
             </li>
             <li th:each="pageNumber : ${pageNumbers}" th:class="${currentPage == pageNumber}? 'active' : ''">
                 <a th:href="@{/cars(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
             </li>
             <li th:class="${currentPage == pageNumbers.size() - 1}? 'disabled' : ''">
-                <a th:href="@{/cars(page=${currentPage + 1})}">Next</a>
+                <a th:href="@{/cars(page=${currentPage + 1})}">Următor</a>
             </li>
             <li th:class="${currentPage == pageNumbers.size() - 1}? 'disabled' : ''">
-                <a th:href="@{/cars(page=${pageNumbers.size() - 1})}">Last</a>
+                <a th:href="@{/cars(page=${pageNumbers.size() - 1})}">Ultima</a>
             </li>
         </ul>
     </div>
