@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ghid de Licitare</title>
+    <link rel="stylesheet" type="text/css" href="/css/navBarStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 70%;
+            margin: auto;
+            padding: 2em 0;
+        }
+
+        h1, h2 {
+            color: #0066cc;
+            margin-bottom: 0.75em;
+        }
+
+        p {
+            margin-bottom: 1.5em;
+        }
+
+        .intro {
+            margin-bottom: 3em;
+        }
+
+    </style>
+</head>
+<body>
+
+<header th:replace="/nav_bar :: nav_bar"></header>
+
+<div class="container" style="margin-top: 5%">
+    <h1>Ghid de Licitare – Sistemul Englez</h1>
+    <p class="intro">Bine ați venit la platforma noastră de licitații de mașini. Pentru a vă asigura că procesul de licitare este cât
+        mai simplu și transparent posibil, vă oferim acest ghid scurt de licitare prin intermediul sistemului
+        englez.</p>
+
+    <h2>Pasul 1: Căutarea Mașinilor</h2>
+    <p>Răsfoiți prin listele noastre de mașini puse la licitație. Fiecare listare va conține detalii despre mașină.</p>
+
+    <h2>Pasul 2: Licitarea</h2>
+    <p>Odată ce ați găsit o mașină pe care doriți să o cumpărați, puteți începe procesul de licitare. Într-o licitație
+        de tip englez, veți introduce suma pe care sunteți dispus să o plătiți pentru mașină. Aceasta trebuie să fie mai
+        mare decât cea mai mare licitație actuală.</p>
+
+    <h2>Pasul 3: Monitorizarea Licitării</h2>
+    <p>După ce ați licitat, veți putea urmări licitația pentru a vedea dacă alți utilizatori licitează mai mult. Dacă
+        cineva licitează mai mult decât suma pe care ați propus-o, veți fi notificat printr-o notificare pe email.</p>
+
+    <h2>Pasul 4: Încheierea Licitării</h2>
+    <p>La încheierea perioadei de licitație, cel care a oferit cea mai mare sumă câștigă licitația. Dacă acea persoană
+        sunteți dvs. puteți încheia licitația prin achitarea prețului acesteia prin intermediul PayPal. Singura metodă
+        de plată acceptată este plata cu cardul.</p>
+
+</div>
+
+<footer th:replace="/footer :: footer" style="margin-top: 30%"></footer>
+
+</body>
+</html>
