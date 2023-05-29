@@ -12,9 +12,10 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Table(name = "image")
 @Data
 public class Image {
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
+    @SequenceGenerator(name = "image_sequence", sequenceName = "image_sequence", allocationSize = 1)
     @Column(name = "id", updatable = false, columnDefinition = "INTEGER")
     private Integer id;
 

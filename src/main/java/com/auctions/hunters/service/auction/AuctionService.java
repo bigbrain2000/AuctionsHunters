@@ -1,9 +1,9 @@
 package com.auctions.hunters.service.auction;
 
 import com.auctions.hunters.model.Auction;
-import com.auctions.hunters.model.Bid;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.model.User;
+import com.auctions.hunters.model.enums.AuctionStatus;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -23,21 +23,17 @@ public interface AuctionService {
     Auction save(Car car, float minimumPrice);
 
     /**
-     * Insert new auctions or update existing entities in the database.
+     * RetrieveS a list with all the {@link Auction} objects from the database which have ACTIVE status.
      *
-     * @param auctionList the list of {@link Auction} objects to be updated
-     */
-    void updateAuctionList(List<Auction> auctionList);
-
-    /**
-     * Retrieve a list with all the auctions from the database.
-     *
-     * @return the auctions list
+     * @return a {@link List} of {@link Auction} objects if exists, empty otherwise
      */
     List<Auction> findAllActiveAuctions();
 
     /**
-     * Retrieved an {@link Auction} from the database where the foreign key, car_id is equal to the parameter value.
+     * Retrieves an {@link Auction} object from the database where the foreign key, car_id is equal to the specified parameter value.
+     *
+     * @param carId the ID of the {@link Car}, which is the FK of the {@link Auction} table
+     * @return an {@link Auction} object if found in the database, or null if not found
      */
     Auction getAuctionByCarId(Integer carId);
 
@@ -49,7 +45,16 @@ public interface AuctionService {
      */
     List<Auction> getAllAuctionsByUserId(Integer userId);
 
-    List<Bid> getAllBidsByAuctionId(Integer auctionId);
+    /**
+     * Retrieves a limited by size list with all the ACTIVE {@link Auction} objects from the database that have the most bidders.
+     * <p>
+     * Sort descendent the auctions list to het the top bidders, filter only the auctions that have {@link AuctionStatus#ACTIVE}
+     * as status and limit the number of list elements by the parameter value.
+     *
+     * @param limit the list limitation size
+     * @return a list of {@link Auction} objects if the bidders bid on auctions / an empty list otherwise
+     */
+    List<Auction> getTopBidAuctions(int limit);
 
     /**
      * Retrieve a list with all the {@link User} ids who bid on the {@link Auction} specified by the parameter id.
@@ -60,31 +65,52 @@ public interface AuctionService {
     List<Integer> getBidderIds(Integer auctionId);
 
     /**
-     * Retrieve a limited by size list with all the ACTIVE {@link Auction} objects from the database that have the most bidders.
-     *
-     * @param limit the list limitation size
-     * @return a list of {@link Auction} objects if the bidders bid on auctions / an empty list otherwise
+     * Method used for setting the price of all {@link Car} objects that are listed in the auctions.
      */
-    List<Auction> getTopBidAuctions(int limit);
-
     List<Float> setCurrentPriceForEachCarPage(Page<Car> carPage);
 
-    List<Auction> retrieveAllFinishedAuctionsFromACarPage(Page<Car> carPage, User user);
-
+    /**
+     * Update the current price of an {@link Auction} that`s live.
+     *
+     * @param auctionId    persisted {@link Auction} auctionId
+     * @param currentPrice the new price of the {@link Auction}
+     */
     void updateAuctionCurrentPrice(Integer auctionId, float currentPrice, Integer buyerId);
 
-    Page<Car> updateLiveAuctionsIntoFinishAuctions(List<Auction> auctions, Page<Car> carPage);
-
+    /**
+     * Manages all the finished auctions. The finished auctions are removed from the live table of {@link Auction}
+     */
     Page<Car> manageFinishedAuctions(User user, Page<Car> carPage);
 
-    List<Car> getCarsFromFinishedAuctionsForBuyerId();
-
+    /**
+     * Method used for retrieving a list of finished {@link Auction} objects and update their status from
+     * ACTIVE to SOLD.
+     */
     void updateFinishedAuctionsStatusAsSold();
 
+    /**
+     * Retrieves a list of {@link Car} from the database by the id of the new owner
+     *
+     * @return A list of {@link Car} objects, containing all the cars won by the user identified by the id param.
+     * If no cars are found for the given buyer, an empty list is returned.
+     */
+    List<Car> getCarsFromFinishedAuctionsForBuyerId();
+
+    /**
+     * Retrieve a list of {@link Float} objects that represents the final prices for the finished auctions.
+     */
     List<Float> getFinishedAuctionsCurrentPrice();
 
+    /**
+     * Get the total price that the user needs to pay for the bought cars.
+     *
+     * @return a {@link Float} number representing the auctions finals price that the user needs to pay for.
+     */
     Float getTotalPriceToPay();
 
+    /**
+     * Retrieves a list of {@link Auction} from the database where based on the cars list provided.
+     */
     List<Auction> findAuctionsByCars(List<Car> cars);
 }
 

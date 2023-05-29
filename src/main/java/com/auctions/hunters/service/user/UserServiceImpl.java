@@ -109,7 +109,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Update all information for a specific {@link User} entity.
      *
-     * @param newUser  the user who will be persisted
+     * @param newUser the user who will be persisted
      * @return updated {@link User} object
      */
     @Override
@@ -142,7 +142,7 @@ public class UserServiceImpl implements UserService {
      * @param status the reminder status of a {@link User} reminder emails
      * @throws ResourceNotFoundException if the {@link User} was not find by the id
      */
-    public void updateReminder(Integer id, boolean status) throws ResourceNotFoundException{
+    public void updateReminder(Integer id, boolean status) throws ResourceNotFoundException {
         User user = userRepository.findById(id).orElseThrow(() -> {
             LOGGER.debug(String.format("User with the id:%s was not found!", id));
             throw new ResourceNotFoundException("User", "id", id);

@@ -95,12 +95,14 @@ class CarControllerTest {
         car.setId(1);
         when(carService.getCarById(anyInt())).thenReturn(car);
         when(imageService.findAllImagesByCarId(anyInt())).thenReturn(Collections.emptyList());
+        when(auctionService.getAuctionByCarId(anyInt())).thenReturn(auction);
 
         String result = uut.getAuctionedCar(1, modelAtr);
 
         assertEquals("/view_auctioned_car", result);
         verify(carService, times(1)).getCarById(anyInt());
         verify(imageService, times(1)).findAllImagesByCarId(anyInt());
+        verify(auctionService, times(1)).getAuctionByCarId(anyInt());
     }
 
     @Test

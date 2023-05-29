@@ -49,9 +49,10 @@ public class AuctionServiceImpl implements AuctionService {
      * The default time to live for an {@link Auction} is 1 day. After that, then it will close.
      * When creating an {@link Auction}, the user needs to enter the minimum price that he will agree to sell the car for.
      * The status of a live {@link Auction} is {@link AuctionStatus#ACTIVE}.
-     *        the {@link Car} entity that will be auctioned
+     * the {@link Car} entity that will be auctioned
+     *
      * @param minimumPrice the
-     *      * @param car  minimum price that the seller demands for his car
+     *                     * @param car  minimum price that the seller demands for his car
      * @return the {@link Auction} model that was persisted in the database
      */
     @Override
@@ -74,22 +75,9 @@ public class AuctionServiceImpl implements AuctionService {
         carService.updateCarAuctionStatus(car.getId(), AUCTIONED);
 
         auctionRepository.save(newAuction);
-        log.debug("Auction with id {} has been create.", newAuction.getId());
+        log.debug("Auction with id {} has been created.", newAuction.getId());
 
         return newAuction;
-    }
-
-    /**
-     * Updates the list of {@link Auction} objects in the database.
-     * The method saves all the items in the list using the {@link AuctionRepository#saveAll} method.
-     * If an auction with the same ID already exists in the database, it will be updated with the values from the provided object.
-     * If it does not exist, a new auction will be created.
-     *
-     * @param auctionList a {@link List} of {@link Auction} objects to be updated or saved in the database
-     */
-    @Override
-    public void updateAuctionList(List<Auction> auctionList) {
-        auctionRepository.saveAll(auctionList);
     }
 
     /**
@@ -124,25 +112,6 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     /**
-     * Retrieves from the database a list of {@link Bid} objects for the given {@link Auction} id.
-     *
-     * @param auctionId the ID of the auction to retrieve the bids from the database
-     * @return a list of {@link Bid} objects for the found {@link Auction} id, or an empty list if not found
-     */
-    @Override
-    public List<Bid> getAllBidsByAuctionId(Integer auctionId) {
-        Auction auction = auctionRepository.findById(auctionId).orElse(null);
-
-        if (auction != null) {
-            List<Bid> bidders = auction.getBidders();
-            bidders.size(); // This line will force Hibernate to fetch the lazy-loaded data
-            return bidders;
-        }
-
-        return new ArrayList<>();
-    }
-
-    /**
      * Retrieves from the database a list of {@link Auction} objects for the given {@link User} id.
      *
      * @param userId the ID of the user for which the auctions will be retrieved from the database
@@ -169,6 +138,7 @@ public class AuctionServiceImpl implements AuctionService {
      * @param limit the list limitation size
      * @return a list of {@link Auction} objects if the bidders bid on auctions / an empty list otherwise
      */
+    @Override
     public List<Auction> getTopBidAuctions(int limit) {
         return auctionRepository.findAll().stream()
                 // the auctions with the most bidders will be listed
@@ -184,6 +154,7 @@ public class AuctionServiceImpl implements AuctionService {
      * @param auctionId the {@link Auction} id for which the bidders ids will be retrieved
      * @return a list of {@link Integer} objects if the bidders bid on the specified auction id parameter / an empty list otherwise
      */
+    @Override
     public List<Integer> getBidderIds(Integer auctionId) {
         List<Bid> bids = getAllBidsByAuctionId(auctionId);
         return bids.stream()
@@ -191,6 +162,28 @@ public class AuctionServiceImpl implements AuctionService {
                 .toList();
     }
 
+    /**
+     * Retrieves from the database a list of {@link Bid} objects for the given {@link Auction} id.
+     *
+     * @param auctionId the ID of the auction to retrieve the bids from the database
+     * @return a list of {@link Bid} objects for the found {@link Auction} id, or an empty list if not found
+     */
+    private List<Bid> getAllBidsByAuctionId(Integer auctionId) {
+        Auction auction = auctionRepository.findById(auctionId).orElse(null);
+
+        if (auction != null) {
+            List<Bid> bidders = auction.getBidders();
+            bidders.size(); // This line will force Hibernate to fetch the lazy-loaded data
+            return bidders;
+        }
+
+        return new ArrayList<>();
+    }
+
+    /**
+     * Method used for setting the price of all {@link Car} objects that are listed in the auctions.
+     */
+    @Override
     public List<Float> setCurrentPriceForEachCarPage(Page<Car> carPage) {
         List<Float> auctionsCurrentPriceList = new ArrayList<>();
         List<Car> carList = carPage.getContent();
@@ -209,13 +202,47 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     /**
+     * Update the current price of an {@link Auction} that`s live.
+     *
+     * @param auctionId    persisted {@link Auction} auctionId
+     * @param currentPrice the new price of the {@link Auction}
+     */
+    @Override
+    public void updateAuctionCurrentPrice(Integer auctionId, float currentPrice, Integer buyerId) {
+        String errorMessage = String.format("Auction with the id: %s was not found!", auctionId);
+
+        Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new IllegalArgumentException(errorMessage));
+        log.debug("Successfully retrieved auction with id {}", auction.getId());
+
+        auction.setCurrentPrice(currentPrice);
+        auction.setBuyerId(buyerId);
+
+        // Save the updated car back to the database
+        auctionRepository.save(auction);
+    }
+
+    /**
+     * Manages all the finished auctions. The finished auctions are removed from the live table of {@link Auction}
+     */
+    @Override
+    public Page<Car> manageFinishedAuctions(User user, Page<Car> carPage) {
+        log.debug("Start processing the finished auctions.");
+
+        List<Auction> finishedUserAuctionsList = retrieveAllFinishedAuctionsFromACarPage(user);
+
+        Page<Car> updatedCarPage = updateLiveAuctionsIntoFinishAuctions(finishedUserAuctionsList, carPage);
+
+        log.debug("Stop processing the finished auctions.");
+        return updatedCarPage;
+    }
+
+    /**
      * Retrieves a list of {@link Auction} objects, representing the finished auctions from the car pages.
      *
-     * @param carPage the car pages displayed to the users
-     * @param buyer   the user for whom the {@link Auction} objects are retrieved
-     * @return
+     * @param buyer the user for whom the {@link Auction} objects are retrieved
+     * @return a list of finished {@link Auction} objects
      */
-    public List<Auction> retrieveAllFinishedAuctionsFromACarPage(Page<Car> carPage, User buyer) {
+    private List<Auction> retrieveAllFinishedAuctionsFromACarPage(User buyer) {
         //filter the auctions list to see if they are finished
         OffsetDateTime now = getDateTime();
         List<Auction> endedAuctions = auctionRepository.findAll().stream()
@@ -237,25 +264,13 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     /**
-     * Update the current price of an {@link Auction} that`s live.
+     * Method used for retrieving a list of finished {@link Auction} objects and update their status from
+     * ACTIVE to SOLD.
      *
-     * @param auctionId    persisted {@link Auction} auctionId
-     * @param currentPrice the new price of the {@link Auction}
+     * @param finishedAuctionList the retrieved auction list.
+     * @param carPage             the car page from where the auctions are retrieved.
      */
-    public void updateAuctionCurrentPrice(Integer auctionId, float currentPrice, Integer buyerId) {
-        String errorMessage = String.format("Auction with the id: %s was not found!", auctionId);
-
-        Auction auction = auctionRepository.findById(auctionId).orElseThrow(() -> new IllegalArgumentException(errorMessage));
-        log.debug("Successfully retrieved auction with id {}", auction.getId());
-
-        auction.setCurrentPrice(currentPrice);
-        auction.setBuyerId(buyerId);
-
-        // Save the updated car back to the database
-        auctionRepository.save(auction);
-    }
-
-    public Page<Car> updateLiveAuctionsIntoFinishAuctions(List<Auction> finishedAuctionList, Page<Car> carPage) {
+    private Page<Car> updateLiveAuctionsIntoFinishAuctions(List<Auction> finishedAuctionList, Page<Car> carPage) {
         List<Car> carList = finishedAuctionList.stream()
                 .map(Auction::getCar)
                 .toList();
@@ -290,25 +305,28 @@ public class AuctionServiceImpl implements AuctionService {
         return carPage;
     }
 
+    /**
+     * Updates the list of {@link Auction} objects in the database.
+     * The method saves all the items in the list using the {@link AuctionRepository#saveAll} method.
+     * If an auction with the same ID already exists in the database, it will be updated with the values from the provided object.
+     * If it does not exist, a new auction will be created.
+     *
+     * @param auctionList a {@link List} of {@link Auction} objects to be updated or saved in the database
+     */
+    private void updateAuctionList(List<Auction> auctionList) {
+        auctionRepository.saveAll(auctionList);
+    }
+
+    /**
+     * Update the status of all finished auctions to SOLD.
+     *
+     * @param finishedAuctionList the finished auction list
+     * @param status              the status to be changed to
+     */
     private void updateAuctionStatus(List<Auction> finishedAuctionList, AuctionStatus status) {
         log.debug("Starting updating finished auction list to status {}.", status);
         finishedAuctionList.forEach(auction -> auction.setStatus(status));
         log.debug("Update complete.");
-    }
-
-    /**
-     * Manages all the finished auctions. The finished auctions are removed from the live table of {@link Auction}
-     */
-    @Override
-    public Page<Car> manageFinishedAuctions(User user, Page<Car> carPage) {
-        log.debug("Start processing the finished auctions.");
-
-        List<Auction> finishedUserAuctionsList = retrieveAllFinishedAuctionsFromACarPage(carPage, user);
-
-        Page<Car> updatedCarPage = updateLiveAuctionsIntoFinishAuctions(finishedUserAuctionsList, carPage);
-
-        log.debug("Stop processing the finished auctions.");
-        return updatedCarPage;
     }
 
     /**
@@ -317,7 +335,7 @@ public class AuctionServiceImpl implements AuctionService {
      * @return A list of {@link Auction} objects, containing all the finished auctions won by the specified buyer.
      * If no auctions are found for the given buyer, an empty list is returned.
      */
-    public List<Auction> getFinishedAuctionsByUserId() {
+    private List<Auction> getFinishedAuctionsByUserId() {
         String loggedUsername = userService.getLoggedUsername();
         User buyer = userService.findByUsername(loggedUsername);
 
@@ -327,6 +345,11 @@ public class AuctionServiceImpl implements AuctionService {
         return userFinishedAuctionList;
     }
 
+    /**
+     * Method used for retrieving a list of finished {@link Auction} objects and update their status from
+     * ACTIVE to SOLD.
+     */
+    @Override
     public void updateFinishedAuctionsStatusAsSold() {
         List<Auction> finishedAuctionsByUserId = getFinishedAuctionsByUserId();
 
@@ -339,6 +362,7 @@ public class AuctionServiceImpl implements AuctionService {
      * @return A list of {@link Car} objects, containing all the cars won by the user identified by the id param.
      * If no cars are found for the given buyer, an empty list is returned.
      */
+    @Override
     public List<Car> getCarsFromFinishedAuctionsForBuyerId() {
         List<Auction> finishedAuctions = getFinishedAuctionsByUserId();
 
@@ -351,6 +375,10 @@ public class AuctionServiceImpl implements AuctionService {
         return carToBeBoughtList;
     }
 
+    /**
+     * Retrieve a list of {@link Float} objects that represents the final prices for the finished auctions.
+     */
+    @Override
     public List<Float> getFinishedAuctionsCurrentPrice() {
         return getFinishedAuctionsByUserId().stream()
                 .map(Auction::getCurrentPrice)
@@ -362,18 +390,16 @@ public class AuctionServiceImpl implements AuctionService {
      *
      * @return a {@link Float} number representing the auctions finals price that the user needs to pay for.
      */
+    @Override
     public Float getTotalPriceToPay() {
-        List<Float> finishedAuctionsCurrentPriceList = getFinishedAuctionsCurrentPrice();
-
-        return finishedAuctionsCurrentPriceList.stream()
+        return getFinishedAuctionsCurrentPrice().stream()
                 .reduce(0.0f, Float::sum);
     }
 
     /**
-     * TODO:// ADD DESCRIPTION
-     * @param cars
-     * @return
+     * Retrieves a list of {@link Auction} from the database where based on the cars list provided.
      */
+    @Override
     public List<Auction> findAuctionsByCars(List<Car> cars) {
         return auctionRepository.findByCarIn(cars);
     }

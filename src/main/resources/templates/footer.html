@@ -4,36 +4,6 @@
     <meta charset="UTF-8">
     <title>Footer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            padding-top: 100px;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-
-        .close {
-            color: #aaaaaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-    </style>
 </head>
 
 <body>
@@ -42,10 +12,8 @@
         <div class="footer-column">
             <h4>Ajutor și suport</h4>
             <ul>
-                <li><a href="#" onclick="openModal(event)">Ghid de licitare</a></li>
-                <li><a href="#" onclick="openModal2(event)">Politică de confidențialitate</a></li>
-
-
+                <li><a href="#">Ghid de licitare</a></li>
+                <li><a href="#">Politică de confidențialitate</a></li>
             </ul>
         </div>
         <div class="footer-column">
@@ -55,9 +23,11 @@
             </ul>
         </div>
         <div class="footer-column">
-            <h4>Top 5 cele mai căutate tipuri de mașini</h4>
+            <h4>Top 3 cele mai căutate tipuri de mașini</h4>
             <ul>
                 <li><a href="/auctions/sedan/cars">Sedan</a></li>
+                <li><a href="/auctions/coupe/cars">Coupe</a></li>
+                <li><a href="/auctions/suv/cars">SUV</a></li>
             </ul>
         </div>
     </div>
@@ -65,98 +35,5 @@
         <p>&copy; 2023 Vânătorii de Licitații. Toate drepturile sunt rezervate.</p>
     </div>
 </footer>
-
-<div id="myModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-line"></div>
-        <span class="close" onclick="closeModal()" style="margin-top: -23px">&times;</span>
-        <p class="modal-text" style="margin-top: 40px">
-            <b> Politica de confidențialitate</b>
-
-            Acest document descrie modul în care Vânătorii de Licitații colectează, utilizează și dezvăluie informațiile
-            dvs. personale în legătură cu utilizarea aplicației.
-
-            <b>Colectarea datelor</b>
-
-            Când utilizați aplicația noastră, putem colecta următoarele informații:
-
-            Informații de contact, cum ar fi numele, adresa de e-mail și numărul de telefon.
-            Informații despre mașinile pe care le licitați sau le vindeți, cum ar fi marca, modelul, anul și numărul de
-            identificare al vehiculului.
-            Informații de plată, cum ar fi detaliile cardului de credit sau debit.
-            Informații privind utilizarea aplicației, cum ar fi datele și timpurile în care utilizați aplicația și
-            interacțiunile dvs. cu serviciul.
-            Utilizarea datelor
-
-            <b>Utilizăm datele pe care le colectăm pentru a:</b>
-
-            Furniza, menține și îmbunătăți serviciul nostru.
-            Procesa tranzacțiile dvs. și trimite vă confirmări și facturi.
-            Comunica cu dvs. despre produse, servicii, oferte, promoții și evenimente pe care le oferim.
-            Verifica identitatea dvs. și preveni fraudă.
-            Îndeplini cerințele legale.
-            Divulgarea datelor
-
-            Nu vom vinde sau închiria informațiile dvs. personale terților. Putem divulga informațiile dvs. personale în
-            următoarele situații:
-            Pentru a respecta legile sau răspunde la cererile legale.
-            Dacă considerăm că divulgarea este necesară sau adecvată pentru a proteja drepturile, proprietatea sau
-            siguranța noastră, a clienților noștri sau a altora.
-            Drepturile dvs.
-            Aveți dreptul să solicitați accesul, corectarea sau ștergerea datelor personale pe care le deținem. De
-            asemenea, aveți dreptul să vă opuneți sau să limitați utilizarea informațiilor dvs. personale de către noi.
-
-            <b>Modificări ale acestei politici</b>
-            Putem actualiza politica noastră de confidențialitate din când în când. Vă vom informa despre orice
-            modificări prin actualizarea
-        </p>
-    </div>
-</div>
-
-<div id="myModal2" class="modal">
-    <div class="modal-content">
-        <div class="modal-line"></div>
-        <span class="close" onclick="closeModal2()">&times;</span>
-        <p class="modal-text" style="margin-top: 40px">
-            Ghid de Licitare – Sistemul Englez
-
-            Bine ați venit la platforma noastră de licitații de mașini. Pentru a vă asigura că procesul de licitare este
-            cât mai simplu și transparent posibil, vă oferim acest ghid scurt de licitare prin intermediul sistemului
-            englez.
-
-            Pasul 1: Căutarea Mașinilor
-            Răsfoiți prin listele noastre de mașini puse la licitație. Fiecare listare va conține detalii despre
-            mașină..
-
-            Pasul 2: Licitarea
-            Odată ce ați găsit o mașină pe care doriți să o cumpărați, puteți începe procesul de licitare. Într-o
-            licitație de tip englez, veți introduce suma pe care sunteți dispus să o plătiți pentru mașină. Aceasta
-            trebuie să fie mai mare decât cea mai mare licitație actuală.
-
-            Pasul 3: Monitorizarea Licitării
-            După ce ați licitat, veți putea urmări licitația pentru a vedea dacă alți utilizatori licitează mai mult.
-            Dacă cineva licitează mai mult decât suma pe care ați propus-o, veți fi notificat printr-o notificare pe
-            email.
-
-            Pasul 4: Încheierea Licitării
-            La încheierea perioadei de licitație, cel care a oferit cea mai mare sumă câștigă licitația. Dacă acea
-            persoană sunteți dvs. puteți încheia licitația prin achitarea prețului acesteia prin intermediul PayPal.
-            Singura metodă de plată acceptată este plata cu cardul.
-        </p>
-    </div>
-</div>
-
-<script>
-    function openModal(event) {
-        event.preventDefault();
-        modal.style.display = "block";
-    }
-
-    function openModal2(event) {
-        event.preventDefault();
-        modal2.style.display = "block";
-    }
-</script>
-
 </body>
 </html>

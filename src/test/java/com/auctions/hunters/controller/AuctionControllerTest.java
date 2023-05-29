@@ -4,6 +4,7 @@ import com.auctions.hunters.model.Auction;
 import com.auctions.hunters.model.Car;
 import com.auctions.hunters.service.auction.AuctionService;
 import com.auctions.hunters.service.car.CarService;
+import com.auctions.hunters.service.car.vincario.CarPriceAnalysis;
 import com.auctions.hunters.service.ml.RecommendationServiceImpl;
 import com.auctions.hunters.service.user.UserService;
 import org.junit.jupiter.api.Test;
@@ -15,11 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +36,9 @@ class AuctionControllerTest {
     @Mock
     private RecommendationServiceImpl recommendationService;
     @Mock
+    private CarPriceAnalysis carPriceAnalysis;
+
+    @Mock
     private Model modelAtr;
     @Mock
     private Car car;
@@ -50,14 +51,16 @@ class AuctionControllerTest {
     private final int page = 0;
 
     @Test
-    void getAuction_notEmptyCarList_returnsPopulatedCarList() {
+    void getAuction_notEmptyCarList_returnsPopulatedCarList() throws NoSuchAlgorithmException {
         when(carService.getCarById(anyInt())).thenReturn(car);
+        when( carPriceAnalysis.analyzeCarPrice(any(Car.class))).thenReturn("2500");
 
         String result = uut.getAuction(1, modelAtr);
 
         verify(carService, times(1)).getCarById(anyInt());
         assertEquals("/auction", result);
         verify(this.modelAtr, times(1)).addAttribute(eq("car"), any(Car.class));
+        verify(this.modelAtr, times(1)).addAttribute(eq("analyzedCarPrice"), any(String.class));
     }
 
     @Test
@@ -83,14 +86,6 @@ class AuctionControllerTest {
         assertEquals("/login", result);
         verify(carService, times(1)).getCarById(anyInt());
         verify(this.modelAtr, times(1)).addAttribute(eq("car"), any(Car.class));
-    }
-
-    @Test
-    void getAuctions() {
-    }
-
-    @Test
-    void getRecommendedAuctions() {
     }
 
     @Test
@@ -415,5 +410,10 @@ class AuctionControllerTest {
         verify(this.modelAtr, times(1)).addAttribute(eq("pageNumbers"), anyList());
         verify(this.modelAtr, times(1)).addAttribute("auctionsMinimumPriceList", auctionsMinimumPriceList);
         verify(this.modelAtr, times(1)).addAttribute(eq("allActiveAuctionsList"), anyList());
+    }
+
+    @Test
+    void getAuctionGuide_returnsSuccess() {
+        assertEquals("/auction_guide", uut.getAuctionGuide());
     }
 }

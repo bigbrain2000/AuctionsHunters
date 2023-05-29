@@ -175,3 +175,18 @@ input[type='number']::-webkit-outer-spin-button {
 input[type='number'] {
     -moz-appearance: textfield;
 }
+
+.current-price-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f4;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.current-price {
+    font-weight: bold;
+    color: #333;
+}

@@ -159,7 +159,25 @@ public class CarController {
     public String getAuctionedCar(@PathVariable Integer id, Model model) {
         getAllImagesForTheSavedCar(id, model);
 
+        Auction auction = auctionService.getAuctionByCarId(id);
+        log.info(String.format("%s", auction.getCurrentPrice()));
+        model.addAttribute("currentPrice", auction.getCurrentPrice());
+
         return "/view_auctioned_car";
+    }
+
+    @PostMapping("/bid/car/{carId}")
+    public String createNewBid(@PathVariable Integer carId,
+                               @RequestParam("bidAmount") Integer bidAmount) {
+        Auction auction = auctionService.getAuctionByCarId(carId);
+
+        try {
+            bidService.save(bidAmount, auction);
+        } catch (LowBidAmountException e) {
+            return "redirect:/bid/car/{carId}";
+        }
+
+        return "redirect:/auctions";
     }
 
     private void getAllImagesForTheSavedCar(Integer id, Model model) {
@@ -174,19 +192,4 @@ public class CarController {
         model.addAttribute("images", base64Images);
         model.addAttribute("contentTypes", images.stream().map(Image::getContentType).toList());
     }
-
-    @PostMapping("/bid/car/{carId}")
-    public String createNewBid(@PathVariable Integer carId, @RequestParam("bidAmount") Integer bidAmount) {
-        Auction auction = auctionService.getAuctionByCarId(carId);
-
-        try {
-            bidService.save(bidAmount, auction);
-        } catch (LowBidAmountException e) {
-            return "redirect:/bid/car/{carId}";
-        }
-
-        return "redirect:/auctions";
-    }
-
-
 }

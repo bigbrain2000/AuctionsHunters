@@ -18,6 +18,7 @@ public class Bid {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
+    @SequenceGenerator(name = "bid_sequence", sequenceName = "bid_sequence", allocationSize = 1)
     @Column(name = "id", updatable = false, columnDefinition = "INTEGER")
     private int id;
 

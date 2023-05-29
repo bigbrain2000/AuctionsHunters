@@ -28,6 +28,7 @@ public class Auction {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "id", updatable = false, columnDefinition = "INTEGER")
+    @SequenceGenerator(name = "auction_sequence", sequenceName = "auction_sequence", allocationSize = 1)
     private Integer id;
 
     @OneToOne(fetch = EAGER, cascade = MERGE)
