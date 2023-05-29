@@ -10,11 +10,11 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.Ness</groupId>
+    <groupId>com.auctions.hunters</groupId>
     <artifactId>AuctionsHunters</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>AuctionsHunters</name>
-    <description>Licence project</description>
+    <version>1.0.0</version>
+    <name>AuctionsHunters Release</name>
+    <description>Auction Hunters Project - Release Version</description>
 
     <properties>
         <java.version>17</java.version>
