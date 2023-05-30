@@ -56,9 +56,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(@NotNull HttpSecurity http) throws Exception {
 
         String[] allUsersPermittedApis = {"/css/**", "/images/**", "/", "/login", "/login_error", "/logout",
-                "/register/user", "/confirm/**"};
+                "/register/user", "/confirm/**", "/pay/**"};
 
         http
+                .csrf().disable()
+                .headers().frameOptions().disable()
+                .and()
                 .authorizeRequests()
                 .antMatchers(allUsersPermittedApis).permitAll()
                 .anyRequest().authenticated()
