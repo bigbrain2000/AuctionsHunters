@@ -30,6 +30,7 @@ spring:
   datasource:
     driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://database.cl5aafsefvfk.us-east-1.rds.amazonaws.com:5432/auctions_hunters
+#    url: jdbc:postgresql://localhost:5432/auctions_hunters
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
 
