@@ -37,10 +37,10 @@ public class Scheduler {
         this.emailService = emailService;
     }
 
-    //TODO: modificat la 5 min poate
     // @Scheduled(cron = "0 * * ? * *") //every minute reminder
 //    @Scheduled(cron = "*/1 * * * * *") //every second
     @Scheduled(cron = "0/30 * * ? * *")  //every 30 second
+    //    @Scheduled(cron = "0 */5 * * * ?")
     public void sendEmailIfUserBidsWereOvertaken() {
         log.debug("Scheduler process started");
         List<User> allUsers = userService.findAll();
@@ -167,11 +167,10 @@ public class Scheduler {
                 <body>
                     <div class="container">
                         <p>Salut %s,</p>
-                        <p>Vrem să vă anunțăm că, din păcate, un alt participant a plasat o ofertă mai mare pentru mașina %s %s de care erați interesat.</p>
-                        <p>Dacă sunteți în continuare interesat, vă încurajăm să revedeți licitația și să luați în considerare posibilitatea de a plasa o nouă ofertă. Nu uitați că licitația poate fi destul de dinamică, iar dacă o urmăriți cu atenție vă puteți crește șansele de succes.</p>
-                        <p>Vă dorim mult noroc în viitoarele licitații!</p>
-                        <p>Numai bine,</p>
-                        <p>Echipa de licitație</p>
+                        <p>Vrem să vă anunțăm că un alt participant a plasat o ofertă mai mare pentru mașina %s %s de care erați interesat.</p>
+                        <p>Dacă sunteți în continuare interesat de această mașina vă încurajăm să plasați o nouă ofertă.</p>
+                            <p>Mult noroc în viitoarele licitații,</p>
+                        <p>Echipa Vânătorii de licitații</p>
                     </div>
                 </body>
                 </html>

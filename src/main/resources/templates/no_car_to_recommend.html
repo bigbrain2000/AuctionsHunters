@@ -2,22 +2,20 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Achitat licitații</title>
+    <title>Recomandare mașini</title>
     <link rel="stylesheet" type="text/css" href="/css/navBarStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
     <link rel="stylesheet" type="text/css" href="/css/noCarStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
-
 <header th:replace="/nav_bar :: nav_bar"></header>
 
-<div class="container">
-    <h1 class="heading">Momentan nu aveți nicio licitație de achitat.</h1>
-    <p class="message">Participați la una dintre licitațiile existente.</p>
+<div class="container" style="margin-top: 220px;margin-bottom: 300px">
+    <h1 class="heading">Se pare că nu există nicio mașină de vânzare.</h1>
 </div>
 
-<footer th:replace="/footer :: footer"></footer>
+<footer th:replace="/footer :: footer" style="margin-top: 200px"></footer>
 
 </body>
 </html>

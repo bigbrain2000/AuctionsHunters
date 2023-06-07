@@ -1,0 +1,54 @@
+spring:
+  mail:
+    username: ${MAILTRAP_USERNAME}
+    port: '587'
+    properties:
+      mail:
+        stmp:
+          atuh: 'true'
+        smtp:
+          starttls:
+            enable: 'true'
+            required: 'true'
+    host: smtp.mailtrap.io
+    password: ${MAILTRAP_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: 'true'
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: 'false'
+
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 10GB
+
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://database.cl5aafsefvfk.us-east-1.rds.amazonaws.com:5432/auctions_hunters
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+
+paypal:
+  currency: USD
+  method: paypal
+  cancel:
+    url: http://localhost:5000/pay/cancel
+  intent: sale
+  client:
+    secret: ${PAYPAL_CLIENT_SECRET}
+    id: ${PAYPAL_CLIENT_ID}
+  success:
+    url: http://localhost:5000/pay/success
+  mode: sandbox
+
+vicarioBaseUrl: https://api.vindecoder.eu/3.2
+vicarioKey: ${VINCARIO_KEY}
+vicarioSecret: ${VINCARIO_SECRET}
+
+server:
+  port: 5000

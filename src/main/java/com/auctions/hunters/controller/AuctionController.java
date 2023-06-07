@@ -68,7 +68,7 @@ public class AuctionController {
             float minimumPrice = Float.parseFloat(minimumPriceStr);
             auctionService.save(car, minimumPrice);
         } catch (NumberFormatException e) {
-            return "/login"; //TODO:schimbat cu unul de eroare.
+            return "/login";
         }
 
         return "redirect:/";
@@ -148,6 +148,10 @@ public class AuctionController {
 
             List<Car> recommendedAuctionedCarsList = recommendationService.getRecommendedAuctionedCarsForUser(user);
             List<Auction> recommendedAuctionsList = recommendationService.getUnfinishedRecommendedAuctions(user);
+
+            if (recommendedAuctionsList.isEmpty()) {
+                return "/no_car_to_recommend";
+            }
 
             SearchCriteria searchCriteria = new SearchCriteria();
             Specification<Car> carSpecification = searchCriteria.buildSpec(producer1, model1, minYear1, maxYear1, minPrice1, maxPrice1);
