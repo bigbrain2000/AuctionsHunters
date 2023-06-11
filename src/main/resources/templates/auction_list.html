@@ -24,7 +24,7 @@
 <div th:include="/searchMenu :: form" style="margin-top: 200px"></div>
 
 <main>
-    <div class="car-list" th:if="${allActiveAuctionsList[stat.index] > 0}">
+    <div class="car-list">
         <table class="table">
             <thead>
             <tr>
@@ -56,7 +56,7 @@
                     </a>
                 </td>
                 <td
-                    th:with="auction=${allActiveAuctionsList[stat.index]}">
+                        th:with="auction=${allActiveAuctionsList[stat.index]}">
                     <span class="timer" th:id="'timer-' + ${auction.id}"
                           th:data-start-date="${#dates.format(auction.startTime.toInstant().toEpochMilli(), 'yyyy-MM-dd''T''HH:mm:ss')}"
                           th:data-end-date="${#dates.format(auction.endTime.toInstant().toEpochMilli(), 'yyyy-MM-dd''T''HH:mm:ss')}"></span>

@@ -223,6 +223,7 @@ public class AuctionServiceImpl implements AuctionService {
 
     /**
      * Manages all the finished auctions. The finished auctions are removed from the live table of {@link Auction}
+     * The return type is {@link Page<Car>} because it will be used to update the live tables.
      */
     @Override
     public Page<Car> manageFinishedAuctions(User user, Page<Car> carPage) {
@@ -234,6 +235,24 @@ public class AuctionServiceImpl implements AuctionService {
 
         log.debug("Stop processing the finished auctions.");
         return updatedCarPage;
+    }
+
+    /**
+     * Manages all the finished auctions. The finished auctions are removed from the live table of {@link Auction}
+     * The return type is void because it will be used in the "/payment" template.
+     */
+    @Override
+    public void manageFinishedAuctions() {
+        String loggedUsername = userService.getLoggedUsername();
+        User user = userService.findByUsername(loggedUsername);
+
+        log.debug(String.format("Start processing the finished auctions for %s.", loggedUsername));
+
+        List<Auction> finishedUserAuctionsList = retrieveAllFinishedAuctionsFromACarPage(user);
+
+        updateLiveAuctionsIntoFinishAuctions(finishedUserAuctionsList);
+
+        log.debug("Stop processing the finished auctions.");
     }
 
     /**
@@ -303,6 +322,32 @@ public class AuctionServiceImpl implements AuctionService {
 
         log.debug("No cars were found to be processed as the list of finished finishedAuctionList is empty.");
         return carPage;
+    }
+
+    private void updateLiveAuctionsIntoFinishAuctions(List<Auction> finishedAuctionList) {
+        List<Car> carList = finishedAuctionList.stream()
+                .map(Auction::getCar)
+                .toList();
+
+        List<Car> updatedCarList = carList.stream()
+                .map(car -> carService.updateCarAuctionStatus(car.getId(), CarStatus.SOLD))
+                .toList();
+
+        List<Integer> carIdsList = carList.stream()
+                .map(Car::getId)
+                .toList();
+
+        if (!updatedCarList.isEmpty()) {
+            // Update the status of all finished auctions to CLOSED
+            updateAuctionStatus(finishedAuctionList, CLOSED);
+
+            // Save the updated auctions to the database
+            updateAuctionList(finishedAuctionList);
+
+            log.debug(String.format("%s cars with IDs %s were deleted from the live finishedAuctionList.", updatedCarList.size(), carIdsList));
+        }
+
+        log.debug("No cars were found to be processed as the list of finished finishedAuctionList is empty.");
     }
 
     /**

@@ -9,7 +9,6 @@ import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +18,6 @@ import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@Validated
 @Controller
 @RequestMapping(produces = APPLICATION_JSON_VALUE)
 public class PaymentController {
@@ -37,9 +35,10 @@ public class PaymentController {
 
     @GetMapping("/pay")
     public String getPaymentLobby(Model model) {
+        auctionService.manageFinishedAuctions();
         List<Car> carsToBuyList = auctionService.getCarsFromFinishedAuctionsForBuyerId();
 
-        if(carsToBuyList.isEmpty()) {
+        if (carsToBuyList.isEmpty()) {
             return "/no_auction_to_pay";
         }
 

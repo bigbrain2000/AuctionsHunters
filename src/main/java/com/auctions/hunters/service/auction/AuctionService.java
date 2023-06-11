@@ -83,6 +83,11 @@ public interface AuctionService {
     Page<Car> manageFinishedAuctions(User user, Page<Car> carPage);
 
     /**
+     * Manages all the finished auctions for the logged user.
+     */
+    void manageFinishedAuctions();
+
+    /**
      * Method used for retrieving a list of finished {@link Auction} objects and update their status from
      * ACTIVE to SOLD.
      */

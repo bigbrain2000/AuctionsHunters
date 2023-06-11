@@ -180,6 +180,7 @@ public class UserServiceImpl implements UserService {
      * @throws InvalidEmailException       if a user email is invalid
      * @throws EmailAlreadyExistsException if a user with the same email already exists
      */
+    //local
     @Override
     public String register(@NotNull User newUser) throws InvalidEmailException, EmailAlreadyExistsException {
 
@@ -197,13 +198,36 @@ public class UserServiceImpl implements UserService {
                 )
         );
 
-        //TODO change with domain url
-        String link = "http://localhost:8080/confirm?token=" + token; //url for validating user account
+        String link = "http://localhost:5000/confirm?token=" + token; //url for validating user account
 
         sendRegistrationEmail(newUser, link);
 
         return token;
     }
+
+    //AWS
+//    public String register(@NotNull User newUser) throws InvalidEmailException, EmailAlreadyExistsException {
+//
+//        checkIfEmailIsValid(newUser.getEmail());
+//
+//        String token = signUpUser(
+//                new User(
+//                        newUser.getUsername(),
+//                        newUser.getPassword(),
+//                        newUser.getEmail(),
+//                        newUser.getCityAddress(),
+//                        newUser.getPhoneNumber(),
+//                        newUser.getRole(),
+//                        FALSE
+//                )
+//        );
+//
+//        String link = "http://demo-env-1.eba-tim3wwmf.us-east-1.elasticbeanstalk.com/confirm?token=" + token; //url for validating user account
+//
+//        sendRegistrationEmail(newUser, link);
+//
+//        return token;
+//    }
 
     /**
      * Verify is the user email is valid
@@ -394,19 +418,14 @@ public class UserServiceImpl implements UserService {
         return "<div style=\"width: 500px; margin: 0 auto; text-align: center; font-family: Arial, sans-serif; background-color: lightgray; padding: 40px; border-radius: 10px; box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);\">\n" +
                 " <h1 style=\"margin-top: 50px; font-size: 36px; color: #01304A;\">Validare email</h1>\n" +
                 " <p>Draga " + name + ",</p>\n" +
-                " <p>Vă mulțumim că v-ați înscris la în aplicația noastră! Pentru a finaliza înregistrarea, trebuie să verificăm adresa dumneavoastră de email.</p>\n" +
+                " <p>Vă mulțumim că v-ați înscris la în aplicația noastră! Pentru a finaliza înregistrarea, trebuie să verificăm adresa dumneavoastră de e-mail.</p>\n" +
                 " <br>\n" +
-                " <p>Apăsați pe butonul de mai jos pentru a valida emalailul.</p>\n" +
+                " <p>Apăsați pe butonul de mai jos pentru a valida e-malailul.</p>\n" +
                 " <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a  target=\"_blank\" href=\"" + link + "\">Actiează acum</a> </p>" +
-                " <p style=\"font-size: 18px; color: gray;\">\n" +
-                " Verificându-vă adresa de e-mail, veți putea accesa toate caracteristicile și desciile aplicației noastre de licitații de mașini.</p>\n" +
-                " <p style=\"font-size: 18px; margin-bottom: 20px; color: gray;\">\n" +
-                " Vă mulțumim pentru timpul acordat!\n" +
                 " </p>\n" +
                 " <p style=\"font-size: 18px; margin-bottom: 20px; color: gray;\">Cele mai bune urări,</p>\n" +
-                " <p style=\"font-size: 18px; margin-bottom: 20px; color: gray;\">echipa AuctionHunters.</p>\n" +
+                " <p style=\"font-size: 18px; margin-bottom: 20px; color: gray;\">echipa Vânătorii de Licitații.</p>\n" +
                 "</p>" +
-                "<blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\">" +
                 "</div>";
     }
 }

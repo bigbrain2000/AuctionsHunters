@@ -216,6 +216,11 @@ public class AuctionController {
 
         final String bodyType = "Sedan/Saloon";
         List<Car> allSedanCars = carService.getAllCarsByBodyType(bodyType);
+
+        if (allSedanCars.isEmpty()) {
+            return "/no_car_for_category";
+        }
+
         return getAuctionsWithSpecificCars(page, producer, model, minYear, maxYear, minPrice, maxPrice, modelAtr, allSedanCars);
     }
 

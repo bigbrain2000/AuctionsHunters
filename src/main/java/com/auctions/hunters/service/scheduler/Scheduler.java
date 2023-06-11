@@ -37,10 +37,8 @@ public class Scheduler {
         this.emailService = emailService;
     }
 
-    // @Scheduled(cron = "0 * * ? * *") //every minute reminder
-//    @Scheduled(cron = "*/1 * * * * *") //every second
-    @Scheduled(cron = "0/30 * * ? * *")  //every 30 second
-    //    @Scheduled(cron = "0 */5 * * * ?")
+//    @Scheduled(cron = "0 * * ? * *") //every minute reminder
+    @Scheduled(cron = "0 0 0 */10 * ?") //every 10 days
     public void sendEmailIfUserBidsWereOvertaken() {
         log.debug("Scheduler process started");
         List<User> allUsers = userService.findAll();
@@ -170,7 +168,7 @@ public class Scheduler {
                         <p>Vrem să vă anunțăm că un alt participant a plasat o ofertă mai mare pentru mașina %s %s de care erați interesat.</p>
                         <p>Dacă sunteți în continuare interesat de această mașina vă încurajăm să plasați o nouă ofertă.</p>
                             <p>Mult noroc în viitoarele licitații,</p>
-                        <p>Echipa Vânătorii de licitații</p>
+                        <p>Echipa Vânătorii de Licitații</p>
                     </div>
                 </body>
                 </html>

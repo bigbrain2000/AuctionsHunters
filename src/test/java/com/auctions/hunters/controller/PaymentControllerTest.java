@@ -43,6 +43,7 @@ class PaymentControllerTest {
 
     @Test
     void getPaymentLobby_emptyFinishedAuctionList_returnsEmpty() {
+        doNothing().when(auctionService).manageFinishedAuctions();
         when(auctionService.getCarsFromFinishedAuctionsForBuyerId()).thenReturn(Collections.emptyList());
 
         String result = uut.getPaymentLobby(modelAtr);
@@ -53,6 +54,7 @@ class PaymentControllerTest {
 
     @Test
     void getPaymentLobby_populatedFinishedAuctionList_returnsPopulatedList() {
+        doNothing().when(auctionService).manageFinishedAuctions();
         when(auctionService.getCarsFromFinishedAuctionsForBuyerId()).thenReturn(Collections.singletonList(car));
         when(auctionService.getFinishedAuctionsCurrentPrice()).thenReturn(Collections.singletonList(2000f));
         when(auctionService.getTotalPriceToPay()).thenReturn(2000f);
