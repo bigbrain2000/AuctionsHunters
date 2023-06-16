@@ -64,7 +64,7 @@ public class AuctionServiceImpl implements AuctionService {
                 .car(car)
                 .user(user)
                 .startTime(now)
-                .endTime(now.plusDays(1))  //end date is current date + 1 day
+                .endTime(now.plusMinutes(2))  //end date is current date + 1 day
                 .minimumPrice(minimumPrice)
                 .startingPrice(minimumPrice)
                 .currentPrice(minimumPrice)
@@ -375,12 +375,12 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     /**
-     * Retrieves a list of {@link Auction} from the database where the specified buyer has won.
+     * Retrieves a list of CLOSED {@link Auction} from the database where the specified buyer has won.
      *
      * @return A list of {@link Auction} objects, containing all the finished auctions won by the specified buyer.
      * If no auctions are found for the given buyer, an empty list is returned.
      */
-    private List<Auction> getFinishedAuctionsByUserId() {
+    private List<Auction> getClosedAuctionsByUserId() {
         String loggedUsername = userService.getLoggedUsername();
         User buyer = userService.findByUsername(loggedUsername);
 
@@ -391,12 +391,28 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     /**
+     * Retrieves a list of SOLD {@link Auction} from the database where the specified buyer has won.
+     *
+     * @return A list of {@link Auction} objects, containing all the finished auctions won by the specified buyer.
+     * If no auctions are found for the given buyer, an empty list is returned.
+     */
+    public List<Auction> getSoldAuctionsByUserId() {
+        String loggedUsername = userService.getLoggedUsername();
+        User buyer = userService.findByUsername(loggedUsername);
+
+        List<Auction> userFinishedAuctionList = auctionRepository.findAllByBuyerIdAndStatus(buyer.getId(), SOLD);
+        log.debug("Retrieved {} SOLD auctions.", userFinishedAuctionList.size());
+
+        return userFinishedAuctionList;
+    }
+
+    /**
      * Method used for retrieving a list of finished {@link Auction} objects and update their status from
      * ACTIVE to SOLD.
      */
     @Override
     public void updateFinishedAuctionsStatusAsSold() {
-        List<Auction> finishedAuctionsByUserId = getFinishedAuctionsByUserId();
+        List<Auction> finishedAuctionsByUserId = getClosedAuctionsByUserId();
 
         updateAuctionStatus(finishedAuctionsByUserId, SOLD);
     }
@@ -409,7 +425,7 @@ public class AuctionServiceImpl implements AuctionService {
      */
     @Override
     public List<Car> getCarsFromFinishedAuctionsForBuyerId() {
-        List<Auction> finishedAuctions = getFinishedAuctionsByUserId();
+        List<Auction> finishedAuctions = getClosedAuctionsByUserId();
 
         List<Integer> carsIdList = finishedAuctions.stream()
                 .map(auction -> auction.getCar().getId())
@@ -425,7 +441,7 @@ public class AuctionServiceImpl implements AuctionService {
      */
     @Override
     public List<Float> getFinishedAuctionsCurrentPrice() {
-        return getFinishedAuctionsByUserId().stream()
+        return getClosedAuctionsByUserId().stream()
                 .map(Auction::getCurrentPrice)
                 .toList();
     }

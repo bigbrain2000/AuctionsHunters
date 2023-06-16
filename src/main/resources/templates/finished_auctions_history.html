@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Istoricul licitațiilor câștigate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/paginationStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/carListStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/navBarStyle.css">
+    <link rel="stylesheet" type="text/css" href="/css/footerStyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"
+            integrity="sha512-gHT5OX5/XkAm5/8/5W1VDvJ/nmlC6U2+6U0J6UHKn6PpLzg0/sHWqJ4z4nnMCBL7pEaYYfYlq3nG9kfTq7VSw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/js/yearDropDownMenu.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<header th:replace="/nav_bar :: nav_bar"></header>
+
+<div th:include="/searchMenu :: form"></div>
+
+<main>
+    <div class="car-list">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Producător</th>
+                <th>Model</th>
+                <th>An fabricație</th>
+                <th>Prețul plătit</th>
+                <th>Vizualizează</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="car, stat : ${carPage.content}">
+                <td th:text="${car.producer}" style="padding-top: 20px;"></td>
+                <td th:text="${car.model}" style="padding-top: 20px;"></td>
+                <td th:text="${car.modelYear}" style="padding-top: 20px;"></td>
+                <td>
+                    <span th:if="${finishedAuctionsFinalPrice[stat.index] != 0}"
+                          th:text="${finishedAuctionsFinalPrice[stat.index]}" style="padding-bottom: -20px;">
+                     </span>
+                </td>
+                <td>
+                    <a th:href="@{/car/{id}(id=${car.id})}" class="btn btn-get-car">
+                        <i class="fa fa-car"></i>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination">
+        <ul class="pagination" style="margin-left: 50px;margin-top: -10px;">
+            <li th:class="${currentPage == 0}? 'disabled' : ''">
+                <a th:href="@{/cars(page=0)}">Prima</a>
+            </li>
+            <li th:class="${currentPage == 0}? 'disabled' : ''">
+                <a th:href="@{/cars(page=${currentPage - 1})}">Anterior</a>
+            </li>
+            <li th:each="pageNumber : ${pageNumbers}" th:class="${currentPage == pageNumber}? 'active' : ''">
+                <a th:href="@{/cars(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+            </li>
+            <li th:class="${currentPage == pageNumbers.size() - 1}? 'disabled' : ''">
+                <a th:href="@{/cars(page=${currentPage + 1})}">Următor</a>
+            </li>
+            <li th:class="${currentPage == pageNumbers.size() - 1}? 'disabled' : ''">
+                <a th:href="@{/cars(page=${pageNumbers.size() - 1})}">Ultima</a>
+            </li>
+        </ul>
+    </div>
+</main>
+
+<footer th:replace="/footer :: footer"></footer>
+</body>
+</html>

@@ -187,6 +187,65 @@ public class AuctionController {
         return pager.createPaginationListForCars(page, producer, model, minYear, maxYear, minPrice, maxPrice, modelAtr);
     }
 
+    @GetMapping("/auctions/cars/bought")
+    public String getBoughtCars(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(value = "producer", required = false) String producer,
+            @RequestParam(value = "model", required = false) String model,
+            @RequestParam(value = "minYear", required = false) Integer minYear,
+            @RequestParam(value = "maxYear", required = false) Integer maxYear,
+            @RequestParam(value = "minPrice", required = false) Integer minPrice,
+            @RequestParam(value = "maxPrice", required = false) Integer maxPrice,
+            Model modelAtr) {
+
+        CarsListPaginator pager = (page1, producer1, model1, minYear1, maxYear1, minPrice1, maxPrice1, modelAtr1) -> {
+            String loggedUsername = userService.getLoggedUsername();
+            User user = userService.findByUsername(loggedUsername);
+
+            List<Auction> finishedAuctions = auctionService.getSoldAuctionsByUserId();
+            List<Integer> carsIdList = finishedAuctions.stream()
+                    .map(auction -> auction.getCar().getId())
+                    .toList();
+
+            List<Car> carsBoughtList = carService.findAllByIdIn(carsIdList);
+
+            if (carsBoughtList.isEmpty()) {
+                return "/no_car_bought";
+            }
+
+            SearchCriteria searchCriteria = new SearchCriteria();
+            Specification<Car> carSpecification = searchCriteria.buildSpec(producer1, model1, minYear1, maxYear1, minPrice1, maxPrice1);
+            carSpecification = carSpecification.and((root, query, criteriaBuilder) -> criteriaBuilder.notEqual(root.get("user"), user));
+
+            // Modify carSpecification to include the condition
+            carSpecification = carSpecification.and((root, query, criteriaBuilder) -> root.in(carsBoughtList));
+
+            Page<Car> carPage = carService.getCarPage(page1, carSpecification);
+
+            int totalPages = carPage.getTotalPages();
+
+            if (totalPages > 0) {
+                List<Integer> pageNumbers = IntStream.rangeClosed(0, totalPages - 1)
+                        .boxed()
+                        .toList();
+
+                List<Float> finishedAuctionsFinalPrice = finishedAuctions.stream()
+                        .map(Auction::getCurrentPrice)
+                        .toList();
+
+                modelAtr1.addAttribute("carPage", carPage);
+                modelAtr1.addAttribute("currentPage", page1);
+                modelAtr1.addAttribute("pageNumbers", pageNumbers);
+                modelAtr1.addAttribute("finishedAuctionsFinalPrice", finishedAuctionsFinalPrice);
+                modelAtr1.addAttribute("finishedAuctions", finishedAuctions);
+            }
+
+            return "/finished_auctions_history";
+        };
+
+        return pager.createPaginationListForCars(page, producer, model, minYear, maxYear, minPrice, maxPrice, modelAtr);
+    }
+
     @GetMapping("/auctions/suv/cars")
     public String getAuctionsWithSuvCars(
             @RequestParam(defaultValue = "0") int page,

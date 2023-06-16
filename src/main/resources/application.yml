@@ -41,9 +41,9 @@ paypal:
   method: paypal
   cancel:
 #    local
-#    url: http://localhost:5000/pay/cancel
+    url: http://localhost:5000/pay/cancel
 #    aws
-    url: demo-env-1.eba-tim3wwmf.us-east-1.elasticbeanstalk.com:5000/pay/cancel
+#    url: demo-env-1.eba-tim3wwmf.us-east-1.elasticbeanstalk.com:5000/pay/cancel
   intent: sale
   client:
     secret: ${PAYPAL_CLIENT_SECRET}

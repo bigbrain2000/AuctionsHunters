@@ -88,6 +88,14 @@ public interface AuctionService {
     void manageFinishedAuctions();
 
     /**
+     * Retrieves a list of SOLD {@link Auction} from the database where the specified buyer has won.
+     *
+     * @return A list of {@link Auction} objects, containing all the finished auctions won by the specified buyer.
+     * If no auctions are found for the given buyer, an empty list is returned.
+     */
+    List<Auction> getSoldAuctionsByUserId();
+
+    /**
      * Method used for retrieving a list of finished {@link Auction} objects and update their status from
      * ACTIVE to SOLD.
      */
