@@ -44,6 +44,9 @@
                         <li><a th:href="@{/login}">Deconectare</a></li>
                     </ul>
                 </div>
+
+                <!--logged user name-->
+                <div class="username" th:text="${@userComponent.getCurrentUsername()}">Username</div>
             </nav>
         </div>
     </header>

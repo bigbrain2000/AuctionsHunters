@@ -289,3 +289,12 @@ nav .content .links {
         padding-right: 30px;
     }
 }
+
+/*username*/
+.username {
+    color: #fff;
+    font-size: 18px;
+    padding: 0 20px;
+    line-height: 70px;
+    text-align: right;
+}
