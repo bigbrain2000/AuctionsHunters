@@ -57,7 +57,7 @@ public class PaymentController {
         try {
             Double totalPrice = Double.valueOf(auctionService.getTotalPriceToPay());
             PaymentRequest paymentRequest = new PaymentRequest();
-            paymentRequest.setTotalAmount(totalPrice/4.5f);
+            paymentRequest.setTotalAmount(totalPrice);
 
             Payment payment = payPalService.createPayment(paymentRequest);
 
