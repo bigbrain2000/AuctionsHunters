@@ -37,8 +37,8 @@ public class Scheduler {
         this.emailService = emailService;
     }
 
-//    @Scheduled(cron = "0 * * ? * *") //every minute reminder
-    @Scheduled(cron = "0 0 0 */10 * ?") //every 10 days
+    @Scheduled(cron = "0 * * ? * *") //every minute reminder
+//    @Scheduled(cron = "0 0 0 */10 * ?") //every 10 days
     public void sendEmailIfUserBidsWereOvertaken() {
         log.debug("Scheduler process started");
         List<User> allUsers = userService.findAll();
