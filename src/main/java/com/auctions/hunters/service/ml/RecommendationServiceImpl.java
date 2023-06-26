@@ -23,7 +23,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     private static final int K_NEIGHBOURS = 1;
-    private static final int NUMBER_OF_RECOMMENDED_AUCTIONS = 1;
+    private static final int NUMBER_OF_RECOMMENDED_AUCTIONS = 2;
 
     /**
      * Return a list with all the different {@link Car} objects retrieved from the recommended {@link Auction} list.

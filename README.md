@@ -28,6 +28,8 @@ To run this project you should have the following technologies installed:
 * IntelliJ/Eclipse
 * Maven
 * Java 17
+* PostgreSQL
+*
 
 ## Technologies
 
@@ -65,10 +67,6 @@ Each of these components are built to handle specific development aspects of an 
 
 ![Alt text](images/ERD.png)
 
-## Deployment instructions
-
-For the deployment part it was used Elastic Beanstalk provided by the [AWS](https://aws.amazon.com/).
-
 ## How to run this service locally
 
 In order to activate the logs at the debugging level, set the Active Profiles to
@@ -79,7 +77,8 @@ SPRING_PROFILES_ACTIVE=debug
 
 Replace the environment variables defined
 in [application.yml](https://github.com/bigbrain2000/AuctionsHunters/blob/main/src/main/resources/application.yml) with
-your own credentials. That means that you will need a [Mailtrap](https://mailtrap.io/), [Vicario](https://vindecoder.eu/), [PayPal](https://developer.paypal.com/) and an [AWS](https://aws.amazon.com/) account.
+your own credentials. That means that you will need a [Mailtrap](https://mailtrap.io/)
+, [Vicario](https://vindecoder.eu/) and an [PayPal](https://developer.paypal.com/) account.
 
 Run the project by running the following commands:
 

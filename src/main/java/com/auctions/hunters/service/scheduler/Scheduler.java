@@ -165,7 +165,7 @@ public class Scheduler {
                 <body>
                     <div class="container">
                         <p>Salut %s,</p>
-                        <p>Vrem să vă anunțăm că un alt participant a plasat o ofertă mai mare pentru mașina %s %s de care erați interesat.</p>
+                        <p>Dorim să vă anunțăm că un alt participant a plasat o ofertă mai mare pentru mașina %s %s de care erați interesat.</p>
                         <p>Dacă sunteți în continuare interesat de această mașina vă încurajăm să plasați o nouă ofertă.</p>
                             <p>Mult noroc în viitoarele licitații,</p>
                         <p>Echipa Vânătorii de Licitații</p>

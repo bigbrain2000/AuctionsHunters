@@ -64,7 +64,7 @@ public class AuctionServiceImpl implements AuctionService {
                 .car(car)
                 .user(user)
                 .startTime(now)
-                .endTime(now.plusMinutes(2))  //end date is current date + 1 day
+                .endTime(now.plusMinutes(10))  //end date is current date + 1 day
                 .minimumPrice(minimumPrice)
                 .startingPrice(minimumPrice)
                 .currentPrice(minimumPrice)
