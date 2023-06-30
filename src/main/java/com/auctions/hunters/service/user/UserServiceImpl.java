@@ -205,30 +205,6 @@ public class UserServiceImpl implements UserService {
         return token;
     }
 
-    //AWS
-//    public String register(@NotNull User newUser) throws InvalidEmailException, EmailAlreadyExistsException {
-//
-//        checkIfEmailIsValid(newUser.getEmail());
-//
-//        String token = signUpUser(
-//                new User(
-//                        newUser.getUsername(),
-//                        newUser.getPassword(),
-//                        newUser.getEmail(),
-//                        newUser.getCityAddress(),
-//                        newUser.getPhoneNumber(),
-//                        newUser.getRole(),
-//                        FALSE
-//                )
-//        );
-//
-//        String link = "http://demo-env-1.eba-tim3wwmf.us-east-1.elasticbeanstalk.com/confirm?token=" + token; //url for validating user account
-//
-//        sendRegistrationEmail(newUser, link);
-//
-//        return token;
-//    }
-
     /**
      * Verify is the user email is valid
      *

@@ -31,8 +31,6 @@ spring:
     driverClassName: org.postgresql.Driver
     #local
     url: jdbc:postgresql://localhost:5432/auctions_hunters
-    #aws
-#    url: jdbc:postgresql://${DATABASE_URL}:5432/auctions_hunters
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
 
@@ -42,8 +40,6 @@ paypal:
   cancel:
 #    local
     url: http://localhost:5000/pay/cancel
-#    aws
-#    url: demo-env-1.eba-tim3wwmf.us-east-1.elasticbeanstalk.com:5000/pay/cancel
   intent: sale
   client:
     secret: ${PAYPAL_CLIENT_SECRET}
@@ -51,8 +47,6 @@ paypal:
   success:
 #    local
     url: http://localhost:5000/pay/success
-#    aws
-#    url: http://demo-env-1.eba-tim3wwmf.us-east-1.elasticbeanstalk.com/pay/success
   mode: sandbox
 
 vicarioBaseUrl: https://api.vindecoder.eu/3.2

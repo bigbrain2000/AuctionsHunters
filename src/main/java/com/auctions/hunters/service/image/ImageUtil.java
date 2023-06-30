@@ -26,19 +26,16 @@ public class ImageUtil {
         deflater.setInput(data);
         deflater.finish();
 
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length)) {
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
             byte[] tmp = new byte[4 * 1024];
             while (!deflater.finished()) {
                 int size = deflater.deflate(tmp);
                 outputStream.write(tmp, 0, size);
             }
-
+        deflater.end();
             return outputStream.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException("Error compressing image data", e);
-        } finally {
-            deflater.end();
-        }
+
+            
     }
 
     /**
